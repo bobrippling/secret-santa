@@ -7,6 +7,7 @@ import { createFirestoreInstance } from 'redux-firestore';
 import { routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga';
 import { createBrowserHistory } from 'history';
+import './index.css';
 import createRootReducer from './rootReducer';
 import { firebaseApp } from './config/fbConfig';
 import rootSaga from './rootSaga';

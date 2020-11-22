@@ -1,14 +1,35 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import Container from '@material-ui/core/Container';
+import { ConnectedRouter } from 'connected-react-router';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Toolbar from '@material-ui/core/Toolbar';
+import Navbar from './navbar/Navbar';
+import RenderRoutes from './RenderRoutes';
+import styles from './App.module.scss';
 
 type Props = {
-    name: string;
+    auth: any;
     history: any;
   };
 
 const App: React.FC<Props> = (props : Props) => (
-    <div>
-        {`App ${props.name}`}
-    </div>
+    <ConnectedRouter history={props.history}>
+        <>
+            <CssBaseline />
+            <div className={styles.app}>
+                <Container className={styles.appContainer}>
+                    <Navbar />
+                    <Toolbar />
+                    <RenderRoutes auth={props.auth} />
+                </Container>
+            </div>
+        </>
+    </ConnectedRouter>
 );
 
-export default App;
+const mapStateToProps = (state: any) => ({
+    auth: state.firebase.auth
+});
+
+export default connect(mapStateToProps, null)(App);

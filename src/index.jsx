@@ -9,6 +9,7 @@ import { routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga';
 import { createBrowserHistory } from 'history';
 import './index.css';
+import 'react-notifications-component/dist/theme.css';
 import createRootReducer from './rootReducer';
 import { firebaseApp } from './config/fbConfig';
 import rootSaga from './rootSaga';

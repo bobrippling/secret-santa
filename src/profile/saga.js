@@ -4,14 +4,14 @@ import {
 import firebase from 'firebase';
 import * as actions from './actions';
 import { setErrorMessage } from '../modalHandling/actions';
-// import { addNotification } from '../notifications/actions';
+import { addNotification } from '../notifications/actions';
 
 export function* linkProfileToGoogle() {
     try {
         console.log('linking with google');
         const provider = new firebase.auth.GoogleAuthProvider();
         yield firebase.auth().currentUser.linkWithPopup(provider);
-        // yield put(addNotification('Profile Successfully linked to Google'));
+        yield put(addNotification('Profile Successfully linked to Google'));
     } catch (error) {
         yield put(setErrorMessage(`Error Linking Email To Google - ${error.email}`, error));
     }
@@ -23,7 +23,7 @@ export function* linkProfileToFacebook() {
         const provider = new firebase.auth.FacebookAuthProvider();
         yield firebase.auth().currentUser.linkWithPopup(provider);
         // yield call(api.linkFacebookAccount);
-        // yield put(addNotification('Profile Successfully linked to Facebook'));
+        yield put(addNotification('Profile Successfully linked to Facebook'));
     } catch (error) {
         yield put(setErrorMessage, `Error Linking Email To Facebook - ${error.email}`, error);
     }

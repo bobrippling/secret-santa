@@ -9,10 +9,8 @@ import SignUp from './auth/SignUp';
 
 import * as routes from './routes';
 
-const RenderRoutes = () => (
+const RenderRoutes:React.FC = () => (
     <Switch>
-
-        {/* Filter out disabled pages */}
         {routes.signedInLinks.map(link => (
             <AuthenticatedRoute
                 exact

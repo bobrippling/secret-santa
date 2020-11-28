@@ -3,12 +3,22 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import TopNavbar from './TopNavbar';
 import SideNavbar from './SideNavbar';
-// import { signOut } from '../auth/actions';
 
-const NewNavbar = (props: any) => {
+type Props = {
+    auth: {
+        emailVerified: boolean;
+        isLoaded: boolean;
+        isEmpty: boolean;
+        uid: string;
+    },
+    history: any;
+    signOut: () => void;
+
+};
+
+const NewNavbar: React.FC<any> = (props: Props) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const closeSidebar = useCallback(() => setSidebarOpen(false), [setSidebarOpen]);
-    const openSidebar = useCallback(() => setSidebarOpen(true), [setSidebarOpen]);
     const toggleSidebar = useCallback(() => setSidebarOpen(!sidebarOpen),
         [sidebarOpen, setSidebarOpen]);
 
@@ -25,27 +35,17 @@ const NewNavbar = (props: any) => {
         <>
             <TopNavbar
                 auth={props.auth}
-                closeNavbar={closeSidebar}
-                currentPath={props.history.location.pathname}
-                isSignedIn={props.auth.uid && props.auth.emailVerified}
-                maxGameWeek={props.maxGameWeek}
-                openNavbar={openSidebar}
                 redirect={onItemClick}
-                // signOut={props.signOut}
+                signOut={props.signOut}
                 toggleNavbar={toggleSidebar}
-                userId={props.auth.uid}
-                userPermissions={props.userPermissions}
             />
 
             <SideNavbar
                 closeNavbar={closeSidebar}
                 currentPath={props.history.location.pathname}
                 isOpen={sidebarOpen}
-                isSignedIn={props.auth.uid && props.auth.emailVerified}
-                openNavbar={openSidebar}
+                isSignedIn={Boolean(props.auth.uid && props.auth.emailVerified)}
                 redirect={onItemClick}
-                toggleNavbar={toggleSidebar}
-                userId={props.auth.uid}
             />
         </>
 

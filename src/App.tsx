@@ -9,7 +9,10 @@ import RenderRoutes from './RenderRoutes';
 import styles from './App.module.scss';
 
 type Props = {
-    auth: any;
+    auth: {
+        isLoaded: boolean;
+        isEmpty: boolean;
+    };
     history: any;
   };
 
@@ -21,7 +24,7 @@ const App: React.FC<Props> = (props : Props) => (
                 <Container className={styles.appContainer}>
                     <Navbar />
                     <Toolbar />
-                    <RenderRoutes auth={props.auth} />
+                    <RenderRoutes />
                 </Container>
             </div>
         </>

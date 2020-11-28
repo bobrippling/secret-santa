@@ -7,7 +7,14 @@ import classNames from 'classnames';
 import * as routes from '../routes';
 import defaultStyles from './SideList.module.scss';
 
-const SideList = (props: any) => {
+type Props = {
+    closeNavbar: () => void;
+    currentPath: string;
+    isSignedIn: boolean;
+    redirect: (path: string) => void;
+};
+
+const SideList: React.FC<Props> = (props: Props) => {
     const linksToRender = props.isSignedIn ? routes.signedInLinks : routes.signedOutLinks;
 
     const onItemClick = useCallback(item => {

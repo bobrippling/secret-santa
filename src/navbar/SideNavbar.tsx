@@ -1,24 +1,26 @@
 import React from 'react';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import SideList from './SideList';
 
-const SideNavbar = (props: any) => (
+type Props = {
+    closeNavbar: () => void;
+    currentPath: string;
+    isOpen: boolean;
+    isSignedIn: boolean;
+    redirect: (path: string) => void;
+};
+
+const SideNavbar: React.FC<Props> = (props: Props) => (
     <SwipeableDrawer
         open={props.isOpen}
         onClose={props.closeNavbar}
         onOpen={props.closeNavbar}
     >
         <SideList
+            closeNavbar={props.closeNavbar}
             currentPath={props.currentPath}
-            disabledPages={props.disabledPages}
             redirect={props.redirect}
             isSignedIn={props.isSignedIn}
-            maxGameWeek={props.maxGameWeek}
-            originalTeam={props.originalTeam}
-            userId={props.userId}
-            userPermissions={props.userPermissions}
         />
     </SwipeableDrawer>
 );

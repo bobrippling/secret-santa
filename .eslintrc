@@ -10,7 +10,7 @@
       "plugin:@typescript-eslint/recommended"
     ],
     "rules": {
-      "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }]
+      "react/jsx-filename-extension": [0]
     },
     "settings": {
       "import/resolver": {

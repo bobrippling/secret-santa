@@ -6,11 +6,8 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import PropTypes from 'prop-types';
-import * as routes from '../routes';
 import * as appConstants from '../constants';
 import defaultStyles from './TopNavbar.module.scss';
 
@@ -39,7 +36,19 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const TopNavbar = (props:any) => {
+type Props = {
+    auth: {
+        emailVerified: boolean;
+        isEmpty: boolean;
+        isLoaded: boolean;
+        uid: string;
+    };
+    redirect: (path: string) => void;
+    signOut: () => void;
+    toggleNavbar: () => void;
+};
+
+const TopNavbar: React.FC<Props> = (props:Props) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -74,7 +83,7 @@ const TopNavbar = (props:any) => {
                 </IconButton>
                 <Typography variant="h6">
                     <div className={defaultStyles.titleWrapper}>
-                        CCAFC
+                        Secret Santa
                     </div>
                 </Typography>
                 <div className={defaultStyles.navbarIcon}>

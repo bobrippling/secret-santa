@@ -17,3 +17,4 @@ const db = admin.firestore();
 // });
 
 exports.auth = require('./src/auth');
+exports.profile = require('./src/profile');

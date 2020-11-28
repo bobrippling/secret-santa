@@ -20,21 +20,24 @@ type Props = {
   };
 
 const App: React.FC<Props> = (props : Props) => (
-    <ConnectedRouter history={props.history}>
-        <>
-            <CssBaseline />
-            <div className={styles.app}>
-                <Container className={styles.appContainer}>
-                    <Navbar />
-                    <Toolbar />
-                    <ReactNotification />
-                    <RenderRoutes />
-                </Container>
-            </div>
-            <ModalHandling />
-            <Notifications />
-        </>
-    </ConnectedRouter>
+    props.auth && props.auth.isLoaded
+        ? (
+            <ConnectedRouter history={props.history}>
+                <>
+                    <CssBaseline />
+                    <div className={styles.app}>
+                        <Container className={styles.appContainer}>
+                            <Navbar />
+                            <Toolbar />
+                            <ReactNotification />
+                            <RenderRoutes />
+                        </Container>
+                    </div>
+                    <ModalHandling />
+                    <Notifications />
+                </>
+            </ConnectedRouter>
+        ) : null
 );
 
 const mapStateToProps = (state: any) => ({

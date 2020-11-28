@@ -5,38 +5,43 @@
   flex-grow: 1;
 }
 
-.clickGoogle, .clickFacebook {
+.clickGoogle, .clickFacebook, .clickPhone {
   cursor: pointer;
 }
 
 .clickGoogle:hover {
+  background-color: $color-light-red-hover;
+}
+
+.clickPhone:hover {
   background-color: $color-light-green-hover;
 }
 
 
-.facebookLinkWrapper:hover{
+.clickFacebook:hover{
   background-color: $color-light-blue-hover
 }
 
 .googleLinkWrapper, .facebookLinkWrapper{
-  padding: $spacing-medium;
+  padding: $spacing-average;
   display: flex;
   justify-content: center;
-  .googleLinkMessage, .facebookLinkMessage{
+  .googleLinkMessage, .facebookLinkMessage, .phoneLinkMessage {
     @include vertical-center-div();
     margin-right: $spacing-medium;
-    font-size: $font-size-huge;
+    font-size: $font-size-medium;
     font-weight: $font-weight-normal;
     color: $color-blue;
     outline: 0px;      
   }
-  .googleLinkImage, .facebookLinkImage{
+  .googleLinkImage, .facebookLinkImage, .phoneLinkImage {
     margin-top: auto;
     margin-bottom: auto;
+    margin-left: auto;
   }  
 }
 
-.googleImage, .facebookImage{
+.googleImage, .facebookImage, .phoneImage {
   height: $spacing-massive;
   width: $spacing-massive;
 }

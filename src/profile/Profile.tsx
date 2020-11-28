@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-    linkProfileToFacebook, linkProfileToGoogle
-} from './actions';
+import { linkProfileToFacebook, linkProfileToGoogle, linkProfileToPhone } from './actions';
 import { StoreState } from '../types';
 import * as selectors from './selectors';
 import LinkAccounts from './linkaccounts/LinkAccounts';
@@ -11,35 +9,32 @@ import styles from './Profile.module.scss';
 type Props = {
     isSignedInWithFacebook: boolean;
     isSignedInWithGoogle: boolean;
-    isSignedInWithPhone: boolean;
+    // isSignedInWithPhone: boolean;
 
     linkProfileToFacebook: () => void;
     linkProfileToGoogle: () => void;
+    // linkProfileToPhone: () => void;
 }
 
-const Profile = (props: Props) => {
-    console.log('signed in with facebook', props.isSignedInWithFacebook);
-    console.log('signed in with google', props.isSignedInWithGoogle);
-    console.log('signed in with phone', props.isSignedInWithPhone);
-
-    return (
-        <div>
-            Profile
-            <div className={styles.bodyWrapper}>
-                <LinkAccounts
-                    isSignedInWithFacebook={props.isSignedInWithFacebook}
-                    isSignedInWithGoogle={props.isSignedInWithGoogle}
-                    linkProfileToFacebook={props.linkProfileToFacebook}
-                    linkProfileToGoogle={props.linkProfileToGoogle}
-                />
-            </div>
+const Profile = (props: Props) => (
+    <div>
+        <div className={styles.bodyWrapper}>
+            <LinkAccounts
+                isSignedInWithFacebook={props.isSignedInWithFacebook}
+                isSignedInWithGoogle={props.isSignedInWithGoogle}
+                // isSignedInWithPhone={props.isSignedInWithPhone}
+                linkProfileToFacebook={props.linkProfileToFacebook}
+                linkProfileToGoogle={props.linkProfileToGoogle}
+                // linkProfileToPhone={props.linkProfileToPhone}
+            />
         </div>
-    );
-};
+    </div>
+);
 
 const mapDispatchToProps = {
     linkProfileToFacebook,
-    linkProfileToGoogle
+    linkProfileToGoogle,
+    linkProfileToPhone
 };
 
 const mapStateToProps = (state: StoreState) => ({

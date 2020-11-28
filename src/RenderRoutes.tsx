@@ -5,7 +5,6 @@ import AuthenticatedRoute from './auth/routes/AuthenticatedRoute';
 import UnauthenticatedRoute from './auth/routes/UnauthenticatedRoute';
 
 import SignIn from './auth/SignIn';
-import SignUp from './auth/SignUp';
 
 import * as routes from './routes';
 import Overview from './overview/Overview';
@@ -29,11 +28,6 @@ const RenderRoutes:React.FC = () => (
         <UnauthenticatedRoute
             path={constants.URL.SIGN_IN}
             component={SignIn}
-            redirect={constants.URL.OVERVIEW}
-        />
-        <UnauthenticatedRoute
-            path={constants.URL.SIGN_UP}
-            component={SignUp}
             redirect={constants.URL.OVERVIEW}
         />
         <UnauthenticatedRoute

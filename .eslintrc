@@ -10,7 +10,9 @@
       "plugin:@typescript-eslint/recommended"
     ],
     "rules": {
-      "react/jsx-filename-extension": [0]
+      "react/jsx-filename-extension": [0],
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off"
     },
     "settings": {
       "import/resolver": {

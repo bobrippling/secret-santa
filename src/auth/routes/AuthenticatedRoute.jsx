@@ -9,6 +9,7 @@ const AuthenticatedRoute = ({
 }) => {
     console.log('auth', auth);
     if (!auth.uid) {
+        console.log('redirecting');
         return <Redirect to={constants.URL.SIGN_IN} />;
     }
     return (

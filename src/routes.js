@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { Suspense } from 'react';
 
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
@@ -15,17 +16,10 @@ const generateLazyComponent = Component => () => (
 export const signedOutLinks = [
     {
         title: 'Sign In',
-        icon: <DoubleArrowIcon color="primary" />,
+        icon: <AccountBoxIcon color="primary" />,
         component: generateLazyComponent(rootComponents.SignIn, 'Sign In'),
         path: () => constants.URL.SIGN_IN,
         urlIncludes: constants.URL.SIGN_IN
-    },
-    {
-        title: 'Sign Up',
-        icon: <AccountBoxIcon color="primary" />,
-        component: generateLazyComponent(rootComponents.SignUp, 'Sign Up'),
-        path: () => constants.URL.SIGN_UP,
-        urlIncludes: constants.URL.SIGN_UP
     }
 ];
 

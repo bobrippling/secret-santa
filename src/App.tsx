@@ -7,6 +7,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Navbar from './navbar/Navbar';
 import RenderRoutes from './RenderRoutes';
 import styles from './App.module.scss';
+import ModalHandling from './modalHandling/ModalHandling';
 
 type Props = {
     auth: {
@@ -27,6 +28,7 @@ const App: React.FC<Props> = (props : Props) => (
                     <RenderRoutes />
                 </Container>
             </div>
+            <ModalHandling />
         </>
     </ConnectedRouter>
 );

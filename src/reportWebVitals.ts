@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ReportHandler } from 'web-vitals';
 
 const reportWebVitals: any = (onPerfEntry?: ReportHandler) => {

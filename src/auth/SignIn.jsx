@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import * as firebaseui from 'firebaseui';
 import firebase from 'firebase';
 import styles from './SignIn.module.scss';
+import * as constants from '../constants';
 
 const App: React.FC = () => {
     React.useEffect(() => {
-        const ui = new firebaseui.auth.AuthUI(firebase.auth());
+        const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
+        // const ui = new firebaseui.auth.AuthUI(firebase.auth());
         const uiConfig = {
             callbacks: {
                 signInSuccessWithAuthResult(authResult, redirectUrl) {
@@ -23,7 +25,7 @@ const App: React.FC = () => {
             },
             // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
             signInFlow: 'popup',
-            signInSuccessUrl: '<url-to-redirect-to-on-success>',
+            // signInSuccessUrl: constants.URL.OVERVIEW,
             signInOptions: [
                 // Leave the lines as is for the providers you want to offer your users.
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,

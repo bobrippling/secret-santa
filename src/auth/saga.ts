@@ -3,14 +3,18 @@ import {
 } from 'redux-saga/effects';
 import firebase from 'firebase';
 import * as actions from './actions';
+import { setErrorMessage } from '../modalHandling/actions';
 
 export function* signOut() {
     try {
         yield firebase.auth().signOut();
         yield put(actions.signOutSuccess());
-        console.log('sign out success');
+        yield put(setErrorMessage('Error Signing Out', {
+            code: 'code',
+            message: 'message'
+        }));
     } catch (error) {
-        // yield put(setErrorMessage('Error Signing Out', error));
+        yield put(setErrorMessage('Error Signing Out', error));
     }
 }
 

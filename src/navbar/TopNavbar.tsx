@@ -131,12 +131,6 @@ const TopNavbar: React.FC<Props> = (props:Props) => {
                                 <MenuItem onClick={() => redirectOnClick(appConstants.URL.SIGN_IN)}>
                                     Sign in
                                 </MenuItem>
-                                <MenuItem onClick={() => redirectOnClick(
-                                    appConstants.URL.SIGN_UP
-                                )}
-                                >
-                                    Sign up
-                                </MenuItem>
                             </div>
                         )}
                     </Menu>

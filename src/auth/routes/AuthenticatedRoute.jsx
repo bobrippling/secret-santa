@@ -5,11 +5,9 @@ import PropTypes from 'prop-types';
 import * as constants from '../../constants';
 
 const AuthenticatedRoute = ({
-    component: Component, auth, loadedPermissions, ...rest
+    component: Component, auth, ...rest
 }) => {
-    console.log('auth', auth);
     if (!auth.uid) {
-        console.log('redirecting');
         return <Redirect to={constants.URL.SIGN_IN} />;
     }
     return (

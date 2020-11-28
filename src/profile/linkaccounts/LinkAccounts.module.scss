@@ -1,0 +1,51 @@
+@import "../../common//Styles.scss";
+
+.linkAccountsWrapper{
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.clickGoogle, .clickFacebook {
+  cursor: pointer;
+}
+
+.clickGoogle:hover {
+  background-color: $color-light-green-hover;
+}
+
+
+.facebookLinkWrapper:hover{
+  background-color: $color-light-blue-hover
+}
+
+.googleLinkWrapper, .facebookLinkWrapper{
+  padding: $spacing-medium;
+  display: flex;
+  justify-content: center;
+  .googleLinkMessage, .facebookLinkMessage{
+    @include vertical-center-div();
+    margin-right: $spacing-medium;
+    font-size: $font-size-huge;
+    font-weight: $font-weight-normal;
+    color: $color-blue;
+    outline: 0px;      
+  }
+  .googleLinkImage, .facebookLinkImage{
+    margin-top: auto;
+    margin-bottom: auto;
+  }  
+}
+
+.googleImage, .facebookImage{
+  height: $spacing-massive;
+  width: $spacing-massive;
+}
+
+@media only screen and (max-width: 800px) {
+  .googleLinkWrapper, .facebookLinkWrapper {
+    margin: 0px;
+    margin-top: $spacing-medium;
+    margin-left: $spacing-average;
+    margin-right: $spacing-average;
+  }
+}

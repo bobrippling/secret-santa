@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { History } from 'history';
 import TopNavbar from './TopNavbar';
 import SideNavbar from './SideNavbar';
 import { signOut } from '../auth/actions';
+import { StoreState } from '../types';
 
 type Props = {
     auth: {
@@ -12,12 +14,12 @@ type Props = {
         isEmpty: boolean;
         uid: string;
     },
-    history: any;
+    history: History;
     signOut: () => void;
 
 };
 
-const NewNavbar: React.FC<any> = (props: Props) => {
+const NewNavbar: React.FC<Props> = (props: Props) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const closeSidebar = useCallback(() => setSidebarOpen(false), [setSidebarOpen]);
     const toggleSidebar = useCallback(() => setSidebarOpen(!sidebarOpen),
@@ -45,7 +47,7 @@ const NewNavbar: React.FC<any> = (props: Props) => {
                 closeNavbar={closeSidebar}
                 currentPath={props.history.location.pathname}
                 isOpen={sidebarOpen}
-                isSignedIn={Boolean(props.auth.uid && props.auth.emailVerified)}
+                isSignedIn={Boolean(props.auth.uid)}
                 redirect={onItemClick}
             />
         </>
@@ -53,7 +55,7 @@ const NewNavbar: React.FC<any> = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: StoreState) => ({
     auth: state.firebase.auth,
     profile: state.firebase.profile,
     pathname: state.router.location.pathname

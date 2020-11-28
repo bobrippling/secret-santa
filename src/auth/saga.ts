@@ -9,10 +9,6 @@ export function* signOut() {
     try {
         yield firebase.auth().signOut();
         yield put(actions.signOutSuccess());
-        yield put(setErrorMessage('Error Signing Out', {
-            code: 'code',
-            message: 'message'
-        }));
     } catch (error) {
         yield put(setErrorMessage('Error Signing Out', error));
     }

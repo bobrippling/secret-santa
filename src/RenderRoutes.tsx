@@ -8,9 +8,11 @@ import SignIn from './auth/SignIn';
 
 import * as routes from './routes';
 import Overview from './overview/Overview';
+import Profile from './profile/Profile';
 
 const RenderRoutes:React.FC = () => (
     <Switch>
+        <AuthenticatedRoute exact path={constants.URL.PROFILE} component={Profile} />
         {routes.signedInLinks.map(link => (
             <AuthenticatedRoute
                 exact

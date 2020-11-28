@@ -1,12 +1,9 @@
 import React from 'react';
 
-const Overview: React.FC = () => {
-    console.log('hey');
-    return (
-        <div>
-            Overview
-        </div>
-    );
-};
+const Overview: React.FC = () => (
+    <div>
+        Overview
+    </div>
+);
 
 export default Overview;

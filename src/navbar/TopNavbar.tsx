@@ -115,15 +115,12 @@ const TopNavbar: React.FC<Props> = (props:Props) => {
 
                         {props.auth.uid ? (
                             <div>
-                                {props.auth.emailVerified
-                                && (
-                                    <MenuItem onClick={() => redirectOnClick(
-                                        appConstants.URL.PROFILE
-                                    )}
-                                    >
-                                        My account
-                                    </MenuItem>
-                                ) }
+                                <MenuItem onClick={() => redirectOnClick(
+                                    appConstants.URL.PROFILE
+                                )}
+                                >
+                                    My account
+                                </MenuItem>
                                 <MenuItem onClick={props.signOut}>Sign out</MenuItem>
                             </div>
                         ) : (

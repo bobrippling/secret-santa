@@ -30,5 +30,12 @@ export const signedOutLinks = [
 ];
 
 export const signedInLinks = [
-
+    {
+        title: 'Overview',
+        icon: <DoubleArrowIcon color="primary" />,
+        component: generateLazyComponent(rootComponents.Overview, 'Overview'),
+        path: () => constants.URL.OVERVIEW,
+        urlIncludes: constants.URL.OVERVIEW,
+        renderPath: constants.URL.OVERVIEW
+    }
 ];

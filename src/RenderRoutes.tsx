@@ -8,6 +8,7 @@ import SignIn from './auth/SignIn';
 import SignUp from './auth/SignUp';
 
 import * as routes from './routes';
+import Overview from './overview/Overview';
 
 const RenderRoutes:React.FC = () => (
     <Switch>
@@ -20,18 +21,26 @@ const RenderRoutes:React.FC = () => (
             />
         ))}
 
+        <AuthenticatedRoute
+            path={constants.URL.OVERVIEW}
+            component={Overview}
+        />
+
         <UnauthenticatedRoute
             path={constants.URL.SIGN_IN}
             component={SignIn}
+            redirect={constants.URL.OVERVIEW}
         />
         <UnauthenticatedRoute
             path={constants.URL.SIGN_UP}
             component={SignUp}
+            redirect={constants.URL.OVERVIEW}
         />
         <UnauthenticatedRoute
             exact
             path="/"
             component={SignIn}
+            redirect={constants.URL.OVERVIEW}
         />
         <Route render={() => <Redirect to="/" />} />
     </Switch>

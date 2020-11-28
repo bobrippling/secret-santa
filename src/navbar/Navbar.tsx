@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import TopNavbar from './TopNavbar';
 import SideNavbar from './SideNavbar';
+import { signOut } from '../auth/actions';
 
 type Props = {
     auth: {
@@ -59,7 +60,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-    // signOut
+    signOut
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NewNavbar));

@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import * as firebaseui from 'firebaseui';
 import firebase from 'firebase';
+import styles from './SignIn.module.scss';
 
 const App: React.FC = () => {
     React.useEffect(() => {
         const ui = new firebaseui.auth.AuthUI(firebase.auth());
         const uiConfig = {
             callbacks: {
-                signInSuccessWithAuthResult(authResult: any, redirectUrl: any) {
-                    console.log('sign in success');
+                signInSuccessWithAuthResult(authResult, redirectUrl) {
+                    console.log('sign in success', authResult);
                     // User successfully signed in.
                     // Return type determines whether we continue the redirect automatically
                     // or whether we leave that to developer to handle.
@@ -27,7 +28,12 @@ const App: React.FC = () => {
                 // Leave the lines as is for the providers you want to offer your users.
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
                 firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-                firebase.auth.PhoneAuthProvider.PROVIDER_ID
+                {
+                    provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+                    defaultCountry: 'GB',
+                    defaultNationalNumber: '1234567890',
+                    loginHint: '+11234567890'
+                }
             ],
             // Terms of service url.
             tosUrl: '<your-tos-url>',
@@ -39,7 +45,7 @@ const App: React.FC = () => {
 
     return (
         <>
-            <h1>REACT PHONE AUTHENTICATION</h1>
+            <div className={styles.signIn}>Sign In</div>
             <div id="firebaseui-auth-container" />
         </>
     );

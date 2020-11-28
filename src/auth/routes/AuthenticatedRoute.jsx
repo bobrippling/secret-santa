@@ -7,11 +7,9 @@ import * as constants from '../../constants';
 const AuthenticatedRoute = ({
     component: Component, auth, loadedPermissions, ...rest
 }) => {
-    if (!auth.uid || !auth.emailVerified) {
-        return <Redirect to={constants.URL.VERIFY_EMAIL} />;
-    }
-    if (!loadedPermissions) {
-        return null;
+    console.log('auth', auth);
+    if (!auth.uid) {
+        return <Redirect to={constants.URL.SIGN_IN} />;
     }
     return (
         <Route
@@ -22,8 +20,7 @@ const AuthenticatedRoute = ({
 };
 
 const mapStateToProps = state => ({
-    auth: state.firebase.auth,
-    loadedPermissions: state.auth.loadedPermissions
+    auth: state.firebase.auth
 });
 
 AuthenticatedRoute.defaultProps = {

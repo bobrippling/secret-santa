@@ -50,6 +50,7 @@ const Profile = (props: Props) => {
     const updateDisplayName = React.useCallback(() => {
         props.updateDisplayNameRequest(newDisplayName);
         setIsDisplayNameModalOpen(false);
+        setNewDisplayName('');
     }, [props.updateDisplayNameRequest, newDisplayName]);
 
     const closeModal = () => {

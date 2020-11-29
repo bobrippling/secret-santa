@@ -5,6 +5,7 @@ const constants = require('./constants');
 
 const db = admin.firestore();
 
+const operations = admin.firestore.FieldValue;
 
 exports.createGroup = functions
     .region(constants.region)
@@ -24,14 +25,53 @@ exports.createGroup = functions
             throw new functions.https.HttpsError('invalid-argument', 'Group code must be at least 6 characters');
         }
 
-        return db.collection('groups').add({
-            code: data.code,
-            groupName: data.groupName,
-            isNoPriceRange: data.isNoPriceRange || false,
-            owner: context.auth.uid,
-            participants: [context.auth.uid],
-            priceMin: data.min || null,
-            priceMax: data.max || null,
+        return db.collection('users').doc(context.auth.uid).get().then(user => {
+            return db.collection('groups').add({
+                code: data.code,
+                groupName: data.groupName,
+                isNoPriceRange: data.isNoPriceRange || false,
+                owner: context.auth.uid,
+                participants: [context.auth.uid],
+                priceMin: data.min || null,
+                priceMax: data.max || null,
+                displayNameMappings: {
+                    [context.auth.uid]: user.data().displayName
+                }
+            })
         })
+    });
 
+exports.joinGroup = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        console.log("data", data)
+        common.isAuthenticated(context);
+
+        if (!data.code) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group code');
+        }
+
+        if (data.code.length < 6) {
+            throw new functions.https.HttpsError('invalid-argument', 'Group code must be at least 6 characters');
+        }
+
+        return db.collection('groups').where('code', '==', data.code).get().then(docs => {
+            if (docs.size === 0) {
+                throw new functions.https.HttpsError('not-found', 'No group with that code exists');
+            }
+
+            if (docs.size > 1) {
+                throw new functions.https.HttpsError('invalid-argument', 'Big error. Contact Matt');
+            }
+            
+            return db.collection('users').doc(context.auth.uid).get().then(user => {
+                return docs.docs[0].ref.update({
+                    participants: operations.arrayUnion(context.auth.uid),
+                    displayNameMappings: {
+                        ...docs.docs[0].data().displayNameMappings,
+                        [context.auth.uid]: user.data().displayName
+                    }
+                })
+            });
+        })
     });

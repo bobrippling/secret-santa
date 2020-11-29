@@ -34,3 +34,34 @@ exports.updateDisplayName = functions
             displayName: data.displayName
         })
     });
+
+exports.updateDisplayNameMappings = functions.region(constants.region).firestore
+    .document('users/{id}')
+    .onWrite(change => {
+        if (!change.after.exists) {
+            return Promise.resolve();
+        }
+        const displayNameBefore = change.before.data().displayName;
+        const displayNameAfter = change.after.data().displayName;
+
+        if (displayNameBefore === displayNameAfter) {
+            return Promise.resolve();
+        }
+
+        const userId = change.after.id;
+
+        console.log("yes");
+
+        return db.collection('groups').where('participants', 'array-contains', userId).get().then(result => {
+            console.log("results length", result.docs.length)
+            return result.docs.forEach(doc => {
+                return doc.ref.update({
+                    displayNameMappings: {
+                        ...doc.data().displayNameMappings,
+                        [userId]: displayNameAfter
+                    }
+                })
+            })
+        })
+
+    });

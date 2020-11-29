@@ -8,8 +8,11 @@ import Fade from '../common/Fade/Fade';
 import DatePicker from '../common/datePicker/DatePicker';
 import RangeSlider from '../common/slider/RangeSlider';
 import styles from './CreateGroup.module.scss';
+import LoadingDiv from '../common/loadingDiv/LoadingDiv';
 
 type Props = {
+
+    creatingGroup: boolean;
 
     groupCode: string;
     setGroupCode: (code: string) => void;
@@ -83,17 +86,20 @@ const MyGroups: React.FC<Props> = (props: Props) => (
             variant="inline"
         />
         <div className={styles.buttonWrapper}>
-            <StyledButton
-                color="primary"
-                onClick={props.createGroupRequest}
-                text="Create"
-                disabled={!props.groupName || !props.groupCode || props.groupCode.length < 6}
-            />
-            <StyledButton
-                color="secondary"
-                onClick={props.closeCreatingGroup}
-                text="Cancel"
-            />
+            <LoadingDiv isLoading={props.creatingGroup} isBorderRadius>
+                <StyledButton
+                    color="primary"
+                    onClick={props.createGroupRequest}
+                    text="Create"
+                    disabled={!props.groupName || !props.groupCode || props.groupCode.length < 6
+                        || props.creatingGroup}
+                />
+                <StyledButton
+                    color="secondary"
+                    onClick={props.closeCreatingGroup}
+                    text="Cancel"
+                />
+            </LoadingDiv>
         </div>
     </div>
 );

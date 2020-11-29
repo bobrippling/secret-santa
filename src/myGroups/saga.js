@@ -1,11 +1,9 @@
 import {
     all, takeEvery, put, call
 } from 'redux-saga/effects';
-import firebase from 'firebase';
 import * as myGroupsApi from './api';
 import * as actions from './actions';
 import { setErrorMessage } from '../modalHandling/actions';
-import { addNotification } from '../notifications/actions';
 
 const getFields = (groupName, priceRange, date, code) => {
     const fields = {
@@ -27,18 +25,31 @@ const getFields = (groupName, priceRange, date, code) => {
 };
 
 export function* createGroup(api, action) {
-    console.log('action', action);
     try {
         const fields = getFields(action.groupName, action.priceRange, action.date, action.code);
         yield call(api.createGroup, fields);
-        yield put(addNotification('Group successfully created'));
     } catch (error) {
         yield put(setErrorMessage('Error Creating group', error));
+    } finally {
+        yield put(actions.cancelCreatingGroup());
+    }
+}
+
+export function* joinGroup(api, action) {
+    try {
+        yield call(api.joinGroup, {
+            code: action.code
+        });
+    } catch (error) {
+        yield put(setErrorMessage('Error Joining group', error));
+    } finally {
+        yield put(actions.cancelJoiningGroup());
     }
 }
 
 export default function* myGroupSaga() {
     yield all([
-        takeEvery(actions.CREATE_GROUP_REQUEST, createGroup, myGroupsApi)
+        takeEvery(actions.CREATE_GROUP_REQUEST, createGroup, myGroupsApi),
+        takeEvery(actions.JOIN_GROUP_REQUEST, joinGroup, myGroupsApi)
     ]);
 }

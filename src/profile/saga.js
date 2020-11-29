@@ -32,7 +32,6 @@ export function* updateDisplayName(api, action) {
     try {
         yield call(api.updateDisplayName, { displayName: action.displayName });
         yield put(actions.updateDisplayNameSuccess());
-        yield put(addNotification('Display Name successfully updated'));
     } catch (error) {
         yield put(setErrorMessage('Error Updating Display Name', error));
     } finally {

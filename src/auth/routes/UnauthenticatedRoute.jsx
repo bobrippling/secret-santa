@@ -21,7 +21,7 @@ const mapStateToProps = state => ({
 UnauthenticatedRoute.defaultProps = {
     auth: {},
     component: {},
-    redirect: constants.URL.OVERVIEW
+    redirect: constants.URL.MY_GROUPS
 };
 
 UnauthenticatedRoute.propTypes = {

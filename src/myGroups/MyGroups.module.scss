@@ -1,0 +1,17 @@
+@import "../common/Styles.scss";
+
+.myGroupsWrapper {
+    text-align: center;
+    margin-left: $spacing-medium;
+    margin-right: $spacing-medium;
+    padding: $spacing-small;
+    color: $color-blue;
+    border-bottom: 2px solid $color-separator;
+    font-size: $font-size-large;
+}
+
+.buttonWrapper {
+    margin-top: $spacing-average;
+    justify-content: center;
+    display: flex;
+}

@@ -56,9 +56,11 @@ const TextInput = props => {
                 id="outlined-secondary"
                 label={props.label}
                 variant={props.variant}
+                error={props.value && props.value.length < props.minLength && props.hasValidation}
                 type={props.type}
                 color={props.color}
                 onBlur={props.onBlur}
+                helperText={props.helperText}
                 onChange={e => props.onChange(e.target.value)}
                 disabled={props.disabled}
                 value={props.value}
@@ -75,6 +77,9 @@ TextInput.defaultProps = {
     icon: null,
     iconColor: '',
     label: '',
+    hasValidation: false,
+    helperText: null,
+    minLength: 1000,
     onBlur: noop,
     onChange: noop,
     onSubmit: noop,
@@ -86,9 +91,12 @@ TextInput.defaultProps = {
 
 TextInput.propTypes = {
     color: PropTypes.string,
+    hasValidation: PropTypes.bool,
+    helperText: PropTypes.string,
     icon: PropTypes.string,
     iconColor: PropTypes.string,
     label: PropTypes.string,
+    minLength: PropTypes.number,
     onBlur: PropTypes.func,
     onChange: PropTypes.func,
     onSubmit: PropTypes.func,

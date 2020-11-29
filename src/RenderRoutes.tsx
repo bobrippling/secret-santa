@@ -7,7 +7,7 @@ import UnauthenticatedRoute from './auth/routes/UnauthenticatedRoute';
 import SignIn from './auth/SignIn';
 
 import * as routes from './routes';
-import Overview from './overview/Overview';
+import MyGroups from './myGroups/MyGroups';
 import Profile from './profile/Profile';
 
 const RenderRoutes:React.FC = () => (
@@ -23,20 +23,20 @@ const RenderRoutes:React.FC = () => (
         ))}
 
         <AuthenticatedRoute
-            path={constants.URL.OVERVIEW}
-            component={Overview}
+            path={constants.URL.MY_GROUPS}
+            component={MyGroups}
         />
 
         <UnauthenticatedRoute
             path={constants.URL.SIGN_IN}
             component={SignIn}
-            redirect={constants.URL.OVERVIEW}
+            redirect={constants.URL.MY_GROUPS}
         />
         <UnauthenticatedRoute
             exact
             path="/"
             component={SignIn}
-            redirect={constants.URL.OVERVIEW}
+            redirect={constants.URL.MY_GROUPS}
         />
         <Route render={() => <Redirect to="/" />} />
     </Switch>

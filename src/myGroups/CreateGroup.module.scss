@@ -1,0 +1,22 @@
+@import "../common/Styles.scss";
+
+.buttonWrapper {
+    margin-top: $spacing-average;
+    justify-content: center;
+    display: flex;
+}
+
+.addPriceRange {
+    font-size: $font-size-miniscule;
+    @include vertical-center-div();
+}
+
+.iconWrapper {
+    @include vertical-center-div();
+}
+
+.priceRangeToggle {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}

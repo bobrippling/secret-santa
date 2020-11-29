@@ -92,7 +92,7 @@ const Profile = (props: Props) => {
             <SuccessModal
                 backdrop
                 closeModal={() => setIsDisplayNameModalOpen(false)}
-                isOpen={isDisplayNameModalOpen}
+                isOpen={isDisplayNameModalOpen || props.updatingDisplayName}
                 headerMessage="Edit Display Name"
                 toggleModal={() => setIsDisplayNameModalOpen(false)}
             >

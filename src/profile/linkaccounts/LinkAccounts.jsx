@@ -16,7 +16,7 @@ const LinkAccounts = props => {
     const isMobile = useMediaQuery(`(max-width:${appConstants.mobileScreenSize}px)`);
     const classes = makeStyles(materialStyles)();
     return (
-        <div className={props.styles.linkAccountsWrapper}>
+        <>
             <Paper
                 elevation={4}
                 className={classNames({
@@ -79,40 +79,7 @@ const LinkAccounts = props => {
                     </div>
                 </div>
             </Paper>
-
-            {/* <Paper
-                elevation={4}
-                className={classNames({
-                    [classes.paperNoPadding]: true,
-                    [classes.paperTinyWidth]: !isMobile
-                })}
-            >
-                <div className={classNames({
-                    [props.styles.googleLinkWrapper]: true,
-                    [props.styles.clickPhone]: !props.isSignedInWithPhone
-                })}
-                >
-                    <div
-                        className={props.styles.phoneLinkMessage}
-                        onClick={props.linkProfileToPhone}
-                        role="button"
-                        tabIndex={0}
-                    >
-                        {props.isSignedInWithPhone ? 'You have linked your Mobile Phone '
-                        : 'Link your Mobile Phone'}
-                    </div>
-                    <div className={props.styles.phoneLinkImage}>
-                        <img
-                            alt="Google"
-                            className={props.styles.phoneImage}
-                            src={PhoneImage}
-                            onClick={props.linkProfileToPhone}
-                            role="presentation"
-                        />
-                    </div>
-                </div>
-            </Paper> */}
-        </div>
+        </>
     );
 };
 

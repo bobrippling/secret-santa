@@ -74,7 +74,9 @@ const WithModal = Component => {
     };
 
     NormalComponent.defaultProps = {
+        backdrop: false,
         cancel: noop,
+        children: null,
         closeModal: noop,
         headerMessage: '',
         errorCode: '',
@@ -83,11 +85,17 @@ const WithModal = Component => {
         isError: false,
         isSuccess: false,
         styles: defaultStyles,
-        submit: noop
+        submit: noop,
+        toggleModal: noop
     };
 
     NormalComponent.propTypes = {
+        backdrop: PropTypes.bool,
         cancel: PropTypes.func,
+        children: PropTypes.oneOfType([
+            PropTypes.arrayOf(PropTypes.node),
+            PropTypes.node
+        ]),
         closeModal: PropTypes.func,
         headerMessage: PropTypes.string,
         errorCode: PropTypes.string,
@@ -96,6 +104,7 @@ const WithModal = Component => {
         isError: PropTypes.bool,
         isSuccess: PropTypes.bool,
         styles: PropTypes.objectOf(PropTypes.string),
+        toggleModal: PropTypes.func,
         submit: PropTypes.func
     };
 

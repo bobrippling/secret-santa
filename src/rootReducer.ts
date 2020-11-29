@@ -6,11 +6,13 @@ import { connectRouter } from 'connected-react-router';
 import modalHandling from './modalHandling/reducer';
 import * as authActions from './auth/actions';
 import * as types from './types';
+import profile from './profile/reducer';
 
 const appReducer = (history: History) => combineReducers({
     firestore: firestoreReducer,
     firebase: firebaseReducer,
     modalHandling,
+    profile,
     router: connectRouter(history)
 });
 

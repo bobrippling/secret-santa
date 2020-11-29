@@ -1,7 +1,47 @@
 @import "../common/Styles.scss";
 
+.profileWrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .bodyWrapper{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
+  }
+
+
+.key {
+    font-weight: bold;
+    color: $color-dark-green;
+    margin-right: $spacing-tiny;
+    font-size: $font-size-medium;
+    @include vertical-center-div();
+    font-size: $font-size-small;
+  }
+
+  .profileHeader{
+    font-size: $font-size-huge;
+    color: $color-blue;
+    display: flex;
+    justify-content: space-evenly;
+    margin: $spacing-average;
+    position: relative;
+  }
+
+  .editIcon {
+      position: absolute;
+      right: $spacing-average;
+      @include vertical-center-div();
+  }
+
+  .editIcon:hover {
+      cursor: pointer;
+      color: $color-dark-blue;
+  }
+
+  .confirmButtons {
+      justify-content: center;
+      display: flex;
   }

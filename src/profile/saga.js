@@ -28,22 +28,22 @@ export function* linkProfileToFacebook(api) {
     }
 }
 
-// export function* linkProfileToPhone() {
-//     try {
-//         console.log('link to phone');
-//         const recap = firebase.auth.RecaptchaVerifier;
-//         yield firebase.auth().currentUser.linkWithPhoneNumber('+447598040467', recap);
-//         // yield firebase.auth().currentUser.linkWithPopup(provider);
-//         // yield firebase.auth().currentUser.linkWithPhoneNumber();
-//         yield put(addNotification('Profile Successfully linked to Phone'));
-//     } catch (error) {
-//         yield put(setErrorMessage, `Error Linking Account to Phone - ${error.email}`, error);
-//     }
-// }
+export function* updateDisplayName(api, action) {
+    try {
+        yield call(api.updateDisplayName, { displayName: action.displayName });
+        yield put(actions.updateDisplayNameSuccess());
+        yield put(addNotification('Display Name successfully updated'));
+    } catch (error) {
+        yield put(setErrorMessage('Error Updating Display Name', error));
+    } finally {
+        yield put(actions.cancelUpdatingDisplayName());
+    }
+}
 
 export default function* profileSaga() {
     yield all([
         takeEvery(actions.LINK_PROFILE_TO_GOOGLE, linkProfileToGoogle),
-        takeEvery(actions.LINK_PROFILE_TO_FACEBOOK, linkProfileToFacebook, profileApi)
+        takeEvery(actions.LINK_PROFILE_TO_FACEBOOK, linkProfileToFacebook, profileApi),
+        takeEvery(actions.UPDATE_DISPLAY_NAME_REQUEST, updateDisplayName, profileApi)
     ]);
 }

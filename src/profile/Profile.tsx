@@ -19,6 +19,7 @@ import * as appConstants from '../constants';
 import TextInput from '../common/TextInput/TextInput';
 import StyledButton from '../common/StyledButton/StyledButton';
 import * as textInputConstants from '../common/TextInput/constants';
+import LoadingDiv from '../common/loadingDiv/LoadingDiv';
 
 type Props = {
     isSignedInWithFacebook: boolean;
@@ -33,6 +34,7 @@ type Props = {
         displayName: string;
     },
     updateDisplayNameRequest: (displayName: string) => void;
+    updatingDisplayName: boolean;
 }
 
 const Profile = (props: Props) => {
@@ -49,6 +51,11 @@ const Profile = (props: Props) => {
         props.updateDisplayNameRequest(newDisplayName);
         setIsDisplayNameModalOpen(false);
     }, [props.updateDisplayNameRequest, newDisplayName]);
+
+    const closeModal = () => {
+        setNewDisplayName('');
+        setIsDisplayNameModalOpen(false);
+    };
 
     return (
         <>
@@ -78,10 +85,8 @@ const Profile = (props: Props) => {
                 <LinkAccounts
                     isSignedInWithFacebook={props.isSignedInWithFacebook}
                     isSignedInWithGoogle={props.isSignedInWithGoogle}
-                    // isSignedInWithPhone={props.isSignedInWithPhone}
                     linkProfileToFacebook={props.linkProfileToFacebook}
                     linkProfileToGoogle={props.linkProfileToGoogle}
-                // linkProfileToPhone={props.linkProfileToPhone}
                 />
             </div>
             <SuccessModal
@@ -100,16 +105,20 @@ const Profile = (props: Props) => {
                         label="Edit Display Name"
                     />
                     <div className={styles.confirmButtons}>
-                        <StyledButton
-                            color="primary"
-                            onClick={updateDisplayName}
-                            text="Confirm"
-                        />
-                        <StyledButton
-                            color="secondary"
-                            onClick={() => console.log('cancel')}
-                            text="Cancel"
-                        />
+                        <LoadingDiv isLoading={props.updatingDisplayName} isBorderRadius>
+                            <StyledButton
+                                color="primary"
+                                onClick={updateDisplayName}
+                                text="Confirm"
+                                disabled={props.updatingDisplayName}
+                            />
+                            <StyledButton
+                                color="secondary"
+                                onClick={closeModal}
+                                text="Cancel"
+                                disabled={props.updatingDisplayName}
+                            />
+                        </LoadingDiv>
                     </div>
                 </div>
             </SuccessModal>

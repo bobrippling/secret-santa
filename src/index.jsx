@@ -17,6 +17,7 @@ import 'react-notifications-component/dist/theme.css';
 
 const history = createBrowserHistory();
 
+// need firestore permissions to read this
 // react-redux-firebase config
 const rrfConfig = {
     userProfile: 'users',

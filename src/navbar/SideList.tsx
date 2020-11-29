@@ -6,12 +6,15 @@ import ListItemText from '@material-ui/core/ListItemText';
 import classNames from 'classnames';
 import * as routes from '../routes';
 import defaultStyles from './SideList.module.scss';
+import * as constants from '../constants';
+import { GroupType } from '../myGroups/types';
 
 type Props = {
     closeNavbar: () => void;
     currentPath: string;
     isSignedIn: boolean;
     redirect: (path: string) => void;
+    groups: GroupType[];
 };
 
 const SideList: React.FC<Props> = (props: Props) => {
@@ -42,6 +45,21 @@ const SideList: React.FC<Props> = (props: Props) => {
                         <ListItemText primary={item.title} />
                     </ListItem>
                 ))}
+                {props.groups.map(group => (
+                    <ListItem
+                        button
+                        key={group.id}
+                        onClick={() => props.redirect(`${constants.URL.GROUP_DETAILS}/${group.id}`)}
+                        className={classNames({
+                            [defaultStyles.activeRoute]: props.currentPath
+                                .includes(`${constants.URL.GROUP_DETAILS}/${group.id}`)
+                        })}
+                    >
+                        {/* <ListItemIcon>{item.icon}</ListItemIcon> */}
+                        <ListItemText primary={group.groupName} />
+                    </ListItem>
+                ))}
+
             </List>
         </div>
     );

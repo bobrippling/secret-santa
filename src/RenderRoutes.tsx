@@ -9,10 +9,12 @@ import SignIn from './auth/SignIn';
 import * as routes from './routes';
 import MyGroups from './myGroups/MyGroups';
 import Profile from './profile/Profile';
+import GroupDetails from './groupDetails/GroupDetails';
 
 const RenderRoutes:React.FC = () => (
     <Switch>
         <AuthenticatedRoute exact path={constants.URL.PROFILE} component={Profile} />
+        <AuthenticatedRoute path={`${constants.URL.GROUP_DETAILS}/:groupId`} component={GroupDetails} />
         {routes.signedInLinks.map(link => (
             <AuthenticatedRoute
                 exact

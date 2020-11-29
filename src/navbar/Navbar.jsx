@@ -1,25 +1,15 @@
 import React, { useState, useCallback } from 'react';
+import _ from 'lodash';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { History } from 'history';
+import { compose } from 'redux';
+import { firestoreConnect } from 'react-redux-firebase';
 import TopNavbar from './TopNavbar';
 import SideNavbar from './SideNavbar';
 import { signOut } from '../auth/actions';
-import { StoreState } from '../types';
 
-type Props = {
-    auth: {
-        emailVerified: boolean;
-        isLoaded: boolean;
-        isEmpty: boolean;
-        uid: string;
-    },
-    history: History;
-    signOut: () => void;
-
-};
-
-const NewNavbar: React.FC<Props> = (props: Props) => {
+const NewNavbar = props => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const closeSidebar = useCallback(() => setSidebarOpen(false), [setSidebarOpen]);
     const toggleSidebar = useCallback(() => setSidebarOpen(!sidebarOpen),
@@ -34,6 +24,9 @@ const NewNavbar: React.FC<Props> = (props: Props) => {
         redirect(path);
     }, [props, redirect]);
 
+    const groups = _.map(props.groups, (value, id) => ({ id, ...value }))
+        .filter(x => x.participants.includes(props.auth.uid));
+
     return (
         <>
             <TopNavbar
@@ -46,6 +39,7 @@ const NewNavbar: React.FC<Props> = (props: Props) => {
             <SideNavbar
                 closeNavbar={closeSidebar}
                 currentPath={props.history.location.pathname}
+                groups={groups}
                 isOpen={sidebarOpen}
                 isSignedIn={Boolean(props.auth.uid)}
                 redirect={onItemClick}
@@ -55,8 +49,9 @@ const NewNavbar: React.FC<Props> = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: StoreState) => ({
+const mapStateToProps = state => ({
     auth: state.firebase.auth,
+    groups: state.firestore.data.groups,
     profile: state.firebase.profile,
     pathname: state.router.location.pathname
 });
@@ -65,6 +60,35 @@ const mapDispatchToProps = {
     signOut
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NewNavbar));
+NewNavbar.propTypes = {
+    auth: PropTypes.shape({
+        uid: PropTypes.string,
+        emailVerified: PropTypes.bool,
+        photoURL: PropTypes.string
+    }),
+    groups: PropTypes.shape({}),
+    history: PropTypes.shape({
+        push: PropTypes.func.isRequired,
+        location: PropTypes.shape({
+            pathname: PropTypes.string
+        })
+    }).isRequired,
+    signOut: PropTypes.func.isRequired
+};
+
+NewNavbar.defaultProps = {
+    auth: {},
+    groups: {}
+};
+
+export default withRouter(compose(
+    connect(mapStateToProps, mapDispatchToProps),
+    firestoreConnect(() => [
+        {
+            collection: 'groups',
+            storeAs: 'groups'
+        }
+    ])
+)(NewNavbar));
 
 export { NewNavbar as NewNavbarUnconnected };

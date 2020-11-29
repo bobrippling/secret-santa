@@ -5,5 +5,6 @@ export const REGION = 'europe-west2';
 export const URL = {
     SIGN_IN: '/sign-in',
     MY_GROUPS: '/my-groups',
-    PROFILE: '/profile'
+    PROFILE: '/profile',
+    GROUP_DETAILS: '/group-details'
 };

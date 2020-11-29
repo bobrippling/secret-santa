@@ -49,9 +49,9 @@ const MyGroups: React.FC<Props> = (props: Props) => (
             value={props.groupCode}
             onChange={props.setGroupCode}
             helperText="Must be at least 6 characters"
-            label="Code"
             minLength={6}
             hasValidation
+            label="Code"
         />
         {!props.isPriceRangeActive ? (
             <div className={styles.priceRangeToggle}>

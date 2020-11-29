@@ -1,36 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import _, { noop } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
+import { withRouter } from 'react-router-dom';
 import { firestoreConnect } from 'react-redux-firebase';
 import Paper from '@material-ui/core/Paper';
 import { compose } from 'redux';
+import PropTypes from 'prop-types';
 import SuccessModal from '../common/modal/SuccessModal';
-import { StoreState } from '../types';
 import materialStyles from '../materialStyles';
 import StyledButton from '../common/StyledButton/StyledButton';
 import styles from './MyGroups.module.scss';
 import CreateGroup from './CreateGroup';
 import { createGroupRequest, joinGroupRequest } from './actions';
 import Group from './Group';
-import { GroupTypeKeyed } from './types';
 import TextInput from '../common/TextInput/TextInput';
 import LoadingDiv from '../common/loadingDiv/LoadingDiv';
-
-type Props = {
-    auth: {
-        uid: string;
-    };
-    creatingGroup: boolean;
-    groups: GroupTypeKeyed;
-    joiningGroup: boolean;
-    joinGroupRequest: (code: string) => void;
-    createGroupRequest: (
-        groupName: string,
-        priceRange: number | number[] | null,
-        date: Date | null,
-        code: string) => void,
-}
+import * as constants from '../constants';
 
 const findNextChristmas = () => {
     const result = new Date();
@@ -42,35 +28,35 @@ const findNextChristmas = () => {
     return result;
 };
 
-const MyGroups: React.FC<Props> = (props: Props) => {
+const MyGroups = props => {
     const classes = makeStyles(materialStyles)();
 
-    const [isJoiningGroup, setIsJoiningGroup] = React.useState<boolean>(false);
-    const [isCreatingGroup, setIsCreatingGroup] = React.useState<boolean>(false);
+    const [isJoiningGroup, setIsJoiningGroup] = React.useState(false);
+    const [isCreatingGroup, setIsCreatingGroup] = React.useState(false);
 
-    const [groupCodeToJoin, setGroupCodeToJoin] = React.useState<string>(
+    const [groupCodeToJoin, setGroupCodeToJoin] = React.useState(
         ''
     );
 
     const createGroup = () => setIsCreatingGroup(true);
 
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+    const [selectedDate, setSelectedDate] = React.useState(
         findNextChristmas()
     );
 
-    const [priceRange, setPriceRange] = React.useState<number | number[]>(
+    const [priceRange, setPriceRange] = React.useState(
         [0, 50]
     );
 
-    const [groupName, setGroupName] = React.useState<string>(
+    const [groupName, setGroupName] = React.useState(
         ''
     );
 
-    const [groupCode, setGroupCode] = React.useState<string>(
+    const [groupCode, setGroupCode] = React.useState(
         ''
     );
 
-    const [isPriceRangeActive, setIsPriceRangeActive] = React.useState<boolean>(
+    const [isPriceRangeActive, setIsPriceRangeActive] = React.useState(
         false
     );
 
@@ -100,9 +86,19 @@ const MyGroups: React.FC<Props> = (props: Props) => {
         resetState();
     }, [groupCodeToJoin]);
 
+    const redirectToGroupDetails = groupId => {
+        props.history.push(`${constants.URL.GROUP_DETAILS}/${groupId}`);
+    };
+
     return (
         <>
-            {groups.map(x => <Group {...x} />)}
+            {groups.map(x => {
+                const propsToPass = {
+                    ...x,
+                    redirectToGroupDetails
+                };
+                return <Group {...propsToPass} />;
+            })}
             <Paper
                 elevation={4}
                 className={classes.paperNoPadding}
@@ -177,19 +173,44 @@ const MyGroups: React.FC<Props> = (props: Props) => {
     );
 };
 
+MyGroups.defaultProps = {
+    auth: {
+        uid: ''
+    },
+    createGroupRequest: noop,
+    creatingGroup: false,
+    joinGroupRequest: noop,
+    joiningGroup: false,
+    groups: {}
+};
+
+MyGroups.propTypes = {
+    auth: PropTypes.shape({
+        uid: PropTypes.string
+    }),
+    createGroupRequest: PropTypes.func,
+    creatingGroup: PropTypes.bool,
+    history: PropTypes.shape({
+        push: PropTypes.func.isRequired
+    }).isRequired,
+    joinGroupRequest: PropTypes.func,
+    joiningGroup: PropTypes.bool,
+    groups: PropTypes.shape({})
+};
+
 const mapDispatchToProps = {
     createGroupRequest,
     joinGroupRequest
 };
 
-const mapStateToProps = (state: StoreState) => ({
+const mapStateToProps = state => ({
     auth: state.firebase.auth,
     creatingGroup: state.myGroups.creatingGroup,
     joiningGroup: state.myGroups.joiningGroup,
     groups: state.firestore.data.groups
 });
 
-export default compose(
+export default withRouter(compose(
     connect(mapStateToProps, mapDispatchToProps),
     firestoreConnect(() => [
         {
@@ -197,4 +218,4 @@ export default compose(
             storeAs: 'groups'
         }
     ])
-)(MyGroups);
+)(MyGroups));

@@ -1,0 +1,41 @@
+@import "../common/Styles.scss";
+
+.groupName {
+    font-size: $font-size-large;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+.detailWrapper {
+    text-align: center;
+    justify-content: center;
+    font-size: $font-size-large;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.key {
+    font-weight: bold;
+    color: $color-dark-green;
+    margin-right: $spacing-tiny;
+    font-size: $font-size-medium;
+    @include vertical-center-div();
+}
+
+.value {
+    font-weight: bold;
+    margin-bottom: $spacing-small;
+}
+
+.participants {
+    padding: $spacing-small;
+    display: flex;
+    justify-content: center;
+    font-size: $font-size-medium;
+}
+
+.faceIcon {
+    margin-right: $spacing-tiny;
+}

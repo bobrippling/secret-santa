@@ -43,3 +43,23 @@
 .participantsValue {
     padding-bottom: $spacing-small;
 }
+
+.moreDetailsWrapper {
+    display: flex;
+}
+
+.detailsText {
+    font-size: $font-size-miniscule;
+}
+
+.groupWrapper {
+    position: relative;
+}
+
+.iconWrapper {
+    position: absolute;
+    right: $spacing-tiny;
+    top: $spacing-tiny;
+    @include vertical-center-div();
+    cursor: pointer;
+}

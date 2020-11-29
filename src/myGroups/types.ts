@@ -5,6 +5,7 @@ export type GroupType = {
     owner: string;
     participants: string[];
     priceMax: number | null;
+    id: string;
     priceMin: number | null;
     displayNameMappings: {
         [key: string]: string;
@@ -12,5 +13,16 @@ export type GroupType = {
 }
 
 export type GroupTypeKeyed = {
-    [key:string]: GroupType
+    [key:string]: {
+        code: string;
+        groupName: string;
+        isNoPriceRange: boolean;
+        owner: string;
+        participants: string[];
+        priceMax: number | null;
+        priceMin: number | null;
+        displayNameMappings: {
+            [key: string]: string;
+        }
+    }
 }

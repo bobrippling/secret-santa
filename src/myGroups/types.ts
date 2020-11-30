@@ -1,3 +1,8 @@
+type WishlistItem = {
+    item: string;
+    url: string;
+}
+
 export type GroupType = {
     code: string;
     groupName: string;
@@ -9,6 +14,9 @@ export type GroupType = {
     priceMin: number | null;
     displayNameMappings: {
         [key: string]: string;
+    },
+    wishlist: {
+        [key: string]: WishlistItem[];
     }
 }
 
@@ -23,6 +31,9 @@ export type GroupTypeKeyed = {
         priceMin: number | null;
         displayNameMappings: {
             [key: string]: string;
+        },
+        wishlist: {
+            [key: string]: WishlistItem[];
         }
     }
 }

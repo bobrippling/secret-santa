@@ -50,8 +50,6 @@ exports.updateDisplayNameMappings = functions.region(constants.region).firestore
 
         const userId = change.after.id;
 
-        console.log("yes");
-
         return db.collection('groups').where('participants', 'array-contains', userId).get().then(result => {
             console.log("results length", result.docs.length)
             return result.docs.forEach(doc => {

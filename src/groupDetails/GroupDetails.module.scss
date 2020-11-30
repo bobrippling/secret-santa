@@ -34,8 +34,53 @@
     display: flex;
     justify-content: center;
     font-size: $font-size-medium;
+    border-bottom: 1px solid $color-separator;
+    margin-left: $spacing-average;
+    margin-right: $spacing-average;
+    padding-bottom: $spacing-tiny;
 }
 
 .faceIcon {
     margin-right: $spacing-tiny;
+}
+
+.addToWishlistIconWrapper {
+    text-align: center;
+    justify-content: center;
+    margin-top: $spacing-small;
+    display: flex;
+    @include vertical-center-div();
+}
+
+.addWishlistIcon {
+    margin-right: $spacing-tiny;
+}
+
+.addWishlistText {
+    color: $color-blue;
+}
+
+.addToWishlistIconWrapper:hover {
+    cursor: pointer;
+    @include hover-bold-blue();
+}
+
+.addToWishlistIconWrapper:focus {
+    outline: none;
+}
+
+.wishlistWrapper {
+    margin-top: $spacing-small;
+    padding-bottom: $spacing-tiny;
+}
+
+.wishlistHeader {
+    font-weight: bold;
+    color: $color-dark-green;
+    font-size: $font-size-medium;
+    @include vertical-center-div();
+}
+
+.wishlistBulletPoints {
+    color: $color-blue;
 }

@@ -4,10 +4,12 @@ import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import RedeemIcon from '@material-ui/icons/Redeem';
 import EmailIcon from '@material-ui/icons/Email';
 import LockIcon from '@material-ui/icons/Lock';
 import SportsSoccerIcon from '@material-ui/icons/SportsSoccer';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import LinkIcon from '@material-ui/icons/Link';
 import SearchIcon from '@material-ui/icons/Search';
 import MessageIcon from '@material-ui/icons/Message';
 import FaceIcon from '@material-ui/icons/Face';
@@ -37,7 +39,9 @@ const iconMapping = iconColor => ({
     [constants.textInputIcons.money]: generateIcon(AttachMoneyIcon, iconColor),
     [constants.textInputIcons.search]: generateIcon(SearchIcon, iconColor),
     [constants.textInputIcons.face]: generateIcon(FaceIcon, iconColor),
-    [constants.textInputIcons.message]: generateIcon(MessageIcon, iconColor)
+    [constants.textInputIcons.message]: generateIcon(MessageIcon, iconColor),
+    [constants.textInputIcons.present]: generateIcon(RedeemIcon, iconColor),
+    [constants.textInputIcons.link]: generateIcon(LinkIcon, iconColor)
 });
 
 const TextInput = props => {

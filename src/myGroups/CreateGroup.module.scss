@@ -11,6 +11,15 @@
     @include vertical-center-div();
 }
 
+.priceRangeToggle:focus {
+    outline: none;
+}
+
+.priceRangeToggle:hover {
+    cursor: pointer;
+    @include hover-bold-blue();
+}
+
 .iconWrapper {
     @include vertical-center-div();
 }

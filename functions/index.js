@@ -19,3 +19,4 @@ const db = admin.firestore();
 exports.auth = require('./src/auth');
 exports.profile = require('./src/profile');
 exports.groups = require('./src/groups');
+exports.wishlist = require('./src/wishlist');

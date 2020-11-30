@@ -8,3 +8,5 @@ module.exports.isAuthenticated = context => {
         throw new functions.https.HttpsError('unauthenticated', 'You must be authenticated to call this function');
     }
 };
+
+module.exports.isNumber = value => Boolean((Number(value) && value) >= 0 || Number(value) === 0);

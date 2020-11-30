@@ -6,5 +6,7 @@ export const textInputIcons = {
     money: 'money',
     search: 'search',
     face: 'face',
-    message: 'message'
+    message: 'message',
+    present: 'present',
+    link: 'link'
 };

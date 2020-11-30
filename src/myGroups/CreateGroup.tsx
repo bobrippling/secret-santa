@@ -54,16 +54,26 @@ const MyGroups: React.FC<Props> = (props: Props) => (
             label="Code"
         />
         {!props.isPriceRangeActive ? (
-            <div className={styles.priceRangeToggle}>
+            <div
+                className={styles.priceRangeToggle}
+                onClick={() => props.setIsPriceRangeActive(true)}
+                role="button"
+                tabIndex={0}
+            >
                 <div className={styles.iconWrapper}>
-                    <AddIcon color="primary" onClick={() => props.setIsPriceRangeActive(true)} />
+                    <AddIcon color="primary" />
                 </div>
                 <div className={styles.addPriceRange}>Add Price Range</div>
             </div>
         ) : (
-            <div className={styles.priceRangeToggle}>
+            <div
+                className={styles.priceRangeToggle}
+                onClick={() => props.setIsPriceRangeActive(false)}
+                role="button"
+                tabIndex={0}
+            >
                 <div className={styles.iconWrapper}>
-                    <RemoveIcon color="secondary" onClick={() => props.setIsPriceRangeActive(false)} />
+                    <RemoveIcon color="secondary" />
                 </div>
                 <div className={styles.addPriceRange}>Remove Price Range</div>
             </div>
@@ -98,6 +108,7 @@ const MyGroups: React.FC<Props> = (props: Props) => (
                     color="secondary"
                     onClick={props.closeCreatingGroup}
                     text="Cancel"
+                    disabled={props.creatingGroup}
                 />
             </LoadingDiv>
         </div>

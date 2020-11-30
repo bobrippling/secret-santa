@@ -32,11 +32,14 @@ exports.createGroup = functions
                 isNoPriceRange: data.isNoPriceRange || false,
                 owner: context.auth.uid,
                 participants: [context.auth.uid],
-                priceMin: data.min || null,
-                priceMax: data.max || null,
+                priceMin: common.isNumber(data.min) ? data.min : null,
+                priceMax: common.isNumber(data.max) ? data.max : null,
                 displayNameMappings: {
                     [context.auth.uid]: user.data().displayName
-                }
+                },
+                wishlist: {
+                    [context.auth.uid]: []
+                },
             })
         })
     });
@@ -44,7 +47,6 @@ exports.createGroup = functions
 exports.joinGroup = functions
     .region(constants.region)
     .https.onCall((data, context) => {
-        console.log("data", data)
         common.isAuthenticated(context);
 
         if (!data.code) {
@@ -70,6 +72,10 @@ exports.joinGroup = functions
                     displayNameMappings: {
                         ...docs.docs[0].data().displayNameMappings,
                         [context.auth.uid]: user.data().displayName
+                    },
+                    wishlist: {
+                        ...docs.docs[0].data().wishlist,
+                        [context.auth.uid]: []
                     }
                 })
             });

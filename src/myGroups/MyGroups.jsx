@@ -95,7 +95,8 @@ const MyGroups = props => {
             {groups.map(x => {
                 const propsToPass = {
                     ...x,
-                    redirectToGroupDetails
+                    redirectToGroupDetails,
+                    key: x.id
                 };
                 return <Group {...propsToPass} />;
             })}

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
 import { firestoreConnect } from 'react-redux-firebase';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import RemoveIcon from '@material-ui/icons/Remove';
 import FaceIcon from '@material-ui/icons/Face';
 import { compose } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,7 +15,8 @@ import * as selectors from './selectors';
 import styles from './GroupDetails.module.scss';
 import { mapIdToName } from '../myGroups/helpers';
 import AddToWishlist from './AddToWishlist';
-import { addWishlistItemRequest } from './actions';
+import { addWishlistItemRequest, removeWishlistItemsRequest } from './actions';
+import RemoveFromWishlist from './RemoveFromWishlist';
 
 type Props = {
     auth: {
@@ -22,13 +24,18 @@ type Props = {
     },
     group: GroupType;
     addingItemToWishlist: boolean;
+    removingItemsFromWishlist: boolean;
     addWishlistItemRequest: (groupId: string, item: string, url: string) => void;
+    removeWishlistItemsRequest: (groupId: string, items: string[]) => void;
 }
 
 const MyGroups: React.FC<Props> = (props: Props) => {
     const classes = makeStyles(materialStyles)();
 
     const [isAddingToWishlist, setIsAddingToWishlist] = React.useState<boolean>(false);
+    const [isRemovingFromWishlist, setIsRemovingFromWishlist] = React.useState<boolean>(false);
+
+    const cancelRemovingFromWishlish = () => setIsRemovingFromWishlist(false);
 
     const [wishlistItemToAdd, setWishlistItemToAdd] = React.useState<string>('');
     const [wishlistItemToAddUrl, setWishlistItemToAddUrl] = React.useState<string>('');
@@ -40,9 +47,14 @@ const MyGroups: React.FC<Props> = (props: Props) => {
     };
 
     const addWishlistItem = React.useCallback(() => {
-        props.addWishlistItemRequest(props.group.id, wishlistItemToAdd, wishlistItemToAddUrl);
+        props.addWishlistItemRequest(props.group?.id, wishlistItemToAdd, wishlistItemToAddUrl);
         closeAddingToWishlist();
     }, [wishlistItemToAdd, wishlistItemToAddUrl, props.group?.id]);
+
+    const removeWishlistItems = (items: string[]) => {
+        props.removeWishlistItemsRequest(props.group?.id, items);
+        setIsRemovingFromWishlist(false);
+    };
 
     const { group } = props;
 
@@ -84,7 +96,6 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                         {group.code}
                     </div>
                 </div>
-
                 <div
                     className={styles.addToWishlistIconWrapper}
                     onClick={() => setIsAddingToWishlist(true)}
@@ -96,6 +107,20 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                     </div>
                     <div className={styles.addWishlistText}>
                         Add item to wishlist
+                    </div>
+                </div>
+
+                <div
+                    className={styles.removeFromWishlistIconWrapper}
+                    onClick={() => setIsRemovingFromWishlist(true)}
+                    role="button"
+                    tabIndex={0}
+                >
+                    <div className={styles.removeWishlistIcon}>
+                        <RemoveIcon color="secondary" fontSize="large" />
+                    </div>
+                    <div className={styles.removeWishlistText}>
+                        Remove wishlist item
                     </div>
                 </div>
             </Paper>
@@ -154,18 +179,35 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                 />
             </SuccessModal>
 
+            <SuccessModal
+                backdrop
+                closeModal={() => setIsRemovingFromWishlist(false)}
+                isOpen={isRemovingFromWishlist || props.removingItemsFromWishlist}
+                headerMessage="Remove items"
+                toggleModal={() => setIsRemovingFromWishlist(false)}
+            >
+                <RemoveFromWishlist
+                    cancelRemovingFromWishlish={cancelRemovingFromWishlish}
+                    initialWishlistItems={props.group.wishlist[props.auth.uid].map(x => x.item)}
+                    removeWishlistItems={removeWishlistItems}
+                    removingItemsFromWishlist={props.removingItemsFromWishlist}
+                />
+            </SuccessModal>
+
         </>
     );
 };
 
 const mapDispatchToProps = {
-    addWishlistItemRequest
+    addWishlistItemRequest,
+    removeWishlistItemsRequest
 };
 
 const mapStateToProps = (state: StoreState, props: any) => ({
     addingItemToWishlist: state.groupDetails.addingItemToWishlist,
     auth: state.firebase.auth,
-    group: selectors.getGroupFromId(state, props)
+    group: selectors.getGroupFromId(state, props),
+    removingItemsFromWishlist: state.groupDetails.removingItemsFromWishlist
 });
 
 export default compose(

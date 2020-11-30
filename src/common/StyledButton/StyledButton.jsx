@@ -66,7 +66,10 @@ StyledButton.propTypes = {
     color: PropTypes.string,
     onClick: PropTypes.func,
     smallButton: PropTypes.bool,
-    text: PropTypes.string,
+    text: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.node
+    ]),
     type: PropTypes.string
 };
 

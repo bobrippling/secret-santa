@@ -3,10 +3,12 @@ import * as actions from './actions';
 
 export type GroupDetailsState = {
     addingItemToWishlist: boolean;
+    removingItemsFromWishlist: boolean;
 }
 
 export const initialState: GroupDetailsState = {
-    addingItemToWishlist: false
+    addingItemToWishlist: false,
+    removingItemsFromWishlist: false
 };
 
 const groupDetailsReducer = (state = initialState, action: any) => {
@@ -16,6 +18,12 @@ const groupDetailsReducer = (state = initialState, action: any) => {
     }
     case actions.CANCEL_ADDING_WISHLIST_ITEM: {
         return fp.set('addingItemToWishlist', false)(state);
+    }
+    case actions.REMOVE_WISHLIST_ITEMS_REQUEST: {
+        return fp.set('removingItemsFromWishlist', true)(state);
+    }
+    case actions.CANCEL_REMOVING_WISHLIST_ITEMS: {
+        return fp.set('removingItemsFromWishlist', false)(state);
     }
     default:
         return state;

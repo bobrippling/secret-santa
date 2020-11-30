@@ -32,3 +32,27 @@ exports.addItem = functions
             })
         })
     });
+
+
+exports.removeItems = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.items || data.items.length === 0) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must remove at least one item');
+        }
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+            return doc.ref.update({
+                wishlist: {
+                    ...doc.data().wishlist,
+                    [context.auth.uid]: doc.data().wishlist[context.auth.uid].filter(x => !data.items.includes(x.item))
+                }
+            })
+        })
+    });

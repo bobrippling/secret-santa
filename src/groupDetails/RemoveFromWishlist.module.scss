@@ -1,0 +1,41 @@
+@import "../common/Styles.scss";
+
+.removeWishlistItemWrapper {
+    display: flex;
+    margin-bottom: $spacing-average;
+}
+
+.removeIcon {
+    margin-left: auto;
+    @include vertical-center-div();
+}
+
+.wishlistItem {
+    color: $color-green;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+.buttonWrapper {
+    justify-content: center;
+    display: flex;
+}
+
+.center {
+    @include vertical-center-div();
+    display: flex;
+}
+
+.icon, .text {
+    @include vertical-center-div();
+}
+
+@media only screen and (max-width: 800px) {
+    .removeWrapper {
+        max-height: 400px;
+        overflow-y: scroll;
+        padding-right: $spacing-average;
+    }
+}

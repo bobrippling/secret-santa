@@ -8,3 +8,11 @@ export const URL = {
     PROFILE: '/profile',
     GROUP_DETAILS: '/group-details'
 };
+
+const WAITING_FOR_PAIRINGS = 'WAITING_FOR_PAIRINGS';
+
+export const groupStatuses = {
+    [WAITING_FOR_PAIRINGS]: WAITING_FOR_PAIRINGS
+};
+
+export type GroupStatuses = typeof WAITING_FOR_PAIRINGS;

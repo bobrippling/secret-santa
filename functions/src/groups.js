@@ -30,6 +30,7 @@ exports.createGroup = functions
                 code: data.code,
                 groupName: data.groupName,
                 isNoPriceRange: data.isNoPriceRange || false,
+                status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
                 owner: context.auth.uid,
                 participants: [context.auth.uid],
                 priceMin: common.isNumber(data.min) ? data.min : null,

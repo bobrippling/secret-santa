@@ -21,6 +21,7 @@ const RemoveFromWishlist: React.FC<Props> = (props: Props) => {
 
     const removeItems = React.useCallback(() => {
         props.removeWishlistItems(removedItems);
+        setRemovedItems([]);
     }, [removedItems]);
 
     return (
@@ -37,6 +38,17 @@ const RemoveFromWishlist: React.FC<Props> = (props: Props) => {
                     </div>
                 ))}
             </div>
+            {props.initialWishlistItems.length === 0 && (
+                <div className={styles.noWishlistItems}>
+                    You have no wishlist items to remove
+                </div>
+            )}
+            {props.initialWishlistItems.length === removedItems.length
+                && removedItems.length > 0 && (
+                <div className={styles.noWishlistItems}>
+                    You have no more wishlist items to remove
+                </div>
+            )}
             <div className={styles.buttonWrapper}>
                 <LoadingDiv isLoading={props.removingItemsFromWishlist} isBorderRadius>
                     <StyledButton

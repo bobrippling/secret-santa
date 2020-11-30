@@ -17,6 +17,7 @@ import { mapIdToName } from '../myGroups/helpers';
 import AddToWishlist from './AddToWishlist';
 import { addWishlistItemRequest, removeWishlistItemsRequest } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
+import * as constants from '../constants';
 
 type Props = {
     auth: {
@@ -96,33 +97,32 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                         {group.code}
                     </div>
                 </div>
-                <div
-                    className={styles.addToWishlistIconWrapper}
-                    onClick={() => setIsAddingToWishlist(true)}
-                    role="button"
-                    tabIndex={0}
-                >
-                    <div className={styles.addWishlistIcon}>
-                        <AddCircleIcon color="primary" fontSize="large" />
+
+                <div className={styles.detailWrapper}>
+                    <div className={styles.key}>
+                        Manage Wishlist
                     </div>
-                    <div className={styles.addWishlistText}>
-                        Add item to wishlist
+                    <div className={styles.wishlistButtons}>
+                        <div className={styles.addWishlistIcon}>
+                            <AddCircleIcon color="primary" fontSize="large" onClick={() => setIsAddingToWishlist(true)} />
+                        </div>
+                        <div className={styles.removeWishlistIcon}>
+                            <RemoveIcon color="secondary" fontSize="large" onClick={() => setIsRemovingFromWishlist(true)} />
+                        </div>
                     </div>
                 </div>
 
-                <div
-                    className={styles.removeFromWishlistIconWrapper}
-                    onClick={() => setIsRemovingFromWishlist(true)}
-                    role="button"
-                    tabIndex={0}
-                >
-                    <div className={styles.removeWishlistIcon}>
-                        <RemoveIcon color="secondary" fontSize="large" />
+                {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS && (
+                    <div className={styles.detailWrapperStatuses}>
+                        <div className={styles.key}>
+                            Who am I getting a gift for?
+                        </div>
+                        <div className={styles.waitForPairingsStatus}>
+                            {`Waiting for ${mapIdToName(props.group.owner, props.group.displayNameMappings)} to randomise pairings`}
+                        </div>
                     </div>
-                    <div className={styles.removeWishlistText}>
-                        Remove wishlist item
-                    </div>
-                </div>
+                )}
+
             </Paper>
 
             {group.participants.map((p, index: number) => (

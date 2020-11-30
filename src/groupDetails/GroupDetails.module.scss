@@ -16,6 +16,17 @@
     margin-right: auto;
 }
 
+.detailWrapperStatuses {
+    text-align: center;
+    justify-content: center;
+    font-size: $font-size-large;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: $spacing-small;
+    padding-bottom: $spacing-small;
+}
+
 .key {
     font-weight: bold;
     color: $color-dark-green;
@@ -27,6 +38,11 @@
 .value {
     font-weight: bold;
     margin-bottom: $spacing-small;
+}
+
+.wishlistButtons {
+    display: flex;
+    justify-content: center;
 }
 
 .participants {
@@ -59,8 +75,18 @@
     @include vertical-center-div();
 }
 
-.addWishlistIcon, .removeWishlistIcon {
-    margin-right: $spacing-tiny;
+.addWishlistIcon {
+    margin-right: $spacing-small;
+}
+
+.waitForPairingsStatus {
+    color: $color-blue;
+    text-align: center;
+    font-size: $font-size-medium;
+}
+
+.removeWishListIcon {
+    margin-left: $spacing-small;
 }
 
 .addWishlistText, .removeWishlistText {

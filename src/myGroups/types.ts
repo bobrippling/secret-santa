@@ -1,3 +1,5 @@
+import { GroupStatuses } from '../constants';
+
 type WishlistItem = {
     item: string;
     url: string;
@@ -12,6 +14,7 @@ export type GroupType = {
     priceMax: number | null;
     id: string;
     priceMin: number | null;
+    status: GroupStatuses;
     displayNameMappings: {
         [key: string]: string;
     },

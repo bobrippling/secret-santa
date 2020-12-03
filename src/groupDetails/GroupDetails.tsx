@@ -7,6 +7,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import FaceIcon from '@material-ui/icons/Face';
 import { compose } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
+import EditIcon from '@material-ui/icons/Edit';
 import SuccessModal from '../common/modal/SuccessModal';
 import materialStyles from '../materialStyles';
 import { GroupType } from '../myGroups/types';
@@ -18,6 +19,7 @@ import AddToWishlist from './AddToWishlist';
 import { addWishlistItemRequest, removeWishlistItemsRequest } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
+import ManageGiftRestrictions from './ManageGiftRestrictions';
 
 type Props = {
     auth: {
@@ -35,6 +37,9 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
     const [isAddingToWishlist, setIsAddingToWishlist] = React.useState<boolean>(false);
     const [isRemovingFromWishlist, setIsRemovingFromWishlist] = React.useState<boolean>(false);
+
+    const [isAddingToGiftRestrictions,
+        setIsAddingToGiftRestrictions] = React.useState<boolean>(false);
 
     const cancelRemovingFromWishlish = () => setIsRemovingFromWishlist(false);
 
@@ -118,7 +123,20 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                             Who am I getting a gift for?
                         </div>
                         <div className={styles.waitForPairingsStatus}>
-                            {`Waiting for ${mapIdToName(props.group.owner, props.group.displayNameMappings)} to randomise pairings`}
+                            {`Waiting for ${mapIdToName(props.group.owner, props.group.displayNameMappings)} to randomise gift assignments`}
+                        </div>
+                    </div>
+                )}
+
+                {props.group.owner === props.auth.uid && (
+                    <div className={styles.detailWrapper}>
+                        <div className={styles.key}>
+                            Manage Gift Restrictions
+                        </div>
+                        <div className={styles.giftRestrictionButtons}>
+                            <div className={styles.manageGiftRestrictions}>
+                                <EditIcon color="primary" fontSize="large" onClick={() => setIsAddingToGiftRestrictions(true)} />
+                            </div>
                         </div>
                     </div>
                 )}
@@ -143,6 +161,11 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                         <div className={styles.wishlistHeader}>
                             Wishlist
                         </div>
+                        {props.group.wishlist[p].length === 0 && (
+                            <div className={styles.noWishlistText}>
+                                {`${mapIdToName(p, group.displayNameMappings)} has nothing in their wishlist yet`}
+                            </div>
+                        )}
                         <ul className={styles.wishlistBulletPoints}>
                             {props.group.wishlist[p].map(wishlistItem => (
                                 <li key={wishlistItem.item}>
@@ -192,6 +215,16 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                     removeWishlistItems={removeWishlistItems}
                     removingItemsFromWishlist={props.removingItemsFromWishlist}
                 />
+            </SuccessModal>
+
+            <SuccessModal
+                backdrop
+                closeModal={() => setIsAddingToGiftRestrictions(false)}
+                isOpen={isAddingToGiftRestrictions}
+                headerMessage="Add Gift Restrictions"
+                toggleModal={() => setIsAddingToGiftRestrictions(false)}
+            >
+                <ManageGiftRestrictions />
             </SuccessModal>
 
         </>

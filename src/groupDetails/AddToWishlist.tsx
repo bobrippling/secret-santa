@@ -41,7 +41,7 @@ const AddToWishlist: React.FC<Props> = (props: Props) => (
                 <StyledButton
                     color="primary"
                     onClick={props.addWishlistItem}
-                    text="Create"
+                    text="Add"
                     disabled={!props.wishlistItemToAdd || props.addingItemToWishlist}
                 />
                 <StyledButton

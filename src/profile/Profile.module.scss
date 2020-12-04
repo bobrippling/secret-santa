@@ -15,10 +15,13 @@
 .key {
     font-weight: bold;
     color: $color-dark-green;
-    margin-right: $spacing-tiny;
     font-size: $font-size-medium;
     @include vertical-center-div();
     font-size: $font-size-small;
+  }
+
+  .displayName {
+    text-align: center;
   }
 
   .profileHeader{

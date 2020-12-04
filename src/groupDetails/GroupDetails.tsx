@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
 import { firestoreConnect } from 'react-redux-firebase';
@@ -7,29 +7,37 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import FaceIcon from '@material-ui/icons/Face';
 import { compose } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
-import EditIcon from '@material-ui/icons/Edit';
 import SuccessModal from '../common/modal/SuccessModal';
 import materialStyles from '../materialStyles';
-import { GroupType } from '../myGroups/types';
+import { GroupType, GiftRestrictions } from '../myGroups/types';
 import { StoreState } from '../types';
 import * as selectors from './selectors';
 import styles from './GroupDetails.module.scss';
 import { mapIdToName } from '../myGroups/helpers';
 import AddToWishlist from './AddToWishlist';
-import { addWishlistItemRequest, removeWishlistItemsRequest } from './actions';
+import {
+    addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
+    removeGiftRestrictionRequests
+} from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
-import ManageGiftRestrictions from './ManageGiftRestrictions';
+import AddGiftRestrictions from './AddGiftRestrictions';
+import RemoveGiftRestrictions from './RemoveGiftRestrictions';
 
 type Props = {
     auth: {
         uid: string;
     },
     group: GroupType;
+    addGiftRestrictionRequest: (groupId: string, group: string[]) => void;
+    addingGiftRestriction: boolean;
     addingItemToWishlist: boolean;
     removingItemsFromWishlist: boolean;
+    restrictions: GiftRestrictions;
     addWishlistItemRequest: (groupId: string, item: string, url: string) => void;
     removeWishlistItemsRequest: (groupId: string, items: string[]) => void;
+    removeGiftRestrictionRequests: (groupId: string, restrictions: string[][]) => void;
+    removingGiftRestrictions: boolean;
 }
 
 const MyGroups: React.FC<Props> = (props: Props) => {
@@ -38,19 +46,29 @@ const MyGroups: React.FC<Props> = (props: Props) => {
     const [isAddingToWishlist, setIsAddingToWishlist] = React.useState<boolean>(false);
     const [isRemovingFromWishlist, setIsRemovingFromWishlist] = React.useState<boolean>(false);
 
-    const [isAddingToGiftRestrictions,
-        setIsAddingToGiftRestrictions] = React.useState<boolean>(false);
+    const [isAddingGiftRestrictions, setIsAddingGiftRestrictions] = React.useState<boolean>(false);
+    const [isRemovingGiftRestrictions,
+        setIsRemovingGiftRestrictions] = React.useState<boolean>(false);
 
     const cancelRemovingFromWishlish = () => setIsRemovingFromWishlist(false);
 
     const [wishlistItemToAdd, setWishlistItemToAdd] = React.useState<string>('');
     const [wishlistItemToAddUrl, setWishlistItemToAddUrl] = React.useState<string>('');
 
+    const [newGiftRestriction, setNewGiftRestriction] = React.useState<string[]>([]);
+    const [removedGiftRestrictions, setRemovedGiftRestrictions] = React.useState<string[][]>([]);
+
     const closeAddingToWishlist = () => {
         setIsAddingToWishlist(false);
         setWishlistItemToAdd('');
         setWishlistItemToAddUrl('');
     };
+
+    const onRemoveRestriction = (restriction: string[]) => {
+        setRemovedGiftRestrictions([...removedGiftRestrictions, restriction]);
+    };
+
+    const cancelAddingGiftRestriction = () => setIsAddingGiftRestrictions(false);
 
     const addWishlistItem = React.useCallback(() => {
         props.addWishlistItemRequest(props.group?.id, wishlistItemToAdd, wishlistItemToAddUrl);
@@ -60,6 +78,42 @@ const MyGroups: React.FC<Props> = (props: Props) => {
     const removeWishlistItems = (items: string[]) => {
         props.removeWishlistItemsRequest(props.group?.id, items);
         setIsRemovingFromWishlist(false);
+    };
+
+    const onGroupRestrictionClick = React.useCallback(id => {
+        if (newGiftRestriction.includes(id)) {
+            setNewGiftRestriction(newGiftRestriction.filter(x => x !== id));
+        } else {
+            setNewGiftRestriction([...newGiftRestriction, id]);
+        }
+    }, [newGiftRestriction]);
+
+    const addGiftRestriction = React.useCallback(() => {
+        props.addGiftRestrictionRequest(props.group.id, newGiftRestriction);
+        // setNewGiftRestriction([]);
+        setIsAddingGiftRestrictions(false);
+    }, [props.group, newGiftRestriction]);
+
+    const cancelRemovingGiftRestrictions = () => {
+        setIsRemovingGiftRestrictions(false);
+        // setRemovedGiftRestrictions([]);
+    };
+
+    useEffect(() => {
+        if (!props.addingGiftRestriction) {
+            setNewGiftRestriction([]);
+        }
+    }, [props.addingGiftRestriction]);
+
+    useEffect(() => {
+        if (!props.removingGiftRestrictions) {
+            setRemovedGiftRestrictions([]);
+        }
+    }, [props.removingGiftRestrictions]);
+
+    const confirmRemoveRequest = () => {
+        props.removeGiftRestrictionRequests(props.group.id, removedGiftRestrictions);
+        cancelRemovingGiftRestrictions();
     };
 
     const { group } = props;
@@ -134,8 +188,11 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                             Manage Gift Restrictions
                         </div>
                         <div className={styles.giftRestrictionButtons}>
-                            <div className={styles.manageGiftRestrictions}>
-                                <EditIcon color="primary" fontSize="large" onClick={() => setIsAddingToGiftRestrictions(true)} />
+                            <div className={styles.addGiftRestrictionIcon}>
+                                <AddCircleIcon color="primary" fontSize="large" onClick={() => setIsAddingGiftRestrictions(true)} />
+                            </div>
+                            <div className={styles.removeGiftRestrictionIcon}>
+                                <RemoveIcon color="secondary" fontSize="large" onClick={() => setIsRemovingGiftRestrictions(true)} />
                             </div>
                         </div>
                     </div>
@@ -163,7 +220,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                         </div>
                         {props.group.wishlist[p].length === 0 && (
                             <div className={styles.noWishlistText}>
-                                {`${mapIdToName(p, group.displayNameMappings)} has nothing in their wishlist yet`}
+                                Empty wishlist
                             </div>
                         )}
                         <ul className={styles.wishlistBulletPoints}>
@@ -204,10 +261,10 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
             <SuccessModal
                 backdrop
-                closeModal={() => setIsRemovingFromWishlist(false)}
+                closeModal={cancelRemovingFromWishlish}
                 isOpen={isRemovingFromWishlist || props.removingItemsFromWishlist}
                 headerMessage="Remove items"
-                toggleModal={() => setIsRemovingFromWishlist(false)}
+                toggleModal={cancelRemovingFromWishlish}
             >
                 <RemoveFromWishlist
                     cancelRemovingFromWishlish={cancelRemovingFromWishlish}
@@ -219,12 +276,38 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
             <SuccessModal
                 backdrop
-                closeModal={() => setIsAddingToGiftRestrictions(false)}
-                isOpen={isAddingToGiftRestrictions}
+                closeModal={() => setIsAddingGiftRestrictions(false)}
+                isOpen={isAddingGiftRestrictions || props.addingGiftRestriction}
                 headerMessage="Add Gift Restrictions"
-                toggleModal={() => setIsAddingToGiftRestrictions(false)}
+                toggleModal={() => setIsAddingGiftRestrictions(false)}
             >
-                <ManageGiftRestrictions />
+                <AddGiftRestrictions
+                    addGiftRestriction={addGiftRestriction}
+                    addingGiftRestriction={props.addingGiftRestriction}
+                    cancelAddingGiftRestriction={cancelAddingGiftRestriction}
+                    displayNameMappings={group.displayNameMappings}
+                    newGiftRestriction={newGiftRestriction}
+                    onClick={onGroupRestrictionClick}
+                    participants={group.participants}
+                />
+            </SuccessModal>
+
+            <SuccessModal
+                backdrop
+                closeModal={cancelRemovingGiftRestrictions}
+                isOpen={isRemovingGiftRestrictions || props.removingGiftRestrictions}
+                headerMessage="Remove Gift Restrictions"
+                toggleModal={cancelRemovingGiftRestrictions}
+            >
+                <RemoveGiftRestrictions
+                    cancelRemovingGiftRestrictions={cancelRemovingGiftRestrictions}
+                    confirmRemoveRequest={confirmRemoveRequest}
+                    displayNameMappings={group.displayNameMappings}
+                    giftRestrictions={props.group.restrictions}
+                    onRemoveRestriction={onRemoveRestriction}
+                    removedGiftRestrictions={removedGiftRestrictions}
+                    removingGiftRestrictions={props.removingGiftRestrictions}
+                />
             </SuccessModal>
 
         </>
@@ -233,14 +316,18 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
 const mapDispatchToProps = {
     addWishlistItemRequest,
-    removeWishlistItemsRequest
+    addGiftRestrictionRequest,
+    removeWishlistItemsRequest,
+    removeGiftRestrictionRequests
 };
 
 const mapStateToProps = (state: StoreState, props: any) => ({
     addingItemToWishlist: state.groupDetails.addingItemToWishlist,
+    addingGiftRestriction: state.groupDetails.addingGiftRestriction,
     auth: state.firebase.auth,
     group: selectors.getGroupFromId(state, props),
-    removingItemsFromWishlist: state.groupDetails.removingItemsFromWishlist
+    removingItemsFromWishlist: state.groupDetails.removingItemsFromWishlist,
+    removingGiftRestrictions: state.groupDetails.removingGiftRestrictions
 });
 
 export default compose(

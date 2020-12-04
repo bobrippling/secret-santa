@@ -1,0 +1,57 @@
+@import "../common/Styles.scss";
+
+.removeGiftRestrictionNamesWrapper {
+    text-align: center;
+}
+
+.removeGiftRestrictionRow {
+    padding: $spacing-small;
+    border: 2px solid black;
+    width: 100%;
+    margin-right: $spacing-tiny;
+}
+
+.rowWrapper {
+    margin-bottom: $spacing-average;
+    display: flex;
+}
+
+.removeButton {
+    @include vertical-center-div();
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.color-0 {
+    background-color: bisque;
+}
+
+.color-1 {
+    background-color: chartreuse;
+}
+
+.color-2 {
+    background-color: coral;
+}
+
+.color-3 {
+    background-color: plum;
+}
+
+.buttonWrapper {
+    justify-content: center;
+    display: flex;
+}
+
+.noGiftRestrictionsToRemove {
+    text-align: center;
+    font-weight: bold;
+    color: $color-green;
+    padding: $spacing-small;
+}
+
+.removeGiftRestrictionNamesWrapper {
+    max-height: 400px;
+    overflow-y: scroll;
+    padding-right: $spacing-small;
+}

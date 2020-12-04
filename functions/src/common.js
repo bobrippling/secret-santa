@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const _ = require('lodash');
 const fp = require('lodash/fp');
 const constants = require('./constants');
 
@@ -10,3 +11,5 @@ module.exports.isAuthenticated = context => {
 };
 
 module.exports.isNumber = value => Boolean((Number(value) && value) >= 0 || Number(value) === 0);
+
+module.exports.doArraysContainSameElements = (arr,    arrTwo) => _.xor(arr, arrTwo).length === 0;

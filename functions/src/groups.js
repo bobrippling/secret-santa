@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
+const _ = require('lodash');
 const common = require('./common');
 const constants = require('./constants');
 
@@ -35,6 +36,7 @@ exports.createGroup = functions
                 participants: [context.auth.uid],
                 priceMin: common.isNumber(data.min) ? data.min : null,
                 priceMax: common.isNumber(data.max) ? data.max : null,
+                restrictions: {},
                 displayNameMappings: {
                     [context.auth.uid]: user.data().displayName
                 },
@@ -80,5 +82,69 @@ exports.joinGroup = functions
                     }
                 })
             });
+        })
+    });
+
+exports.addGiftRestriction = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.restriction || data.restriction.length < 2) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a valid number of restrictions');
+        }
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+
+            if (Object.keys(doc.data().restrictions).length >= 10) {
+                throw new functions.https.HttpsError('invalid-argument', 'Max of 10 restrictions');
+            }
+
+            let minKey = 0;
+
+            for (let x = 0; x < constants.maxGiftRestrictionGroups; x += 1) {
+                if (!(x in doc.data().restrictions)) {
+                    minKey = x;
+                    break;
+                }
+            }
+
+            return doc.ref.update({
+                restrictions: {
+                    ...doc.data().restrictions,
+                    [minKey]: data.restriction
+                }
+            })
+        })
+    });
+
+exports.removeGiftRestrictions = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.restrictions || data.restrictions.length === 0) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a valid number of restrictions');
+        }
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+            const getRemovedResult = (restrictions, removed) => Object.keys(restrictions)
+                .reduce((acc, cur) => (removed.some(x => common.doArraysContainSameElements(x, restrictions[cur])) 
+                ? acc : {
+                    ...acc,
+                [cur]: restrictions[cur]
+            }), {});
+
+            return doc.ref.update({
+                restrictions: getRemovedResult(doc.data().restrictions, data.restrictions)
+            })
         })
     });

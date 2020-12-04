@@ -75,16 +75,12 @@
     @include vertical-center-div();
 }
 
-.addWishlistIcon {
+.addWishlistIcon, .addGiftRestrictionIcon {
     margin-right: $spacing-tiny;
     cursor: pointer;
 }
 
-.manageGiftRestrictions {
-    cursor: pointer;
-}
-
-.removeWishlistIcon {
+.removeWishlistIcon, .removeGiftRestrictionIcon {
     margin-left: $spacing-tiny;
     cursor: pointer;
 }
@@ -128,4 +124,6 @@
     text-align: center;
     font-weight: bold;
     color: $color-blue;
+    margin-left: $spacing-small;
+    margin-right: $spacing-small;
 }

@@ -1,0 +1,21 @@
+@import "../common/Styles.scss";
+
+.instructionsMessage {
+    text-align: center;
+    font-weight: bold;
+}
+
+.participantRow {
+    display: flex;
+    margin-left: $spacing-average;
+}
+
+.participantName {
+    margin-left: $spacing-tiny;
+    @include vertical-center-div();
+}
+
+.buttonWrapper {
+    justify-content: center;
+    display: flex;
+}

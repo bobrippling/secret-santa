@@ -5,19 +5,26 @@ type WishlistItem = {
     url: string;
 }
 
+export type DisplayNameMappings = {
+    [key: string]: string;
+};
+
+export type GiftRestrictions = {
+    [id: string]: string[];
+}
+
 export type GroupType = {
     code: string;
+    displayNameMappings: DisplayNameMappings;
     groupName: string;
+    id: string;
     isNoPriceRange: boolean;
     owner: string;
     participants: string[];
     priceMax: number | null;
-    id: string;
     priceMin: number | null;
+    restrictions: GiftRestrictions;
     status: GroupStatuses;
-    displayNameMappings: {
-        [key: string]: string;
-    },
     wishlist: {
         [key: string]: WishlistItem[];
     }

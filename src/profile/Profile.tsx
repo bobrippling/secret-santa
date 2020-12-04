@@ -74,7 +74,7 @@ const Profile = (props: Props) => {
                             <div className={styles.key}>
                                 Display Name
                             </div>
-                            <div>
+                            <div className={styles.displayName}>
                                 {props.profile.displayName || 'N/A'}
                             </div>
                         </div>

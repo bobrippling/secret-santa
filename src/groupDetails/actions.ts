@@ -12,8 +12,10 @@ export const CANCEL_REMOVING_GIFT_RESTRICTIONS = `${pre}CANCEL_REMOVING_GIFT_RES
 export const ASSIGN_PAIRINGS_REQUEST = `${pre}ASSIGN_PAIRINGS_REQUEST`;
 export const CANCEL_ASSIGNING_PAIRINGS = `${pre}CANCEL_ASSIGNING_PAIRINGS`;
 export const CANCEL_DELETING_GROUP = `${pre}CANCEL_DELETING_GROUP`;
-
+export const REDIRECT_REQUEST = `${pre}REDIRECT_REQUEST`;
+export const LEAVE_GROUP_REQUEST = `${pre}LEAVE_GROUP_REQUEST`;
 export const DELETE_GROUP_REQIEST = `${pre}DELETE_GROUP_REQIEST`;
+export const CANCEL_LEAVE_GROUP = `${pre}CANCEL_LEAVE_GROUP`;
 
 export type AddWishlistItemRequest = {type: typeof ADD_WISHLIST_ITEM_REQUEST,
     groupId: string, item: string, url: string};
@@ -32,11 +34,15 @@ export type CancelAddingWishlistItem = {type: typeof CANCEL_ADDING_WISHLIST_ITEM
 export type RemoveWishlistItemsRequest = {type: typeof REMOVE_WISHLIST_ITEMS_REQUEST
     , groupId: string, items: string[]}
 
+export type LeaveGroupRequest = {type: typeof LEAVE_GROUP_REQUEST, groupId: string}
+
 export type CancelRemovingWishlistItems = {type: typeof CANCEL_REMOVING_WISHLIST_ITEMS}
 export type CancelAddingGiftRestriction = {type: typeof CANCEL_ADDING_GIFT_RESTRICTION}
 export type CancelRemovingGiftRestrictions = {type: typeof CANCEL_REMOVING_GIFT_RESTRICTIONS}
 export type CancelAssigningPairings = {type: typeof CANCEL_ASSIGNING_PAIRINGS}
 export type CancelDeletingGroup = {type: typeof CANCEL_DELETING_GROUP}
+export type RedirectRequest = {type: typeof REDIRECT_REQUEST, url: string}
+export type CancelLeaveGroup = {type: typeof CANCEL_LEAVE_GROUP}
 
 export type RemoveGiftRestrictionRequests = {type: typeof REMOVE_GIFT_RESTRICTIONS_REQUEST,
     restrictions: string[]}
@@ -100,6 +106,20 @@ export const cancelDeletingGroup = () => ({
     type: CANCEL_DELETING_GROUP
 });
 
+export const redirectRequest = (url: string) => ({
+    type: REDIRECT_REQUEST,
+    url
+});
+
+export const leaveGroupRequest = (groupId: string) => ({
+    type: LEAVE_GROUP_REQUEST,
+    groupId
+});
+
+export const cancelLeaveGroup = () => ({
+    type: CANCEL_LEAVE_GROUP
+});
+
 export type GroupDetailsActions = AddWishlistItemRequest
 | CancelAddingWishlistItem
 | RemoveWishlistItemsRequest
@@ -110,4 +130,6 @@ export type GroupDetailsActions = AddWishlistItemRequest
 | AssignPairingsRequest
 | CancelAssigningPairings
 | DeleteGroupRequest
-| CancelDeletingGroup;
+| CancelDeletingGroup
+| LeaveGroupRequest
+| CancelLeaveGroup;

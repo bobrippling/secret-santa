@@ -212,3 +212,34 @@ exports.deleteGroup = functions
             return doc.ref.delete();
         })
     });
+
+exports.leaveGroup = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+            if (context.auth.uid === doc.data().owner && doc.data().participants && doc.data().participants.length > 1) {
+                throw new functions.https.HttpsError('invalid-argument', 'The owner cannot leave if there are people left in the group');
+            }
+
+            if (doc.data().participants && doc.data().participants.length === 1) {
+                return doc.ref.delete();
+            }
+
+            if (doc.data().status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
+                throw new functions.https.HttpsError('invalid-argument', 'The group has started. You cannot leave until it has finished');
+            }
+
+            return doc.ref.update({
+                participants: operations.arrayRemove(context.auth.uid),
+                displayNameMappings: _.omit(doc.data().displayNameMappings, context.auth.uid),
+                wishlist: _.omit(doc.data().wishlist, context.auth.uid),
+            })
+            
+        })
+    });

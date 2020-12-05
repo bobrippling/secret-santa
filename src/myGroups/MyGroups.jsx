@@ -154,7 +154,7 @@ const MyGroups = props => {
                     label="Enter code"
                 />
                 <div className={styles.buttonWrapper}>
-                    <LoadingDiv isLoading={props.joiningGroup} isBorderRadius>
+                    <LoadingDiv isLoading={props.joiningGroup} isBorderRadius isFitContent>
                         <StyledButton
                             color="primary"
                             onClick={joinGroup}

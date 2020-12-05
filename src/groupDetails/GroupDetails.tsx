@@ -20,7 +20,8 @@ import { mapIdToName } from '../myGroups/helpers';
 import AddToWishlist from './AddToWishlist';
 import {
     addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
-    removeGiftRestrictionRequests, assignPairingsRequest, deleteGroupRequest
+    removeGiftRestrictionRequests, assignPairingsRequest, deleteGroupRequest,
+    redirectRequest, leaveGroupRequest
 } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
@@ -40,9 +41,12 @@ type Props = {
     assigningPairings: boolean;
     deleteGroupRequest: (groupId: string) => void;
     deletingGroup: boolean;
+    leavingGroup: boolean;
+    leaveGroupRequest: (groupId: string) => void;
     removingItemsFromWishlist: boolean;
     restrictions: GiftRestrictions;
     addWishlistItemRequest: (groupId: string, item: string, url: string) => void;
+    redirectRequest: (url: string) => void;
     removeWishlistItemsRequest: (groupId: string, items: string[]) => void;
     removeGiftRestrictionRequests: (groupId: string, restrictions: string[][]) => void;
     removingGiftRestrictions: boolean;
@@ -68,6 +72,8 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
     const [isConfirmDeleteGroup, setIsConfirmDeleteGroup] = React.useState<boolean>(false);
     const [confirmDeleteText, setConfirmDeleteText] = React.useState<string>('');
+
+    const [isConfirmLeaveGroup, setIsConfirmLeaveGroup] = React.useState<boolean>(false);
 
     const closeConfirmDeleteGroup = () => {
         setIsConfirmDeleteGroup(false);
@@ -144,9 +150,8 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
     const { group } = props;
 
-    console.log('Group', group);
-
     if (!group) {
+        props.redirectRequest(constants.URL.MY_GROUPS);
         return null;
     }
 
@@ -274,7 +279,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                             </div>
                         )}
                         <ul className={styles.wishlistBulletPoints}>
-                            {props.group.wishlist[p].map(wishlistItem => (
+                            {props.group.wishlist[p]?.map(wishlistItem => (
                                 <li key={wishlistItem.item}>
                                     {wishlistItem.url ? (
                                         <a target="_blank" rel="noopener noreferrer" href={wishlistItem.url}>{wishlistItem.item}</a>
@@ -301,7 +306,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                         )}
                         <StyledButton
                             color="secondary"
-                            onClick={props.cancelRemovingGiftRestrictions}
+                            onClick={() => setIsConfirmLeaveGroup(true)}
                             text="Leave group"
                         />
                     </LoadingDiv>
@@ -335,7 +340,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
             >
                 <RemoveFromWishlist
                     cancelRemovingFromWishlish={cancelRemovingFromWishlish}
-                    initialWishlistItems={props.group.wishlist[props.auth.uid].map(x => x.item)}
+                    initialWishlistItems={props.group.wishlist[props.auth.uid]?.map(x => x.item)}
                     removeWishlistItems={removeWishlistItems}
                     removingItemsFromWishlist={props.removingItemsFromWishlist}
                 />
@@ -461,6 +466,36 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
             </SuccessModal>
 
+            <SuccessModal
+                backdrop
+                closeModal={() => setIsConfirmLeaveGroup(false)}
+                isOpen={isConfirmLeaveGroup}
+                headerMessage="Confirm Leave Group"
+                toggleModal={() => setIsConfirmLeaveGroup(false)}
+            >
+                <div className={styles.confirmDeleteMessage}>
+                    Are you sure you want to leave the group?
+                </div>
+
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.leavingGroup} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={() => props.leaveGroupRequest(props.group.id)}
+                            text="Confirm Leave"
+                            disabled={props.leavingGroup}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={() => setIsConfirmLeaveGroup(false)}
+                            text="Cancel"
+                            disabled={props.leavingGroup}
+                        />
+                    </LoadingDiv>
+                </div>
+
+            </SuccessModal>
+
         </>
     );
 };
@@ -470,6 +505,8 @@ const mapDispatchToProps = {
     addGiftRestrictionRequest,
     assignPairingsRequest,
     deleteGroupRequest,
+    leaveGroupRequest,
+    redirectRequest,
     removeWishlistItemsRequest,
     removeGiftRestrictionRequests
 };
@@ -480,6 +517,7 @@ const mapStateToProps = (state: StoreState, props: any) => ({
     assigningPairings: state.groupDetails.assigningPairings,
     auth: state.firebase.auth,
     deletingGroup: state.groupDetails.deletingGroup,
+    leavingGroup: state.groupDetails.leavingGroup,
     group: selectors.getGroupFromId(state, props),
     removingItemsFromWishlist: state.groupDetails.removingItemsFromWishlist,
     removingGiftRestrictions: state.groupDetails.removingGiftRestrictions

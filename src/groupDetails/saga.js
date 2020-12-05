@@ -1,6 +1,8 @@
 import {
     all, takeEvery, put, call
 } from 'redux-saga/effects';
+import { push } from 'connected-react-router';
+import * as constants from '../constants';
 import * as myGroupsApi from './api';
 import * as actions from './actions';
 import { setErrorMessage } from '../modalHandling/actions';
@@ -75,10 +77,28 @@ export function* deleteGroup(api, action) {
         yield call(api.deleteGroup, {
             groupId: action.groupId
         });
+        yield put(push(constants.URL.MY_GROUPS));
     } catch (error) {
         yield put(setErrorMessage('Error Deleting Group', error));
     } finally {
         yield put(actions.cancelDeletingGroup());
+    }
+}
+
+export function* redirectRequest(action) {
+    yield put(push(action.url));
+}
+
+export function* leaveGroup(api, action) {
+    try {
+        yield call(api.leaveGroup, {
+            groupId: action.groupId
+        });
+        yield put(push(constants.URL.MY_GROUPS));
+    } catch (error) {
+        yield put(setErrorMessage('Error Leaving Group', error));
+    } finally {
+        yield put(actions.cancelLeaveGroup());
     }
 }
 
@@ -89,6 +109,8 @@ export default function* groupDetails() {
         takeEvery(actions.ADD_GIFT_RESTRICTION_REQUEST, addGiftRestriction, myGroupsApi),
         takeEvery(actions.REMOVE_GIFT_RESTRICTIONS_REQUEST, removeGiftRestrictions, myGroupsApi),
         takeEvery(actions.ASSIGN_PAIRINGS_REQUEST, assignPairings, myGroupsApi),
-        takeEvery(actions.DELETE_GROUP_REQIEST, deleteGroup, myGroupsApi)
+        takeEvery(actions.DELETE_GROUP_REQIEST, deleteGroup, myGroupsApi),
+        takeEvery(actions.REDIRECT_REQUEST, redirectRequest),
+        takeEvery(actions.LEAVE_GROUP_REQUEST, leaveGroup, myGroupsApi)
     ]);
 }

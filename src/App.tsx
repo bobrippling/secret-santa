@@ -35,8 +35,6 @@ type Props = {
 
 const App: React.FC<Props> = (props : Props) => {
     const [newDisplayName, setNewDisplayName] = React.useState<string>('');
-
-    console.log('profile', props.profile);
     return (
         props.auth && props.auth.isLoaded
             ? (

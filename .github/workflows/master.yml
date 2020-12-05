@@ -64,6 +64,12 @@ jobs:
       with:
         name: build
         path: build
+    - name: List project
+      run: |
+        npm ci
+        npx firebase projects:list
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
     - name: Deploy Firebase Hosting
       run: |
         npm ci

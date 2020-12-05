@@ -11,9 +11,15 @@ export const REMOVE_GIFT_RESTRICTIONS_REQUEST = `${pre}REMOVE_GIFT_RESTRICTIONS_
 export const CANCEL_REMOVING_GIFT_RESTRICTIONS = `${pre}CANCEL_REMOVING_GIFT_RESTRICTIONS`;
 export const ASSIGN_PAIRINGS_REQUEST = `${pre}ASSIGN_PAIRINGS_REQUEST`;
 export const CANCEL_ASSIGNING_PAIRINGS = `${pre}CANCEL_ASSIGNING_PAIRINGS`;
+export const CANCEL_DELETING_GROUP = `${pre}CANCEL_DELETING_GROUP`;
+
+export const DELETE_GROUP_REQIEST = `${pre}DELETE_GROUP_REQIEST`;
 
 export type AddWishlistItemRequest = {type: typeof ADD_WISHLIST_ITEM_REQUEST,
     groupId: string, item: string, url: string};
+
+export type DeleteGroupRequest = {type: typeof DELETE_GROUP_REQIEST,
+        groupId: string};
 
 export type AssignPairingsRequest = {type: typeof ASSIGN_PAIRINGS_REQUEST,
     groupId: string};
@@ -30,6 +36,7 @@ export type CancelRemovingWishlistItems = {type: typeof CANCEL_REMOVING_WISHLIST
 export type CancelAddingGiftRestriction = {type: typeof CANCEL_ADDING_GIFT_RESTRICTION}
 export type CancelRemovingGiftRestrictions = {type: typeof CANCEL_REMOVING_GIFT_RESTRICTIONS}
 export type CancelAssigningPairings = {type: typeof CANCEL_ASSIGNING_PAIRINGS}
+export type CancelDeletingGroup = {type: typeof CANCEL_DELETING_GROUP}
 
 export type RemoveGiftRestrictionRequests = {type: typeof REMOVE_GIFT_RESTRICTIONS_REQUEST,
     restrictions: string[]}
@@ -80,8 +87,17 @@ export const assignPairingsRequest = (groupId: string) => ({
     groupId
 });
 
+export const deleteGroupRequest = (groupId: string) => ({
+    type: DELETE_GROUP_REQIEST,
+    groupId
+});
+
 export const cancelAssigningPairings = () => ({
     type: CANCEL_ASSIGNING_PAIRINGS
+});
+
+export const cancelDeletingGroup = () => ({
+    type: CANCEL_DELETING_GROUP
 });
 
 export type GroupDetailsActions = AddWishlistItemRequest
@@ -92,4 +108,6 @@ export type GroupDetailsActions = AddWishlistItemRequest
 | RemoveGiftRestrictionRequests
 | CancelRemovingGiftRestrictions
 | AssignPairingsRequest
-| CancelAssigningPairings;
+| CancelAssigningPairings
+| DeleteGroupRequest
+| CancelDeletingGroup;

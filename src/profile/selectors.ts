@@ -22,6 +22,7 @@ export const getProfile = (state: StoreState) => {
         email: fp.get('email')(auth),
         displayName: fp.get('displayName')(auth),
         photoUrl: fp.get('photoURL')(auth),
-        teamName: 'N/A'
+        teamName: 'N/A',
+        isLoaded: false
     };
 };

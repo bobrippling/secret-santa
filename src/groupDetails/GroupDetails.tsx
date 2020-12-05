@@ -20,12 +20,13 @@ import { mapIdToName } from '../myGroups/helpers';
 import AddToWishlist from './AddToWishlist';
 import {
     addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
-    removeGiftRestrictionRequests, assignPairingsRequest
+    removeGiftRestrictionRequests, assignPairingsRequest, deleteGroupRequest
 } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
 import AddGiftRestrictions from './AddGiftRestrictions';
 import RemoveGiftRestrictions from './RemoveGiftRestrictions';
+import TextInput from '../common/TextInput/TextInput';
 
 type Props = {
     auth: {
@@ -37,6 +38,8 @@ type Props = {
     addingItemToWishlist: boolean;
     assignPairingsRequest: (groupId: string) => void;
     assigningPairings: boolean;
+    deleteGroupRequest: (groupId: string) => void;
+    deletingGroup: boolean;
     removingItemsFromWishlist: boolean;
     restrictions: GiftRestrictions;
     addWishlistItemRequest: (groupId: string, item: string, url: string) => void;
@@ -62,6 +65,14 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
     const [newGiftRestriction, setNewGiftRestriction] = React.useState<string[]>([]);
     const [removedGiftRestrictions, setRemovedGiftRestrictions] = React.useState<string[][]>([]);
+
+    const [isConfirmDeleteGroup, setIsConfirmDeleteGroup] = React.useState<boolean>(false);
+    const [confirmDeleteText, setConfirmDeleteText] = React.useState<string>('');
+
+    const closeConfirmDeleteGroup = () => {
+        setIsConfirmDeleteGroup(false);
+        setConfirmDeleteText('');
+    };
 
     const [isConfirmingAssignPairings,
         setIsConfirmingAssingPairings] = React.useState<boolean>(false);
@@ -132,6 +143,8 @@ const MyGroups: React.FC<Props> = (props: Props) => {
     };
 
     const { group } = props;
+
+    console.log('Group', group);
 
     if (!group) {
         return null;
@@ -208,7 +221,8 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                     </div>
                 </div>
 
-                {props.group.owner === props.auth.uid && (
+                {props.group.owner === props.auth.uid
+                && props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS && (
                     <div className={styles.detailWrapper}>
                         <div className={styles.key}>
                             Manage Gift Restrictions
@@ -272,6 +286,28 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                 </Paper>
             ))}
 
+            <Paper
+                elevation={4}
+                className={classes.paperNoPadding}
+            >
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.removingGiftRestrictions} isBorderRadius>
+                        {props.group.owner === props.auth.uid && (
+                            <StyledButton
+                                color="primary"
+                                onClick={() => setIsConfirmDeleteGroup(true)}
+                                text="Delete Group"
+                            />
+                        )}
+                        <StyledButton
+                            color="secondary"
+                            onClick={props.cancelRemovingGiftRestrictions}
+                            text="Leave group"
+                        />
+                    </LoadingDiv>
+                </div>
+            </Paper>
+
             <SuccessModal
                 backdrop
                 closeModal={() => setIsAddingToWishlist(false)}
@@ -280,16 +316,11 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                 toggleModal={() => setIsAddingToWishlist(false)}
             >
                 <AddToWishlist
-
                     addingItemToWishlist={props.addingItemToWishlist}
-
                     addWishlistItem={addWishlistItem}
-
                     closeAddingToWishlist={closeAddingToWishlist}
-
                     wishlistItemToAdd={wishlistItemToAdd}
                     setWishlistItemToAdd={setWishlistItemToAdd}
-
                     wishlistItemToAddUrl={wishlistItemToAddUrl}
                     setWishlistItemToAddUrl={setWishlistItemToAddUrl}
                 />
@@ -393,6 +424,43 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
             </SuccessModal>
 
+            <SuccessModal
+                backdrop
+                closeModal={closeConfirmDeleteGroup}
+                isOpen={isConfirmDeleteGroup || props.deletingGroup}
+                headerMessage="Confirm Delete Group"
+                toggleModal={closeConfirmDeleteGroup}
+            >
+                <div className={styles.confirmDeleteMessage}>
+                    Are you sure you want to delete the group? It cannot be undone.
+                </div>
+                <div>
+                    <TextInput
+                        value={confirmDeleteText}
+                        onChange={setConfirmDeleteText}
+                        label="Type delete to confirm"
+                    />
+                </div>
+
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.deletingGroup} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={() => props.deleteGroupRequest(props.group.id)}
+                            text="Confirm Delete"
+                            disabled={confirmDeleteText.toLowerCase() !== 'delete' || props.deletingGroup}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={closeConfirmDeleteGroup}
+                            text="Cancel"
+                            disabled={props.deletingGroup}
+                        />
+                    </LoadingDiv>
+                </div>
+
+            </SuccessModal>
+
         </>
     );
 };
@@ -401,6 +469,7 @@ const mapDispatchToProps = {
     addWishlistItemRequest,
     addGiftRestrictionRequest,
     assignPairingsRequest,
+    deleteGroupRequest,
     removeWishlistItemsRequest,
     removeGiftRestrictionRequests
 };
@@ -410,6 +479,7 @@ const mapStateToProps = (state: StoreState, props: any) => ({
     addingGiftRestriction: state.groupDetails.addingGiftRestriction,
     assigningPairings: state.groupDetails.assigningPairings,
     auth: state.firebase.auth,
+    deletingGroup: state.groupDetails.deletingGroup,
     group: selectors.getGroupFromId(state, props),
     removingItemsFromWishlist: state.groupDetails.removingItemsFromWishlist,
     removingGiftRestrictions: state.groupDetails.removingGiftRestrictions

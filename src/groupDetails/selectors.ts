@@ -15,6 +15,11 @@ export const getGroupFromId = (state: StoreState, props: any) => {
     }
 
     const result = groups[groupId];
+
+    if (!result) {
+        return null;
+    }
+
     return {
         ...result,
         id: groupId

@@ -11,15 +11,22 @@ const operations = admin.firestore.FieldValue;
 exports.createGroup = functions
     .region(constants.region)
     .https.onCall((data, context) => {
-        console.log("data", data)
         common.isAuthenticated(context);
 
         if (!data.groupName) {
             throw new functions.https.HttpsError('invalid-argument', 'Must provide a group name');
         }
 
+        if (data.groupName.length > 40) {
+            throw new functions.https.HttpsError('invalid-argument', 'Max group name length is 40');
+        }
+
         if (!data.code) {
             throw new functions.https.HttpsError('invalid-argument', 'Must provide a group code');
+        }
+
+        if (data.code.length > 20) {
+            throw new functions.https.HttpsError('invalid-argument', 'Max code length is 20');
         }
 
         if (data.code.length < 6) {
@@ -186,5 +193,22 @@ exports.assignPairings = functions
                 pairings,
                 status: constants.groupStatuses.PAIRINGS_ASSIGNED
             })
+        })
+    });
+
+exports.deleteGroup = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+            if (context.auth.uid !== doc.data().owner) {
+                throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can delete the group');
+            }
+            return doc.ref.delete();
         })
     });

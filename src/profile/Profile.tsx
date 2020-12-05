@@ -111,7 +111,7 @@ const Profile = (props: Props) => {
                                 color="primary"
                                 onClick={updateDisplayName}
                                 text="Confirm"
-                                disabled={props.updatingDisplayName}
+                                disabled={props.updatingDisplayName || !newDisplayName}
                             />
                             <StyledButton
                                 color="secondary"

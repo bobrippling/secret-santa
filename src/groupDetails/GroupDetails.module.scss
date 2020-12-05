@@ -155,6 +155,12 @@
     overflow-y: scroll;
 }
 
+.confirmDeleteMessage {
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: $spacing-small;
+}
+
 @media only screen and (max-width: 800px) {
     .waitForPairingsStatus {
        max-height: 300px;

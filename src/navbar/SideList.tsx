@@ -29,6 +29,7 @@ const SideList: React.FC<Props> = (props: Props) => {
             role="presentation"
             onClick={props.closeNavbar}
             onKeyDown={props.closeNavbar}
+            className={defaultStyles.maxWidthSidebar}
         >
             <List>
                 {linksToRender.map(item => (

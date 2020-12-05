@@ -5,3 +5,4 @@ export const removeItems = request => functionToCall('wishlist-removeItems')(req
 export const addGiftRestriction = request => functionToCall('groups-addGiftRestriction')(request);
 export const removeGiftRestrictions = request => functionToCall('groups-removeGiftRestrictions')(request);
 export const assignPairings = request => functionToCall('groups-assignPairings')(request);
+export const deleteGroup = request => functionToCall('groups-deleteGroup')(request);

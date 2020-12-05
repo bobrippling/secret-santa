@@ -58,11 +58,24 @@ export function* removeGiftRestrictions(api, action) {
     }
 }
 
+export function* assignPairings(api, action) {
+    try {
+        yield call(api.assignPairings, {
+            groupId: action.groupId
+        });
+    } catch (error) {
+        yield put(setErrorMessage('Error Assigning Pairings. Please try again', error));
+    } finally {
+        yield put(actions.cancelAssigningPairings());
+    }
+}
+
 export default function* groupDetails() {
     yield all([
         takeEvery(actions.ADD_WISHLIST_ITEM_REQUEST, addItemToWishlist, myGroupsApi),
         takeEvery(actions.REMOVE_WISHLIST_ITEMS_REQUEST, removeWishlistItems, myGroupsApi),
         takeEvery(actions.ADD_GIFT_RESTRICTION_REQUEST, addGiftRestriction, myGroupsApi),
-        takeEvery(actions.REMOVE_GIFT_RESTRICTIONS_REQUEST, removeGiftRestrictions, myGroupsApi)
+        takeEvery(actions.REMOVE_GIFT_RESTRICTIONS_REQUEST, removeGiftRestrictions, myGroupsApi),
+        takeEvery(actions.ASSIGN_PAIRINGS_REQUEST, assignPairings, myGroupsApi)
     ]);
 }

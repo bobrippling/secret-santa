@@ -127,3 +127,37 @@
     margin-left: $spacing-small;
     margin-right: $spacing-small;
 }
+
+.activateGroupButton {
+    justify-content: center;
+    text-align: center;
+}
+
+.mySecretSantaTarget {
+    font-weight: bold;
+    text-align: center;
+    font-size: $font-size-large;
+    color: $color-red;
+}
+
+.confirmMessage {
+    text-align: center;
+    font-weight: bold;
+}
+
+.buttonWrapper {
+    justify-content: center;
+    display: flex;
+}
+
+.scrollYConfirm {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+@media only screen and (max-width: 800px) {
+    .waitForPairingsStatus {
+       max-height: 300px;
+       overflow-y: scroll;
+    }
+}

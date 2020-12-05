@@ -2,11 +2,14 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
 import { firestoreConnect } from 'react-redux-firebase';
+import classNames from 'classnames';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveIcon from '@material-ui/icons/Remove';
 import FaceIcon from '@material-ui/icons/Face';
 import { compose } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
+import StyledButton from '../common/StyledButton/StyledButton';
+import LoadingDiv from '../common/loadingDiv/LoadingDiv';
 import SuccessModal from '../common/modal/SuccessModal';
 import materialStyles from '../materialStyles';
 import { GroupType, GiftRestrictions } from '../myGroups/types';
@@ -17,7 +20,7 @@ import { mapIdToName } from '../myGroups/helpers';
 import AddToWishlist from './AddToWishlist';
 import {
     addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
-    removeGiftRestrictionRequests
+    removeGiftRestrictionRequests, assignPairingsRequest
 } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
@@ -32,6 +35,8 @@ type Props = {
     addGiftRestrictionRequest: (groupId: string, group: string[]) => void;
     addingGiftRestriction: boolean;
     addingItemToWishlist: boolean;
+    assignPairingsRequest: (groupId: string) => void;
+    assigningPairings: boolean;
     removingItemsFromWishlist: boolean;
     restrictions: GiftRestrictions;
     addWishlistItemRequest: (groupId: string, item: string, url: string) => void;
@@ -57,6 +62,9 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
     const [newGiftRestriction, setNewGiftRestriction] = React.useState<string[]>([]);
     const [removedGiftRestrictions, setRemovedGiftRestrictions] = React.useState<string[][]>([]);
+
+    const [isConfirmingAssignPairings,
+        setIsConfirmingAssingPairings] = React.useState<boolean>(false);
 
     const closeAddingToWishlist = () => {
         setIsAddingToWishlist(false);
@@ -88,6 +96,8 @@ const MyGroups: React.FC<Props> = (props: Props) => {
         }
     }, [newGiftRestriction]);
 
+    // console.log('group', props.group);
+
     const addGiftRestriction = React.useCallback(() => {
         props.addGiftRestrictionRequest(props.group.id, newGiftRestriction);
         // setNewGiftRestriction([]);
@@ -116,6 +126,11 @@ const MyGroups: React.FC<Props> = (props: Props) => {
         cancelRemovingGiftRestrictions();
     };
 
+    const confirmAssignPairings = () => {
+        setIsConfirmingAssingPairings(false);
+        props.assignPairingsRequest(props.group.id);
+    };
+
     const { group } = props;
 
     if (!group) {
@@ -136,6 +151,28 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                         {group.groupName}
                     </div>
                 </div>
+
+                {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS && (
+                    <div className={styles.detailWrapperStatuses}>
+                        <div className={styles.key}>
+                            Who am I getting a gift for?
+                        </div>
+                        <div className={styles.waitForPairingsStatus}>
+                            {`Waiting for ${mapIdToName(props.group.owner, props.group.displayNameMappings)} to randomise gift assignments`}
+                        </div>
+                    </div>
+                )}
+                {props.group.status === constants.groupStatuses.PAIRINGS_ASSIGNED && (
+                    <div className={styles.detailWrapperStatuses}>
+                        <div className={styles.key}>
+                            Who am I getting a gift for?
+                        </div>
+                        <div className={styles.mySecretSantaTarget}>
+                            {mapIdToName(props.group.pairings[props.auth.uid],
+                                props.group.displayNameMappings)}
+                        </div>
+                    </div>
+                )}
 
                 {!group.isNoPriceRange && (
                     <div className={styles.detailWrapper}>
@@ -171,17 +208,6 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                     </div>
                 </div>
 
-                {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS && (
-                    <div className={styles.detailWrapperStatuses}>
-                        <div className={styles.key}>
-                            Who am I getting a gift for?
-                        </div>
-                        <div className={styles.waitForPairingsStatus}>
-                            {`Waiting for ${mapIdToName(props.group.owner, props.group.displayNameMappings)} to randomise gift assignments`}
-                        </div>
-                    </div>
-                )}
-
                 {props.group.owner === props.auth.uid && (
                     <div className={styles.detailWrapper}>
                         <div className={styles.key}>
@@ -195,6 +221,16 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                                 <RemoveIcon color="secondary" fontSize="large" onClick={() => setIsRemovingGiftRestrictions(true)} />
                             </div>
                         </div>
+                    </div>
+                )}
+
+                {((props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS
+                && props.auth.uid === props.group.owner) || true) && (
+                    <div className={styles.activateGroupButton}>
+                        <StyledButton
+                            text="Assign Pairings"
+                            onClick={() => setIsConfirmingAssingPairings(true)}
+                        />
                     </div>
                 )}
 
@@ -220,7 +256,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                         </div>
                         {props.group.wishlist[p].length === 0 && (
                             <div className={styles.noWishlistText}>
-                                Empty wishlist
+                                Nothing added yet
                             </div>
                         )}
                         <ul className={styles.wishlistBulletPoints}>
@@ -276,10 +312,10 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 
             <SuccessModal
                 backdrop
-                closeModal={() => setIsAddingGiftRestrictions(false)}
+                closeModal={cancelAddingGiftRestriction}
                 isOpen={isAddingGiftRestrictions || props.addingGiftRestriction}
                 headerMessage="Add Gift Restrictions"
-                toggleModal={() => setIsAddingGiftRestrictions(false)}
+                toggleModal={cancelAddingGiftRestriction}
             >
                 <AddGiftRestrictions
                     addGiftRestriction={addGiftRestriction}
@@ -310,6 +346,53 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                 />
             </SuccessModal>
 
+            <SuccessModal
+                backdrop
+                closeModal={() => setIsConfirmingAssingPairings(false)}
+                isOpen={isConfirmingAssignPairings || props.assigningPairings}
+                headerMessage="Confirm Assign Pairings"
+                toggleModal={() => setIsConfirmingAssingPairings(false)}
+            >
+                <div className={styles.confirmMessage}>
+                    Once you confirm pairings, nobody else will be able to join the group!
+                </div>
+
+                <div className={styles.detailWrapperStatuses}>
+                    <div className={styles.key}>
+                        Group Members
+                    </div>
+                    <div className={classNames({
+                        [styles.waitForPairingsStatus]: true,
+                        [styles.scrollYConfirm]: props.group.participants.length > 15
+                    })}
+                    >
+                        {props.group.participants.map(p => (
+                            <div>
+                                {mapIdToName(p, props.group.displayNameMappings)}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.assigningPairings} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={confirmAssignPairings}
+                            text="Confirm"
+                            disabled={props.assigningPairings}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={() => setIsConfirmingAssingPairings(false)}
+                            text="Cancel"
+                            disabled={props.assigningPairings}
+                        />
+                    </LoadingDiv>
+                </div>
+
+            </SuccessModal>
+
         </>
     );
 };
@@ -317,6 +400,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
 const mapDispatchToProps = {
     addWishlistItemRequest,
     addGiftRestrictionRequest,
+    assignPairingsRequest,
     removeWishlistItemsRequest,
     removeGiftRestrictionRequests
 };
@@ -324,6 +408,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state: StoreState, props: any) => ({
     addingItemToWishlist: state.groupDetails.addingItemToWishlist,
     addingGiftRestriction: state.groupDetails.addingGiftRestriction,
+    assigningPairings: state.groupDetails.assigningPairings,
     auth: state.firebase.auth,
     group: selectors.getGroupFromId(state, props),
     removingItemsFromWishlist: state.groupDetails.removingItemsFromWishlist,

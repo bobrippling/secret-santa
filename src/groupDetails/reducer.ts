@@ -4,6 +4,7 @@ import * as actions from './actions';
 export type GroupDetailsState = {
     addingItemToWishlist: boolean;
     addingGiftRestriction: boolean;
+    assigningPairings: boolean;
     removingItemsFromWishlist: boolean;
     removingGiftRestrictions: boolean;
 }
@@ -11,6 +12,7 @@ export type GroupDetailsState = {
 export const initialState: GroupDetailsState = {
     addingItemToWishlist: false,
     addingGiftRestriction: false,
+    assigningPairings: false,
     removingItemsFromWishlist: false,
     removingGiftRestrictions: false
 };
@@ -40,6 +42,12 @@ const groupDetailsReducer = (state = initialState, action: any) => {
     }
     case actions.CANCEL_REMOVING_GIFT_RESTRICTIONS: {
         return fp.set('removingGiftRestrictions', false)(state);
+    }
+    case actions.ASSIGN_PAIRINGS_REQUEST: {
+        return fp.set('assigningPairings', true)(state);
+    }
+    case actions.CANCEL_ASSIGNING_PAIRINGS: {
+        return fp.set('assigningPairings', false)(state);
     }
     default:
         return state;

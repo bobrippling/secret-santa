@@ -21,6 +21,9 @@ export type GroupType = {
     isNoPriceRange: boolean;
     owner: string;
     participants: string[];
+    pairings: {
+        [uid: string]: string
+    };
     priceMax: number | null;
     priceMin: number | null;
     restrictions: GiftRestrictions;

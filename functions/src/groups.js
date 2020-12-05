@@ -34,6 +34,7 @@ exports.createGroup = functions
                 status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
                 owner: context.auth.uid,
                 participants: [context.auth.uid],
+                pairings: {},
                 priceMin: common.isNumber(data.min) ? data.min : null,
                 priceMax: common.isNumber(data.max) ? data.max : null,
                 restrictions: {},
@@ -61,12 +62,17 @@ exports.joinGroup = functions
         }
 
         return db.collection('groups').where('code', '==', data.code).get().then(docs => {
+
             if (docs.size === 0) {
                 throw new functions.https.HttpsError('not-found', 'No group with that code exists');
             }
 
             if (docs.size > 1) {
                 throw new functions.https.HttpsError('invalid-argument', 'Big error. Contact Matt');
+            }
+
+            if (docs.docs[0].data().status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
+                throw new functions.https.HttpsError('invalid-argument', 'This group has already started. Too late to join');
             }
             
             return db.collection('users').doc(context.auth.uid).get().then(user => {
@@ -102,6 +108,14 @@ exports.addGiftRestriction = functions
 
             if (Object.keys(doc.data().restrictions).length >= 10) {
                 throw new functions.https.HttpsError('invalid-argument', 'Max of 10 restrictions');
+            }
+
+            if (context.auth.uid !== doc.data().owner) {
+                throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can add restrictions');
+            }
+
+            if (Object.values(doc.data().restrictions).some(r => common.doArraysContainSameElements(r, data.restriction))) {
+                throw new functions.https.HttpsError('invalid-argument', 'Cannot add duplicate group restrictions');
             }
 
             let minKey = 0;
@@ -145,6 +159,32 @@ exports.removeGiftRestrictions = functions
 
             return doc.ref.update({
                 restrictions: getRemovedResult(doc.data().restrictions, data.restrictions)
+            })
+        })
+    });
+
+exports.assignPairings = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+
+            if (context.auth.uid !== doc.data().owner) {
+                throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can assign pairings');
+            }
+
+            const { restrictions, participants } = doc.data();
+
+            const pairings = common.generatePairings(restrictions, participants)
+
+            return doc.ref.update({
+                pairings,
+                status: constants.groupStatuses.PAIRINGS_ASSIGNED
             })
         })
     });

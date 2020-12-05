@@ -13,9 +13,33 @@
 .participantName {
     margin-left: $spacing-tiny;
     @include vertical-center-div();
+    cursor: pointer;
+}
+
+.participantName:focus {
+    outline: none;
+}
+
+.participantName:hover {
+    @include hover-bold-black();    
+}
+
+.makeBold {
+    @include hover-bold-black();   
 }
 
 .buttonWrapper {
     justify-content: center;
     display: flex;
+}
+
+.checkboxWrapper {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+@media only screen and (max-width: 800px) {
+    .checkboxWrapper {
+        flex-direction: column;
+    }  
 }

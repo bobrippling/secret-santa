@@ -457,7 +457,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                         <StyledButton
                             color="primary"
                             onClick={() => props.deleteGroupRequest(props.group.id)}
-                            text="Confirm Delete"
+                            text="Delete"
                             disabled={confirmDeleteText.toLowerCase() !== 'delete' || props.deletingGroup}
                         />
                         <StyledButton

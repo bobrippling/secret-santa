@@ -6,6 +6,7 @@ import * as profileApi from './api';
 import * as actions from './actions';
 import { setErrorMessage } from '../modalHandling/actions';
 import { addNotification } from '../notifications/actions';
+import { signOut } from '../auth/actions';
 
 export function* linkProfileToGoogle() {
     try {
@@ -39,10 +40,22 @@ export function* updateDisplayName(api, action) {
     }
 }
 
+export function* deleteAccount(api) {
+    try {
+        yield call(api.deleteAccount);
+        yield put(signOut());
+    } catch (error) {
+        yield put(setErrorMessage('Error Deleting Account', error));
+    } finally {
+        yield put(actions.cancelDeleteAccount());
+    }
+}
+
 export default function* profileSaga() {
     yield all([
         takeEvery(actions.LINK_PROFILE_TO_GOOGLE, linkProfileToGoogle),
         takeEvery(actions.LINK_PROFILE_TO_FACEBOOK, linkProfileToFacebook, profileApi),
-        takeEvery(actions.UPDATE_DISPLAY_NAME_REQUEST, updateDisplayName, profileApi)
+        takeEvery(actions.UPDATE_DISPLAY_NAME_REQUEST, updateDisplayName, profileApi),
+        takeEvery(actions.DELETE_ACCOUNT_REQUEST, deleteAccount, profileApi)
     ]);
 }

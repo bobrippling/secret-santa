@@ -7,7 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import classNames from 'classnames';
 import {
     linkProfileToFacebook, linkProfileToGoogle, linkProfileToPhone,
-    updateDisplayNameRequest
+    updateDisplayNameRequest, deleteAccountRequest
 } from './actions';
 import { StoreState } from '../types';
 import * as selectors from './selectors';
@@ -22,6 +22,7 @@ import * as textInputConstants from '../common/TextInput/constants';
 import LoadingDiv from '../common/loadingDiv/LoadingDiv';
 
 type Props = {
+    deletingAccount: boolean;
     isSignedInWithFacebook: boolean;
     isSignedInWithGoogle: boolean;
     // isSignedInWithPhone: boolean;
@@ -29,6 +30,8 @@ type Props = {
     linkProfileToFacebook: () => void;
     linkProfileToGoogle: () => void;
     // linkProfileToPhone: () => void;
+
+    deleteAccountRequest: () => void;
 
     profile: {
         displayName: string;
@@ -56,6 +59,21 @@ const Profile = (props: Props) => {
     const closeModal = () => {
         setNewDisplayName('');
         setIsDisplayNameModalOpen(false);
+    };
+
+    const [isDeletingAccount, setIsDeletingAccount] = React.useState<boolean>(false);
+
+    const [deleteAccountText, setDeleteAccountText] = React.useState<string>('');
+
+    const closeDeleteAccount = () => {
+        setIsDeletingAccount(false);
+        setDeleteAccountText('');
+    };
+
+    const deleteAccount = () => {
+        props.deleteAccountRequest();
+        setIsDeletingAccount(false);
+        setDeleteAccountText('');
     };
 
     return (
@@ -90,6 +108,9 @@ const Profile = (props: Props) => {
                     linkProfileToGoogle={props.linkProfileToGoogle}
                 />
             </div>
+            <div className={styles.deleteButton}>
+                <StyledButton text="Delete Account" color="secondary" onClick={() => setIsDeletingAccount(true)} />
+            </div>
             <SuccessModal
                 backdrop
                 closeModal={() => setIsDisplayNameModalOpen(false)}
@@ -123,11 +144,46 @@ const Profile = (props: Props) => {
                     </div>
                 </div>
             </SuccessModal>
+
+            <SuccessModal
+                backdrop
+                closeModal={closeDeleteAccount}
+                isOpen={isDeletingAccount || props.deletingAccount}
+                headerMessage="Delete Account"
+                toggleModal={closeDeleteAccount}
+            >
+                <div className={styles.modalWrapper}>
+                    <TextInput
+                        icon={textInputConstants.textInputIcons.user}
+                        iconColor="primary"
+                        value={deleteAccountText}
+                        onChange={setDeleteAccountText}
+                        label="Type delete to confirm"
+                    />
+                    <div className={styles.confirmButtons}>
+                        <LoadingDiv isLoading={props.deletingAccount} isBorderRadius>
+                            <StyledButton
+                                color="primary"
+                                onClick={deleteAccount}
+                                text="Delete"
+                                disabled={deleteAccountText.toLowerCase() !== 'delete' || props.deletingAccount}
+                            />
+                            <StyledButton
+                                color="secondary"
+                                onClick={closeDeleteAccount}
+                                text="Cancel"
+                                disabled={props.deletingAccount}
+                            />
+                        </LoadingDiv>
+                    </div>
+                </div>
+            </SuccessModal>
         </>
     );
 };
 
 const mapDispatchToProps = {
+    deleteAccountRequest,
     linkProfileToFacebook,
     linkProfileToGoogle,
     linkProfileToPhone,
@@ -136,6 +192,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state: StoreState) => ({
     auth: state.firebase.auth,
+    deletingAccount: state.profile.deletingAccount,
     isSignedInWithFacebook: selectors.isSignedIn(state, 'facebook.com'),
     isSignedInWithGoogle: selectors.isSignedIn(state, 'google.com'),
     isSignedInWithPhone: selectors.isSignedIn(state, 'phone'),

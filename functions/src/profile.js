@@ -51,7 +51,6 @@ exports.updateDisplayNameMappings = functions.region(constants.region).firestore
         const userId = change.after.id;
 
         return db.collection('groups').where('participants', 'array-contains', userId).get().then(result => {
-            console.log("results length", result.docs.length)
             return result.docs.forEach(doc => {
                 return doc.ref.update({
                     displayNameMappings: {
@@ -61,5 +60,19 @@ exports.updateDisplayNameMappings = functions.region(constants.region).firestore
                 })
             })
         })
+    });
 
+exports.deleteAccount = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        return db.collection('groups').where('participants', 'array-contains', context.auth.uid).get().then(result => {
+            if (result.size > 0) {
+                throw new functions.https.HttpsError('invalid-argument', 'Must leave all groups before deleting your account');
+            }
+            return admin.auth().deleteUser(context.auth.uid).then(
+                () => db.collection('users').doc(context.auth.uid).delete()
+            );
+        })
     });

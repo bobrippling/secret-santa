@@ -6,7 +6,9 @@ export const URL = {
     SIGN_IN: '/sign-in',
     MY_GROUPS: '/my-groups',
     PROFILE: '/profile',
-    GROUP_DETAILS: '/group-details'
+    GROUP_DETAILS: '/group-details',
+    PRIVACY_POLICY: '/privacy-policy',
+    TERMS_OF_SERVICE: '/terms-of-service'
 };
 
 const WAITING_FOR_PAIRINGS = 'WAITING_FOR_PAIRINGS';

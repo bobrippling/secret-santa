@@ -1,6 +1,7 @@
 import React from 'react';
 import * as firebaseui from 'firebaseui';
 import firebase from 'firebase';
+import * as constants from '../constants';
 import styles from './SignIn.module.scss';
 
 const App = () => {
@@ -10,12 +11,6 @@ const App = () => {
         // const ui = new firebaseui.auth.AuthUI(firebase.auth());
         const uiConfig = {
             callbacks: {
-                signInSuccessWithAuthResult() {
-                    // User successfully signed in.
-                    // Return type determines whether we continue the redirect automatically
-                    // or whether we leave that to developer to handle.
-                    return true;
-                }
                 // uiShown() {
                 // // The widget is rendered.
                 // // Hide the loader.
@@ -36,10 +31,9 @@ const App = () => {
                     loginHint: '+11234567890'
                 }
             ],
-            // Terms of service url.
-            tosUrl: '<your-tos-url>',
+            tosUrl: constants.URL.TERMS_OF_SERVICE,
             // Privacy policy url.
-            privacyPolicyUrl: '<your-privacy-policy-url>'
+            privacyPolicyUrl: constants.URL.PRIVACY_POLICY
         };
         ui.start('#firebaseui-auth-container', uiConfig);
     }, []);

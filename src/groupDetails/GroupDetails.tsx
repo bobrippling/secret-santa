@@ -148,6 +148,11 @@ const MyGroups: React.FC<Props> = (props: Props) => {
         props.assignPairingsRequest(props.group.id);
     };
 
+    const leaveGroup = () => {
+        props.leaveGroupRequest(props.group.id);
+        setIsConfirmLeaveGroup(false);
+    };
+
     const { group } = props;
 
     if (!group) {
@@ -469,7 +474,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
             <SuccessModal
                 backdrop
                 closeModal={() => setIsConfirmLeaveGroup(false)}
-                isOpen={isConfirmLeaveGroup}
+                isOpen={isConfirmLeaveGroup || props.leavingGroup}
                 headerMessage="Confirm Leave Group"
                 toggleModal={() => setIsConfirmLeaveGroup(false)}
             >
@@ -481,7 +486,7 @@ const MyGroups: React.FC<Props> = (props: Props) => {
                     <LoadingDiv isLoading={props.leavingGroup} isBorderRadius>
                         <StyledButton
                             color="primary"
-                            onClick={() => props.leaveGroupRequest(props.group.id)}
+                            onClick={leaveGroup}
                             text="Confirm Leave"
                             disabled={props.leavingGroup}
                         />

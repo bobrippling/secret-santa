@@ -37,7 +37,7 @@ const Group: React.FC<Props> = (props: Props) => {
                     </div>
                     <div className={styles.participantsValue}>
                         {props.participants.map(x => mapIdToName(x, props.displayNameMappings))
-                            .toString()}
+                            .join(', ')}
                     </div>
                 </div>
             </div>

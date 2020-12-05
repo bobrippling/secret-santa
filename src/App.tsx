@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { History } from 'history';
 import Container from '@material-ui/core/Container';
 import ReactNotification from 'react-notifications-component';
 import { ConnectedRouter } from 'connected-react-router';
@@ -24,7 +25,7 @@ type Props = {
         isLoaded: boolean;
         isEmpty: boolean;
     };
-    history: any;
+    history: History;
     profile: {
         displayName: string;
         isLoaded: boolean;

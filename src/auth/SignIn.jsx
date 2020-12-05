@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 import * as firebaseui from 'firebaseui';
 import firebase from 'firebase';
 import styles from './SignIn.module.scss';
-import * as constants from '../constants';
 
-const App: React.FC = () => {
+const App = () => {
     React.useEffect(() => {
-        const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
+        const ui = firebaseui.auth.AuthUI.getInstance()
+        || new firebaseui.auth.AuthUI(firebase.auth());
         // const ui = new firebaseui.auth.AuthUI(firebase.auth());
         const uiConfig = {
             callbacks: {
-                signInSuccessWithAuthResult(authResult, redirectUrl) {
-                    console.log('sign in success', authResult);
+                signInSuccessWithAuthResult() {
                     // User successfully signed in.
                     // Return type determines whether we continue the redirect automatically
                     // or whether we leave that to developer to handle.

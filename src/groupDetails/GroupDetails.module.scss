@@ -58,6 +58,12 @@
 
 .faceIcon {
     margin-right: $spacing-tiny;
+    @include vertical-center-div();
+}
+
+.participantName {
+    @include vertical-center-div();
+    font-weight: bold;
 }
 
 .addToWishlistIconWrapper {

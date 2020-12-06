@@ -34,7 +34,7 @@ const Profile = props => {
         props.updateDisplayNameRequest(newDisplayName);
         setIsDisplayNameModalOpen(false);
         setNewDisplayName('');
-    }, [props.updateDisplayNameRequest, newDisplayName]);
+    }, [props, newDisplayName]);
 
     const closeModal = () => {
         setNewDisplayName('');

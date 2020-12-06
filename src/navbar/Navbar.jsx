@@ -22,7 +22,7 @@ const NewNavbar = props => {
 
     const onItemClick = useCallback(path => {
         redirect(path);
-    }, [props, redirect]);
+    }, [redirect]);
 
     const groups = _.map(props.groups, (value, id) => ({ id, ...value }))
         .filter(x => x.participants.includes(props.auth.uid));

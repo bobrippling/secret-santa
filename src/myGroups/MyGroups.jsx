@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import _, { noop } from 'lodash';
@@ -75,7 +76,7 @@ const MyGroups = props => {
         const priceRangeUsed = isPriceRangeActive ? priceRange : null;
         props.createGroupRequest(groupName, priceRangeUsed, selectedDate, groupCode);
         resetState();
-    }, [isPriceRangeActive, priceRange, selectedDate, groupName, groupCode]);
+    }, [props, isPriceRangeActive, priceRange, selectedDate, groupName, groupCode]);
 
     const groups = _.map(props.groups, (value, id) => ({ id, ...value }))
         .filter(x => x.participants.includes(props.auth.uid));
@@ -84,7 +85,7 @@ const MyGroups = props => {
         props.joinGroupRequest(groupCodeToJoin);
         setIsJoiningGroup(false);
         resetState();
-    }, [groupCodeToJoin]);
+    }, [props, groupCodeToJoin]);
 
     const redirectToGroupDetails = groupId => {
         props.history.push(`${constants.URL.GROUP_DETAILS}/${groupId}`);

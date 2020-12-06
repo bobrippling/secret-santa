@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
@@ -73,7 +74,7 @@ const MyGroups = props => {
     const addWishlistItem = React.useCallback(() => {
         props.addWishlistItemRequest(props.group?.id, wishlistItemToAdd, wishlistItemToAddUrl);
         closeAddingToWishlist();
-    }, [wishlistItemToAdd, wishlistItemToAddUrl, props.group?.id]);
+    }, [props, wishlistItemToAdd, wishlistItemToAddUrl]);
 
     const removeWishlistItems = items => {
         props.removeWishlistItemsRequest(props.group?.id, items);
@@ -86,15 +87,13 @@ const MyGroups = props => {
         } else {
             setNewGiftRestriction([...newGiftRestriction, id]);
         }
-    }, [newGiftRestriction]);
-
-    // console.log('group', props.group);
+    }, [setNewGiftRestriction, newGiftRestriction]);
 
     const addGiftRestriction = React.useCallback(() => {
         props.addGiftRestrictionRequest(props.group.id, newGiftRestriction);
         // setNewGiftRestriction([]);
         setIsAddingGiftRestrictions(false);
-    }, [props.group, newGiftRestriction]);
+    }, [props, newGiftRestriction]);
 
     const cancelRemovingGiftRestrictions = () => {
         setIsRemovingGiftRestrictions(false);
@@ -105,7 +104,7 @@ const MyGroups = props => {
         if (!props.addingGiftRestriction) {
             setNewGiftRestriction([]);
         }
-    }, [props.addingGiftRestriction]);
+    }, [props.addingGiftRestriction, setNewGiftRestriction]);
 
     useEffect(() => {
         if (!props.removingGiftRestrictions) {

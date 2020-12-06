@@ -6,6 +6,8 @@ import StyledButton from '../common/StyledButton/StyledButton';
 import styles from './RemoveFromWishlist.module.scss';
 
 const RemoveFromWishlist = props => {
+    const { removeWishlistItems } = props;
+
     const [removedItems, setRemovedItems] = React.useState([]);
 
     const removeItem = React.useCallback(item => {
@@ -13,9 +15,9 @@ const RemoveFromWishlist = props => {
     }, [removedItems]);
 
     const removeItems = React.useCallback(() => {
-        props.removeWishlistItems(removedItems);
+        removeWishlistItems(removedItems);
         setRemovedItems([]);
-    }, [removedItems]);
+    }, [removeWishlistItems, removedItems]);
 
     return (
         <>

@@ -222,11 +222,11 @@ const MyGroups = props => {
                     </div>
                 )}
 
-                {((props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS
-                && props.auth.uid === props.group.owner) || true) && (
+                {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS
+                && props.auth.uid === props.group.owner && (
                     <div className={styles.activateGroupButton}>
                         <StyledButton
-                            text="Assign Pairings"
+                            text="Randomise Pairings"
                             onClick={() => setIsConfirmingAssingPairings(true)}
                         />
                     </div>

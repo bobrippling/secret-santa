@@ -2,6 +2,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _, { noop } from 'lodash';
+import classNames from 'classnames';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { makeStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom';
 import { firestoreConnect } from 'react-redux-firebase';
@@ -91,6 +93,8 @@ const MyGroups = props => {
         props.history.push(`${constants.URL.GROUP_DETAILS}/${groupId}`);
     };
 
+    const isMobile = useMediaQuery(`(max-width:${constants.mobileScreenSize}px)`);
+
     return (
         <>
             {groups.map(x => {
@@ -103,7 +107,10 @@ const MyGroups = props => {
             })}
             <Paper
                 elevation={4}
-                className={classes.paperNoPadding}
+                className={classNames({
+                    [classes.paperNoPadding]: true,
+                    [classes.halfWidth]: !isMobile
+                })}
             >
                 <div className={styles.buttonWrapper}>
                     <StyledButton

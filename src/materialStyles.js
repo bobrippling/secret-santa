@@ -11,7 +11,18 @@ export default theme => ({
         marginLeft: 'auto',
         marginRight: 'auto'
     },
+    halfWidth: {
+        width: '50%',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    },
+    slightlySquished: {
+        width: '75%',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    },
     maxWidth: {
         width: '100%'
     }
+
 });

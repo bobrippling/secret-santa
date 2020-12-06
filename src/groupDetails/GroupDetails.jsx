@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
 import { firestoreConnect } from 'react-redux-firebase';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import classNames from 'classnames';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -127,6 +128,8 @@ const MyGroups = props => {
         setIsConfirmLeaveGroup(false);
     };
 
+    const isMobile = useMediaQuery(`(max-width:${constants.mobileScreenSize}px)`);
+
     const { group } = props;
 
     if (!group) {
@@ -138,7 +141,10 @@ const MyGroups = props => {
         <>
             <Paper
                 elevation={4}
-                className={classes.paperNoPadding}
+                className={classNames({
+                    [classes.paperNoPadding]: true,
+                    [classes.halfWidth]: !isMobile
+                })}
             >
                 <div className={styles.detailWrapper}>
                     <div className={styles.key}>
@@ -237,7 +243,10 @@ const MyGroups = props => {
             {group.participants.map((p, index) => (
                 <Paper
                     elevation={4}
-                    className={classes.paperNoPadding}
+                    className={classNames({
+                        [classes.paperNoPadding]: true,
+                        [classes.paperTinyWidth]: !isMobile
+                    })}
                     key={p}
                 >
                     <div className={styles.participants}>
@@ -272,7 +281,10 @@ const MyGroups = props => {
 
             <Paper
                 elevation={4}
-                className={classes.paperNoPadding}
+                className={classNames({
+                    [classes.paperNoPadding]: true,
+                    [classes.paperTinyWidth]: !isMobile
+                })}
             >
                 <div className={styles.buttonWrapper}>
                     <LoadingDiv isLoading={props.removingGiftRestrictions} isBorderRadius>

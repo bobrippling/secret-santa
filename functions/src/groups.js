@@ -33,26 +33,31 @@ exports.createGroup = functions
             throw new functions.https.HttpsError('invalid-argument', 'Group code must be at least 6 characters');
         }
 
-        return db.collection('users').doc(context.auth.uid).get().then(user => {
-            return db.collection('groups').add({
-                code: data.code,
-                groupName: data.groupName,
-                isNoPriceRange: data.isNoPriceRange || false,
-                status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
-                owner: context.auth.uid,
-                participants: [context.auth.uid],
-                pairings: {},
-                priceMin: common.isNumber(data.min) ? data.min : null,
-                priceMax: common.isNumber(data.max) ? data.max : null,
-                restrictions: {},
-                displayNameMappings: {
-                    [context.auth.uid]: user.data().displayName
-                },
-                wishlist: {
-                    [context.auth.uid]: []
-                },
+        return db.collection('groups').where('code', '==', data.code).get().then(result => {
+            if (result.size > 0) {
+                throw new functions.https.HttpsError('invalid-argument', 'There is already a group with that code!');
+            }
+            return db.collection('users').doc(context.auth.uid).get().then(user => {
+                return db.collection('groups').add({
+                    code: data.code,
+                    groupName: data.groupName,
+                    isNoPriceRange: data.isNoPriceRange || false,
+                    status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
+                    owner: context.auth.uid,
+                    participants: [context.auth.uid],
+                    pairings: {},
+                    priceMin: common.isNumber(data.min) ? data.min : null,
+                    priceMax: common.isNumber(data.max) ? data.max : null,
+                    restrictions: {},
+                    displayNameMappings: {
+                        [context.auth.uid]: user.data().displayName
+                    },
+                    wishlist: {
+                        [context.auth.uid]: []
+                    },
+                })
             })
-        })
+        })        
     });
 
 exports.joinGroup = functions

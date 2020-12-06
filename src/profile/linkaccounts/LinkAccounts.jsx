@@ -24,16 +24,17 @@ const LinkAccounts = props => {
                     [classes.paperTinyWidth]: !isMobile
                 })}
             >
-                <div className={classNames({
-                    [props.styles.facebookLinkWrapper]: true,
-                    [props.styles.clickFacebook]: !props.isSignedInWithFacebook
-                })}
+                <div
+                    className={classNames({
+                        [props.styles.facebookLinkWrapper]: true,
+                        [props.styles.clickFacebook]: !props.isSignedInWithFacebook
+                    })}
+                    onClick={props.linkProfileToFacebook}
+                    role="button"
+                    tabIndex={0}
                 >
                     <div
                         className={props.styles.facebookLinkMessage}
-                        onClick={props.linkProfileToFacebook}
-                        role="button"
-                        tabIndex={0}
                     >
                         {props.isSignedInWithFacebook ? 'You have linked your Facebook account ' : 'Link your Facebook account'}
                     </div>
@@ -42,8 +43,6 @@ const LinkAccounts = props => {
                             alt="Facebook"
                             className={props.styles.facebookImage}
                             src={FacebookImage}
-                            onClick={props.linkProfileToFacebook}
-                            role="presentation"
                         />
                     </div>
                 </div>

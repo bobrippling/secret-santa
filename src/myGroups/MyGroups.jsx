@@ -156,11 +156,16 @@ const MyGroups = props => {
                 headerMessage="Join Group"
                 toggleModal={resetState}
             >
-                <TextInput
-                    value={groupCodeToJoin}
-                    onChange={setGroupCodeToJoin}
-                    label="Enter code"
-                />
+                <div className={classNames({
+                    [styles.smallWidth]: !isMobile
+                })}
+                >
+                    <TextInput
+                        value={groupCodeToJoin}
+                        onChange={setGroupCodeToJoin}
+                        label="Enter code"
+                    />
+                </div>
                 <div className={styles.buttonWrapper}>
                     <LoadingDiv isLoading={props.joiningGroup} isBorderRadius isFitContent>
                         <StyledButton

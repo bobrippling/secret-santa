@@ -26,6 +26,7 @@
   padding: $spacing-average;
   display: flex;
   justify-content: center;
+  height: 100%;
   .googleLinkMessage, .facebookLinkMessage, .phoneLinkMessage {
     @include vertical-center-div();
     margin-right: $spacing-medium;
@@ -39,6 +40,10 @@
     margin-bottom: auto;
     margin-left: auto;
   }  
+}
+
+.facebookLinkWrapper:focus, .googleLinkWrapper:focus {
+  outline: none;
 }
 
 .googleImage, .facebookImage, .phoneImage {

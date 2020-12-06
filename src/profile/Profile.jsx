@@ -99,13 +99,18 @@ const Profile = props => {
                 toggleModal={() => setIsDisplayNameModalOpen(false)}
             >
                 <div className={styles.modalWrapper}>
-                    <TextInput
-                        icon={textInputConstants.textInputIcons.user}
-                        iconColor="primary"
-                        value={newDisplayName}
-                        onChange={setNewDisplayName}
-                        label="Edit Display Name"
-                    />
+                    <div className={classNames({
+                        [styles.smallWidth]: !isMobile
+                    })}
+                    >
+                        <TextInput
+                            icon={textInputConstants.textInputIcons.user}
+                            iconColor="primary"
+                            value={newDisplayName}
+                            onChange={setNewDisplayName}
+                            label="Edit Display Name"
+                        />
+                    </div>
                     <div className={styles.confirmButtons}>
                         <LoadingDiv isLoading={props.updatingDisplayName} isBorderRadius>
                             <StyledButton

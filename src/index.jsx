@@ -9,6 +9,7 @@ import { ReactReduxFirebaseProvider, getFirebase } from 'react-redux-firebase';
 import { createFirestoreInstance } from 'redux-firestore';
 import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
+import * as serviceWorker from './serviceWorker';
 import { firebaseApp } from './config/fbConfig';
 import createRootReducer from './rootReducer';
 import rootSaga from './rootSaga';
@@ -57,3 +58,5 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root')
 );
+
+serviceWorker.register();

@@ -83,7 +83,7 @@ const TopNavbar: React.FC<Props> = (props:Props) => {
                 </IconButton>
                 <Typography variant="h6">
                     <div className={defaultStyles.titleWrapper}>
-                        Secret Santa
+                        Secret Santas
                     </div>
                 </Typography>
                 <div className={defaultStyles.navbarIcon}>

@@ -43,7 +43,7 @@ const MyGroups = props => {
     const [wishlistItemToAdd, setWishlistItemToAdd] = React.useState('');
     const [wishlistItemToAddUrl, setWishlistItemToAddUrl] = React.useState('');
 
-    const [newGiftRestriction, setNewGiftRestriction] = React.useState > ([]);
+    const [newGiftRestriction, setNewGiftRestriction] = React.useState([]);
     const [removedGiftRestrictions, setRemovedGiftRestrictions] = React.useState([]);
 
     const [isConfirmDeleteGroup, setIsConfirmDeleteGroup] = React.useState(false);
@@ -382,7 +382,7 @@ const MyGroups = props => {
                     })}
                     >
                         {props.group.participants.map(p => (
-                            <div>
+                            <div key={p}>
                                 {mapIdToName(p, props.group.displayNameMappings)}
                             </div>
                         ))}

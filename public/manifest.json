@@ -1,22 +1,20 @@
 {
-  "short_name": "Santa",
-  "name": "Secret Santa",
+  "short_name": "Mattican",
+  "name": "Mattican Games",
   "icons": [
     {
-      "src": "ChristmasTree.ico",
+      "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon",
-      "purpose": "maskable"
+      "type": "image/x-icon"
     },
     {
       "src": "ChristmasTree.png",
-      "sizes": "192x192 512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "sizes": "192x192 512x512"
     }
   ],
   "start_url": "./index.html",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#000000"
 }

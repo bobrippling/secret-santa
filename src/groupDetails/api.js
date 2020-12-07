@@ -7,3 +7,4 @@ export const removeGiftRestrictions = request => functionToCall('groups-removeGi
 export const assignPairings = request => functionToCall('groups-assignPairings')(request);
 export const deleteGroup = request => functionToCall('groups-deleteGroup')(request);
 export const leaveGroup = request => functionToCall('groups-leaveGroup')(request);
+export const setAddress = request => functionToCall('groups-setAddress')(request);

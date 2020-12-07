@@ -52,9 +52,12 @@ const WithModal = Component => {
                     <Fade in={props.isOpen}>
                         <div style={modalStyle} className={classes.paper}>
                             <div className={props.styles.modalContextWrapper}>
-                                <div className={props.styles.closeModalIcon}>
-                                    <CloseIcon onClick={props.closeModal} />
-                                </div>
+                                {!props.hideCloseIcon
+                                && (
+                                    <div className={props.styles.closeModalIcon}>
+                                        <CloseIcon onClick={props.closeModal} />
+                                    </div>
+                                )}
                                 <div className={classNames({
                                     [props.styles.headerWrapper]: true,
                                     [props.styles.isError]: props.isError,
@@ -80,6 +83,7 @@ const WithModal = Component => {
         headerMessage: '',
         errorCode: '',
         errorMessage: '',
+        hideCloseIcon: false,
         isOpen: false,
         isError: false,
         isSuccess: false,
@@ -99,6 +103,7 @@ const WithModal = Component => {
         headerMessage: PropTypes.string,
         errorCode: PropTypes.string,
         errorMessage: PropTypes.string,
+        hideCloseIcon: PropTypes.bool,
         isOpen: PropTypes.bool,
         isError: PropTypes.bool,
         isSuccess: PropTypes.bool,

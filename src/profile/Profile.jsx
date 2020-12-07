@@ -33,8 +33,13 @@ const Profile = props => {
     const updateDisplayName = React.useCallback(() => {
         props.updateDisplayNameRequest(newDisplayName);
         setIsDisplayNameModalOpen(false);
-        setNewDisplayName('');
     }, [props, newDisplayName]);
+
+    React.useEffect(() => {
+        if (!props.updatingDisplayName) {
+            setNewDisplayName('');
+        }
+    }, [props.updatingDisplayName]);
 
     const closeModal = () => {
         setNewDisplayName('');

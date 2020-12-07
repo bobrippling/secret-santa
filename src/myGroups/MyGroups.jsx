@@ -77,8 +77,14 @@ const MyGroups = props => {
     const triggerCreateGroupRequest = React.useCallback(() => {
         const priceRangeUsed = isPriceRangeActive ? priceRange : null;
         props.createGroupRequest(groupName, priceRangeUsed, selectedDate, groupCode);
-        resetState();
+        // resetState();
     }, [props, isPriceRangeActive, priceRange, selectedDate, groupName, groupCode]);
+
+    React.useEffect(() => {
+        if (!props.creatingGroup || !props.joiningGroup) {
+            resetState();
+        }
+    }, [props.creatingGroup, props.joiningGroup]);
 
     const groups = _.map(props.groups, (value, id) => ({ id, ...value }))
         .filter(x => x.participants.includes(props.auth.uid));
@@ -86,7 +92,6 @@ const MyGroups = props => {
     const joinGroup = React.useCallback(() => {
         props.joinGroupRequest(groupCodeToJoin);
         setIsJoiningGroup(false);
-        resetState();
     }, [props, groupCodeToJoin]);
 
     const redirectToGroupDetails = groupId => {

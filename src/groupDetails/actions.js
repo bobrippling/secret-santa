@@ -16,6 +16,8 @@ export const REDIRECT_REQUEST = `${pre}REDIRECT_REQUEST`;
 export const LEAVE_GROUP_REQUEST = `${pre}LEAVE_GROUP_REQUEST`;
 export const DELETE_GROUP_REQIEST = `${pre}DELETE_GROUP_REQIEST`;
 export const CANCEL_LEAVE_GROUP = `${pre}CANCEL_LEAVE_GROUP`;
+export const ADD_DELIVERY_ADDRESS_REQUEST = `${pre}ADD_DELIVERY_ADDRESS_REQUEST`;
+export const CANCEL_ADDING_DELIVERY_ADDRESS = `${pre}CANCEL_ADDING_DELIVERY_ADDRESS`;
 
 export const addWishlistItemRequest = (groupId, item, url) => ({
     type: ADD_WISHLIST_ITEM_REQUEST,
@@ -88,4 +90,14 @@ export const leaveGroupRequest = groupId => ({
 
 export const cancelLeaveGroup = () => ({
     type: CANCEL_LEAVE_GROUP
+});
+
+export const addDeliveryAddressRequest = (groupId, address) => ({
+    type: ADD_DELIVERY_ADDRESS_REQUEST,
+    groupId,
+    address
+});
+
+export const cancelAddingDeliveryAddress = () => ({
+    type: CANCEL_ADDING_DELIVERY_ADDRESS
 });

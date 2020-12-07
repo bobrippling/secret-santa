@@ -39,7 +39,8 @@ const App = props => {
                         <SuccessModal
                             backdrop
                             isOpen={!props.profile?.displayName && props.profile.isLoaded}
-                            headerMessage="Set your display name"
+                            headerMessage="You must set your display name"
+                            hideCloseIcon
                         >
                             <TextInput
                                 icon={textInputConstants.textInputIcons.user}

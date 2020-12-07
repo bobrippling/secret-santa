@@ -35,9 +35,22 @@
     @include vertical-center-div();
 }
 
-.value {
+.addressKey {
+    font-weight: bold;
+    color: $color-dark-green;
+    margin-right: $spacing-tiny;
+    font-size: $font-size-medium;
+    @include vertical-center-div();
+    text-align: center;
+}
+
+.value, .valueCode {
     font-weight: bold;
     margin-bottom: $spacing-small;
+}
+
+.valueCode {
+    word-break: break-all;
 }
 
 .wishlistButtons, .giftRestrictionButtons {
@@ -54,6 +67,13 @@
     margin-left: $spacing-average;
     margin-right: $spacing-average;
     padding-bottom: $spacing-tiny;
+    position: relative;
+}
+
+.groupPartialInfoWrapper {
+    display: flex;
+    padding-left: $spacing-tiny;
+    padding-right: $spacing-tiny;
 }
 
 .faceIcon {
@@ -168,9 +188,42 @@
     padding-bottom: $spacing-small;
 }
 
+.addAddressText {
+    font-weight: bold;
+    color: $color-dark-green;
+    margin-right: $spacing-tiny;
+    font-size: $font-size-medium;
+    @include vertical-center-div();
+}
+
+.addAddressWrapper {
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.addAddressWrapper:focus {
+    outline: none;
+}
+
+.addressWrapper {
+    position: absolute;
+    right: 0px;
+}
+
+.viewAddressMessage {
+    font-size: $font-size-miniscule;
+}
+
 @media only screen and (max-width: 800px) {
     .waitForPairingsStatus {
        max-height: 300px;
        overflow-y: scroll;
+    }
+
+    .groupPartialInfoWrapper {
+        flex-direction: column;
     }
 }

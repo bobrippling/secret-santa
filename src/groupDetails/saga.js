@@ -102,6 +102,19 @@ export function* leaveGroup(api, action) {
     }
 }
 
+export function* setAddress(api, action) {
+    try {
+        yield call(api.setAddress, {
+            groupId: action.groupId,
+            address: action.address
+        });
+    } catch (error) {
+        yield put(setErrorMessage('Error Setting Address', error));
+    } finally {
+        yield put(actions.cancelAddingDeliveryAddress());
+    }
+}
+
 export default function* groupDetails() {
     yield all([
         takeEvery(actions.ADD_WISHLIST_ITEM_REQUEST, addItemToWishlist, myGroupsApi),
@@ -111,6 +124,7 @@ export default function* groupDetails() {
         takeEvery(actions.ASSIGN_PAIRINGS_REQUEST, assignPairings, myGroupsApi),
         takeEvery(actions.DELETE_GROUP_REQIEST, deleteGroup, myGroupsApi),
         takeEvery(actions.REDIRECT_REQUEST, redirectRequest),
-        takeEvery(actions.LEAVE_GROUP_REQUEST, leaveGroup, myGroupsApi)
+        takeEvery(actions.LEAVE_GROUP_REQUEST, leaveGroup, myGroupsApi),
+        takeEvery(actions.ADD_DELIVERY_ADDRESS_REQUEST, setAddress, myGroupsApi)
     ]);
 }

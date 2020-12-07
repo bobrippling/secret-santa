@@ -39,6 +39,7 @@ exports.createGroup = functions
             }
             return db.collection('users').doc(context.auth.uid).get().then(user => {
                 return db.collection('groups').add({
+                    addressMappings: {},
                     code: data.code,
                     groupName: data.groupName,
                     isNoPriceRange: data.isNoPriceRange || false,
@@ -85,6 +86,10 @@ exports.joinGroup = functions
 
             if (docs.docs[0].data().status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
                 throw new functions.https.HttpsError('invalid-argument', 'This group has already started. Too late to join');
+            }
+
+            if (docs.docs[0].data().participants.includes(context.auth.uid)){
+                throw new functions.https.HttpsError('invalid-argument', 'You are already in that group!');
             }
             
             return db.collection('users').doc(context.auth.uid).get().then(user => {
@@ -190,6 +195,10 @@ exports.assignPairings = functions
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can assign pairings');
             }
 
+            if (doc.data().participants.length < 2) {
+                throw new functions.https.HttpsError('invalid-argument', 'There are not enough people in the group yet');
+            }
+
             const { restrictions, participants } = doc.data();
 
             const pairings = common.generatePairings(restrictions, participants)
@@ -229,7 +238,7 @@ exports.leaveGroup = functions
 
         return db.collection('groups').doc(data.groupId).get().then(doc => {
             if (context.auth.uid === doc.data().owner && doc.data().participants && doc.data().participants.length > 1) {
-                throw new functions.https.HttpsError('invalid-argument', 'The owner cannot leave if there are people left in the group');
+                throw new functions.https.HttpsError('invalid-argument', 'The group owner cannot leave if there are people left in the group');
             }
 
             if (doc.data().participants && doc.data().participants.length === 1) {
@@ -246,5 +255,24 @@ exports.leaveGroup = functions
                 wishlist: _.omit(doc.data().wishlist, context.auth.uid),
             })
             
+        })
+    });
+
+exports.setAddress = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+            return doc.ref.update({
+                addressMappings: {
+                    ...doc.data().addressMappings,
+                    [context.auth.uid]: data.address || ''
+                }
+            })
         })
     });

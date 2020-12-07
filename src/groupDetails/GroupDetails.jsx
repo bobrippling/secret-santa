@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Paper from '@material-ui/core/Paper';
 import { firestoreConnect } from 'react-redux-firebase';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import ContactsIcon from '@material-ui/icons/Contacts';
 import classNames from 'classnames';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -21,7 +22,7 @@ import AddToWishlist from './AddToWishlist';
 import {
     addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
     removeGiftRestrictionRequests, assignPairingsRequest, deleteGroupRequest,
-    redirectRequest, leaveGroupRequest
+    redirectRequest, leaveGroupRequest, addDeliveryAddressRequest
 } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
@@ -52,6 +53,18 @@ const MyGroups = props => {
 
     const [isConfirmLeaveGroup, setIsConfirmLeaveGroup] = React.useState(false);
 
+    const [newAddress, setNewAddress] = React.useState('');
+    const [isAddingAddress, setIsAddingAddress] = React.useState(false);
+
+    const [isViewingAddress, setIsViewingAddress] = React.useState(false);
+    const [addressBeingViewed, setAddressBeingViewed] = React.useState('');
+    const [userIdAddressBeingViewed, setUserIdAddressBeingViewed] = React.useState('');
+
+    const closeAddingAddress = () => {
+        setIsAddingAddress(false);
+        setNewAddress('');
+    };
+
     const closeConfirmDeleteGroup = () => {
         setIsConfirmDeleteGroup(false);
         setConfirmDeleteText('');
@@ -74,8 +87,14 @@ const MyGroups = props => {
 
     const addWishlistItem = React.useCallback(() => {
         props.addWishlistItemRequest(props.group?.id, wishlistItemToAdd, wishlistItemToAddUrl);
-        closeAddingToWishlist();
+        // closeAddingToWishlist();
     }, [props, wishlistItemToAdd, wishlistItemToAddUrl]);
+
+    React.useEffect(() => {
+        if (!props.addingItemToWishlist) {
+            closeAddingToWishlist();
+        }
+    }, [props.addingItemToWishlist]);
 
     const removeWishlistItems = items => {
         props.removeWishlistItemsRequest(props.group?.id, items);
@@ -128,6 +147,29 @@ const MyGroups = props => {
         setIsConfirmLeaveGroup(false);
     };
 
+    const addAddress = () => {
+        props.addDeliveryAddressRequest(props.group.id, newAddress);
+        setIsAddingAddress(false);
+    };
+
+    React.useEffect(() => {
+        if (!props.addingAddress) {
+            setNewAddress(''); // CHANGE ME
+        }
+    }, [props.addingAddress]);
+
+    const viewAddress = (address, userId) => {
+        setAddressBeingViewed(address);
+        setUserIdAddressBeingViewed(userId);
+        setIsViewingAddress(true);
+    };
+
+    const closeViewingAddress = () => {
+        setIsViewingAddress(false);
+        setAddressBeingViewed('');
+        setUserIdAddressBeingViewed('');
+    };
+
     const isMobile = useMediaQuery(`(max-width:${constants.mobileScreenSize}px)`);
 
     const { group } = props;
@@ -146,36 +188,24 @@ const MyGroups = props => {
                     [classes.halfWidth]: !isMobile
                 })}
             >
-                <div className={styles.detailWrapper}>
-                    <div className={styles.key}>
-                        Group Name
+                <div className={styles.groupPartialInfoWrapper}>
+                    <div className={styles.detailWrapper}>
+                        <div className={styles.key}>
+                            Group Name
+                        </div>
+                        <div className={styles.value}>
+                            {group.groupName}
+                        </div>
                     </div>
-                    <div className={styles.value}>
-                        {group.groupName}
+                    <div className={styles.detailWrapper}>
+                        <div className={styles.key}>
+                            Group Code
+                        </div>
+                        <div className={styles.valueCode}>
+                            {group.code}
+                        </div>
                     </div>
                 </div>
-
-                {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS && (
-                    <div className={styles.detailWrapperStatuses}>
-                        <div className={styles.key}>
-                            Who am I getting a gift for?
-                        </div>
-                        <div className={styles.waitForPairingsStatus}>
-                            {`Waiting for ${mapIdToName(props.group.owner, props.group.displayNameMappings)} to randomise gift assignments`}
-                        </div>
-                    </div>
-                )}
-                {props.group.status === constants.groupStatuses.PAIRINGS_ASSIGNED && (
-                    <div className={styles.detailWrapperStatuses}>
-                        <div className={styles.key}>
-                            Who am I getting a gift for?
-                        </div>
-                        <div className={styles.mySecretSantaTarget}>
-                            {mapIdToName(props.group.pairings[props.auth.uid],
-                                props.group.displayNameMappings)}
-                        </div>
-                    </div>
-                )}
 
                 {!group.isNoPriceRange && (
                     <div className={styles.detailWrapper}>
@@ -187,15 +217,6 @@ const MyGroups = props => {
                         </div>
                     </div>
                 )}
-
-                <div className={styles.detailWrapper}>
-                    <div className={styles.key}>
-                        Group Code
-                    </div>
-                    <div className={styles.value}>
-                        {group.code}
-                    </div>
-                </div>
 
                 <div className={styles.detailWrapper}>
                     <div className={styles.key}>
@@ -228,6 +249,37 @@ const MyGroups = props => {
                     </div>
                 )}
 
+                <div
+                    className={styles.addAddressWrapper}
+                    onClick={() => setIsAddingAddress(true)}
+                    role="button"
+                    tabIndex={0}
+                >
+                    <div className={styles.addAddressText}>
+                        {props.group.addressMappings[props.auth.uid] ? 'Set Address' : 'Add Address'}
+                    </div>
+                    <div>
+                        <AddCircleIcon color="primary" fontSize="large" />
+                    </div>
+                </div>
+
+                <div className={styles.detailWrapperStatuses}>
+                    <div className={styles.key}>
+                        Who am I getting a gift for?
+                    </div>
+
+                    {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS ? (
+                        <div className={styles.waitForPairingsStatus}>
+                            {`Waiting for ${mapIdToName(props.group.owner, props.group.displayNameMappings)} to randomise gift assignments`}
+                        </div>
+                    ) : (
+                        <div className={styles.mySecretSantaTarget}>
+                            {mapIdToName(props.group.pairings[props.auth.uid],
+                                props.group.displayNameMappings)}
+                        </div>
+                    )}
+                </div>
+
                 {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS
                 && props.auth.uid === props.group.owner && (
                     <div className={styles.activateGroupButton}>
@@ -255,6 +307,12 @@ const MyGroups = props => {
                         </div>
                         <div className={styles.participantName}>
                             {mapIdToName(p, group.displayNameMappings)}
+                        </div>
+                        <div className={styles.addressWrapper}>
+                            <ContactsIcon
+                                color={index % 2 === 0 ? 'primary' : 'secondary'}
+                                onClick={() => viewAddress(props.group?.addressMappings[p], p)}
+                            />
                         </div>
                     </div>
                     <div className={styles.wishlistWrapper}>
@@ -487,11 +545,62 @@ const MyGroups = props => {
 
             </SuccessModal>
 
+            <SuccessModal
+                backdrop
+                closeModal={closeAddingAddress}
+                isOpen={isAddingAddress || props.addingAddress}
+                headerMessage="Add Delivery Address"
+                toggleModal={closeAddingAddress}
+            >
+                <div className={styles.confirmDeleteMessage}>
+                    Please set your delivery address if necessary
+                </div>
+                <div>
+                    <TextInput
+                        value={newAddress}
+                        onChange={setNewAddress}
+                        label="Set your delivery address"
+                    />
+                </div>
+
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.addingAddress} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={addAddress}
+                            text="Set Address"
+                            disabled={props.addingAddress}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={closeAddingAddress}
+                            text="Cancel"
+                            disabled={props.addingAddress}
+                        />
+                    </LoadingDiv>
+                </div>
+
+            </SuccessModal>
+
+            <SuccessModal
+                backdrop
+                closeModal={closeViewingAddress}
+                isOpen={isViewingAddress}
+                headerMessage={`${mapIdToName(userIdAddressBeingViewed, props.group.displayNameMappings)} Delivery Address`}
+                toggleModal={closeViewingAddress}
+            >
+                <div className={styles.addressKey}>
+                    {addressBeingViewed}
+                </div>
+
+            </SuccessModal>
+
         </>
     );
 };
 
 const mapDispatchToProps = {
+    addDeliveryAddressRequest,
     addWishlistItemRequest,
     addGiftRestrictionRequest,
     assignPairingsRequest,
@@ -503,6 +612,7 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state, props) => ({
+    addingAddress: state.groupDetails.addingAddress,
     addingItemToWishlist: state.groupDetails.addingItemToWishlist,
     addingGiftRestriction: state.groupDetails.addingGiftRestriction,
     assigningPairings: state.groupDetails.assigningPairings,

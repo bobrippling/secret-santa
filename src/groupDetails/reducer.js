@@ -2,6 +2,7 @@ import fp from 'lodash/fp';
 import * as actions from './actions';
 
 export const initialState = {
+    addingAddress: false,
     addingItemToWishlist: false,
     addingGiftRestriction: false,
     assigningPairings: false,
@@ -54,6 +55,12 @@ const groupDetailsReducer = (state = initialState, action) => {
     }
     case actions.CANCEL_LEAVE_GROUP: {
         return fp.set('leavingGroup', false)(state);
+    }
+    case actions.ADD_DELIVERY_ADDRESS_REQUEST: {
+        return fp.set('addingAddress', true)(state);
+    }
+    case actions.CANCEL_ADDING_DELIVERY_ADDRESS: {
+        return fp.set('addingAddress', false)(state);
     }
     default:
         return state;

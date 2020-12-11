@@ -19,6 +19,12 @@ export const CANCEL_LEAVE_GROUP = `${pre}CANCEL_LEAVE_GROUP`;
 export const ADD_DELIVERY_ADDRESS_REQUEST = `${pre}ADD_DELIVERY_ADDRESS_REQUEST`;
 export const CANCEL_ADDING_DELIVERY_ADDRESS = `${pre}CANCEL_ADDING_DELIVERY_ADDRESS`;
 
+export const KICK_USER_REQUEST = `${pre}KICK_USER_REQUEST`;
+export const CANCEL_KICKING_USER = `${pre}CANCEL_KICKING_USER`;
+
+export const REGENERATE_GROUP_REQUEST = `${pre}REGENERATE_GROUP_REQUEST`;
+export const CANCEL_REGENERATING_GROUP = `${pre}CANCEL_REGENERATING_GROUP`;
+
 export const addWishlistItemRequest = (groupId, item, url) => ({
     type: ADD_WISHLIST_ITEM_REQUEST,
     item,
@@ -101,3 +107,37 @@ export const addDeliveryAddressRequest = (groupId, address) => ({
 export const cancelAddingDeliveryAddress = () => ({
     type: CANCEL_ADDING_DELIVERY_ADDRESS
 });
+
+export const kickUserRequest = (groupId, userId) => ({
+    type: KICK_USER_REQUEST,
+    groupId,
+    userId
+});
+
+export const cancelKickingUser = () => ({
+    type: CANCEL_KICKING_USER
+});
+
+export const regenerateGroupRequest = (groupId, priceRange, date) => ({
+    type: REGENERATE_GROUP_REQUEST,
+    groupId,
+    priceRange,
+    date
+});
+
+export const cancelRegeneratingGroup = () => ({
+    type: CANCEL_REGENERATING_GROUP
+});
+
+const x = {
+    a: [1, 2, 3, 5],
+    b: [3, 5, 1, 3],
+    c: [4, 7]
+};
+
+const reduced = Object.keys(x).reduce((acc, cur) => ({
+    ...acc,
+    [cur]: []
+}), {});
+
+console.log('x', reduced);

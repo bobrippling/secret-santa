@@ -21,7 +21,7 @@ import TextInput from '../common/TextInput/TextInput';
 import LoadingDiv from '../common/loadingDiv/LoadingDiv';
 import * as constants from '../constants';
 
-const findNextChristmas = () => {
+export const findNextChristmas = () => {
     const result = new Date();
     result.setDate(25);
     result.setMonth(11);

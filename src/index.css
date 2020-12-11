@@ -7,13 +7,13 @@ html {
   body{
     height:100%;
     min-height: 100%;
-    font-family: 'Special Elite', cursive !important;
+    font-family: 'Roboto', sans-serif !important;
   }
   
   #root{
     height: 100%; 
     overflow-y: scroll;
-    font-family: 'Special Elite', cursive !important;
+    font-family: 'Roboto', sans-serif !important;
   }
 
   #root{
@@ -22,5 +22,5 @@ html {
   }
   
   * {
-    font-family: 'Special Elite', cursive !important;
+    font-family: 'Roboto', sans-serif !important;
    }

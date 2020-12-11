@@ -7,6 +7,8 @@ export const initialState = {
     addingGiftRestriction: false,
     assigningPairings: false,
     deletingGroup: false,
+    kickingUser: false,
+    regeneratingGroup: false,
     leavingGroup: false,
     removingItemsFromWishlist: false,
     removingGiftRestrictions: false
@@ -61,6 +63,18 @@ const groupDetailsReducer = (state = initialState, action) => {
     }
     case actions.CANCEL_ADDING_DELIVERY_ADDRESS: {
         return fp.set('addingAddress', false)(state);
+    }
+    case actions.KICK_USER_REQUEST: {
+        return fp.set('kickingUser', true)(state);
+    }
+    case actions.CANCEL_KICKING_USER: {
+        return fp.set('kickingUser', false)(state);
+    }
+    case actions.REGENERATE_GROUP_REQUEST: {
+        return fp.set('regeneratingGroup', true)(state);
+    }
+    case actions.CANCEL_REGENERATING_GROUP: {
+        return fp.set('regeneratingGroup', false)(state);
     }
     default:
         return state;

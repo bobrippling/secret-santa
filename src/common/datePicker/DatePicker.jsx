@@ -9,7 +9,7 @@ import {
 
 const MaterialUIPickers = props => {
     const {
-        selectedDate, setSelectedDate, variant, label
+        selectedDate, setSelectedDate, variant, label, minDate
     } = props;
 
     return (
@@ -20,6 +20,7 @@ const MaterialUIPickers = props => {
                     variant={variant}
                     format="dd/MM/yyyy"
                     autoOk
+                    minDate={minDate || undefined}
                     margin="normal"
                     id={label}
                     label={label}

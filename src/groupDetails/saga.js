@@ -115,6 +115,48 @@ export function* setAddress(api, action) {
     }
 }
 
+export function* kickUser(api, action) {
+    try {
+        yield call(api.kickUser, {
+            groupId: action.groupId,
+            userId: action.userId
+        });
+    } catch (error) {
+        yield put(setErrorMessage('Error Kicking User', error));
+    } finally {
+        yield put(actions.cancelKickingUser());
+    }
+}
+
+const getFields = (priceRange, date, groupId) => {
+    const fields = {
+        date: date.toString(),
+        groupId
+    };
+
+    if (priceRange) {
+        const min = Math.min(...priceRange);
+        const max = Math.max(...priceRange);
+        fields.min = min;
+        fields.max = max;
+    } else {
+        fields.isNoPriceRange = true;
+    }
+
+    return fields;
+};
+
+export function* regenerate(api, action) {
+    try {
+        const fields = getFields(action.priceRange, action.date, action.groupId);
+        yield call(api.regenerateGroup, fields);
+    } catch (error) {
+        yield put(setErrorMessage('Error Regenerating Group', error));
+    } finally {
+        yield put(actions.cancelRegeneratingGroup());
+    }
+}
+
 export default function* groupDetails() {
     yield all([
         takeEvery(actions.ADD_WISHLIST_ITEM_REQUEST, addItemToWishlist, myGroupsApi),
@@ -125,6 +167,8 @@ export default function* groupDetails() {
         takeEvery(actions.DELETE_GROUP_REQIEST, deleteGroup, myGroupsApi),
         takeEvery(actions.REDIRECT_REQUEST, redirectRequest),
         takeEvery(actions.LEAVE_GROUP_REQUEST, leaveGroup, myGroupsApi),
-        takeEvery(actions.ADD_DELIVERY_ADDRESS_REQUEST, setAddress, myGroupsApi)
+        takeEvery(actions.ADD_DELIVERY_ADDRESS_REQUEST, setAddress, myGroupsApi),
+        takeEvery(actions.KICK_USER_REQUEST, kickUser, myGroupsApi),
+        takeEvery(actions.REGENERATE_GROUP_REQUEST, regenerate, myGroupsApi)
     ]);
 }

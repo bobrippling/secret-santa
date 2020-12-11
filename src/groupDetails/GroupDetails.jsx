@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import Paper from '@material-ui/core/Paper';
 import { firestoreConnect } from 'react-redux-firebase';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -8,13 +9,19 @@ import ContactsIcon from '@material-ui/icons/Contacts';
 import classNames from 'classnames';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveIcon from '@material-ui/icons/Remove';
+import AddIcon from '@material-ui/icons/Add';
 import FaceIcon from '@material-ui/icons/Face';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { compose } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
 import StyledButton from '../common/StyledButton/StyledButton';
 import LoadingDiv from '../common/loadingDiv/LoadingDiv';
+import { findNextChristmas } from '../myGroups/MyGroups';
 import SuccessModal from '../common/modal/SuccessModal';
 import materialStyles from '../materialStyles';
+import Fade from '../common/Fade/Fade';
+import DatePicker from '../common/datePicker/DatePicker';
+import RangeSlider from '../common/slider/RangeSlider';
 import * as selectors from './selectors';
 import styles from './GroupDetails.module.scss';
 import { mapIdToName } from '../myGroups/helpers';
@@ -22,13 +29,32 @@ import AddToWishlist from './AddToWishlist';
 import {
     addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
     removeGiftRestrictionRequests, assignPairingsRequest, deleteGroupRequest,
-    redirectRequest, leaveGroupRequest, addDeliveryAddressRequest
+    redirectRequest, leaveGroupRequest, addDeliveryAddressRequest,
+    kickUserRequest, regenerateGroupRequest
 } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
 import AddGiftRestrictions from './AddGiftRestrictions';
 import RemoveGiftRestrictions from './RemoveGiftRestrictions';
 import TextInput from '../common/TextInput/TextInput';
+
+const isDateInFuture = date => {
+    const providedDate = moment(Date.parse(date));
+    const currentDate = moment();
+    return providedDate.isAfter(currentDate);
+};
+
+const date = 'Fri Dec 10 2020 23:24:39 GMT+0000 (Greenwich Mean Time)';
+
+console.log('isDateInFuture', isDateInFuture(date));
+
+const getDate = d => {
+    if (!d) {
+        return '';
+    }
+    const castAsD = Date.parse(d);
+    return moment(castAsD).format('Do MMMM YYYY');
+};
 
 const MyGroups = props => {
     const classes = makeStyles(materialStyles)();
@@ -59,6 +85,60 @@ const MyGroups = props => {
     const [isViewingAddress, setIsViewingAddress] = React.useState(false);
     const [addressBeingViewed, setAddressBeingViewed] = React.useState('');
     const [userIdAddressBeingViewed, setUserIdAddressBeingViewed] = React.useState('');
+
+    const [isKicking, setIsKicking] = React.useState(false);
+    const [kickingText, setKickingText] = React.useState('');
+    const [personBeingKicked, setPersonBeingKicked] = React.useState('');
+
+    const [regenerateDate, setRegenerateDate] = React.useState(findNextChristmas());
+    const [regeneratePriceRange, setRegeneratePriceRange] = React.useState(
+        [0, 50]
+    );
+    const [isRegenerating, setIsRegenerating] = React.useState(false);
+    const [isPriceRangeActive, setIsPriceRangeActive] = React.useState(false);
+
+    const regenerateRequest = () => {
+        props.regenerateGroupRequest(props.group.id,
+            isPriceRangeActive ? regeneratePriceRange : null, regenerateDate);
+        console.log(regenerateDate);
+        setIsRegenerating(false);
+    };
+
+    const closeRegenerating = () => {
+        setIsRegenerating(false);
+        setRegenerateDate(findNextChristmas());
+        setRegeneratePriceRange([0, 50]);
+    };
+
+    React.useEffect(() => {
+        if (!props.regeneratingGroup) {
+            setRegenerateDate(findNextChristmas());
+            setRegeneratePriceRange([0, 50]);
+        }
+    }, [props.regeneratingGroup]);
+
+    const kickPerson = id => {
+        setPersonBeingKicked(id);
+        setIsKicking(true);
+    };
+
+    const closeIsKicking = () => {
+        setIsKicking(false);
+        setKickingText('');
+        setPersonBeingKicked('');
+    };
+
+    const confirmKickRequest = () => {
+        props.kickUserRequest(props.group.id, personBeingKicked);
+        setIsKicking(false);
+    };
+
+    React.useEffect(() => {
+        if (!props.kickingUser) {
+            setKickingText('');
+            setPersonBeingKicked('');
+        }
+    }, [props.kickingUser]);
 
     const closeAddingAddress = () => {
         setIsAddingAddress(false);
@@ -280,12 +360,32 @@ const MyGroups = props => {
                     )}
                 </div>
 
+                <div className={styles.detailWrapperStatuses}>
+                    <div className={styles.key}>
+                        When is the deadline?
+                    </div>
+
+                    <div className={styles.waitForPairingsStatus}>
+                        {getDate(props.group.date)}
+                    </div>
+                </div>
+
                 {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS
                 && props.auth.uid === props.group.owner && (
                     <div className={styles.activateGroupButton}>
                         <StyledButton
                             text="Randomise Pairings"
                             onClick={() => setIsConfirmingAssingPairings(true)}
+                        />
+                    </div>
+                )}
+
+                {props.group.status === constants.groupStatuses.PAIRINGS_ASSIGNED
+                && props.auth.uid === props.group.owner && (
+                    <div className={styles.activateGroupButton}>
+                        <StyledButton
+                            text="Regenerate group"
+                            onClick={() => setIsRegenerating(true)}
                         />
                     </div>
                 )}
@@ -302,6 +402,15 @@ const MyGroups = props => {
                     key={p}
                 >
                     <div className={styles.participants}>
+                        {props.group.owner === props.auth.uid && p !== props.auth.uid
+                        && props.group.status !== constants.groupStatuses.PAIRINGS_ASSIGNED && (
+                            <div className={styles.deleteWrapper}>
+                                <DeleteIcon
+                                    color={index % 2 === 0 ? 'primary' : 'secondary'}
+                                    onClick={() => kickPerson(p)}
+                                />
+                            </div>
+                        )}
                         <div className={styles.faceIcon}>
                             <FaceIcon color={index % 2 === 0 ? 'primary' : 'secondary'} />
                         </div>
@@ -586,11 +695,118 @@ const MyGroups = props => {
                 backdrop
                 closeModal={closeViewingAddress}
                 isOpen={isViewingAddress}
-                headerMessage={`${mapIdToName(userIdAddressBeingViewed, props.group.displayNameMappings)} Delivery Address`}
+                headerMessage={`${(mapIdToName(userIdAddressBeingViewed, props.group.displayNameMappings) || '')} Delivery Address`}
                 toggleModal={closeViewingAddress}
             >
                 <div className={styles.addressKey}>
-                    {addressBeingViewed}
+                    {addressBeingViewed || 'Address not set yet'}
+                </div>
+
+            </SuccessModal>
+
+            <SuccessModal
+                backdrop
+                closeModal={closeIsKicking}
+                isOpen={isKicking || props.kickingUser}
+                headerMessage={`Confirm kick ${(mapIdToName(personBeingKicked, props.group.displayNameMappings) || '')}`}
+                toggleModal={closeIsKicking}
+            >
+                <div className={styles.confirmDeleteMessage}>
+                    {`Are you sure you want to kick ${(mapIdToName(personBeingKicked, props.group.displayNameMappings) || '')}?`}
+                </div>
+                <div>
+                    <TextInput
+                        value={kickingText}
+                        onChange={setKickingText}
+                        label="Type kick to confirm"
+                    />
+                </div>
+
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.kickingUser} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={confirmKickRequest}
+                            text="Delete"
+                            disabled={kickingText.toLowerCase() !== 'kick' || props.kickingUser}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={closeIsKicking}
+                            text="Cancel"
+                            disabled={props.kickingUser}
+                        />
+                    </LoadingDiv>
+                </div>
+
+            </SuccessModal>
+
+            <SuccessModal
+                backdrop
+                closeModal={closeRegenerating}
+                isOpen={isRegenerating || props.regeneratingGroup}
+                headerMessage="Regenerate group for next year"
+                toggleModal={closeRegenerating}
+            >
+                {!isPriceRangeActive ? (
+                    <div
+                        className={styles.priceRangeToggle}
+                        onClick={() => setIsPriceRangeActive(true)}
+                        role="button"
+                        tabIndex={0}
+                    >
+                        <div className={styles.iconWrapper}>
+                            <AddIcon color="primary" />
+                        </div>
+                        <div className={styles.addPriceRange}>Add Price Range</div>
+                    </div>
+                ) : (
+                    <div
+                        className={styles.priceRangeToggle}
+                        onClick={() => setIsPriceRangeActive(false)}
+                        role="button"
+                        tabIndex={0}
+                    >
+                        <div className={styles.iconWrapper}>
+                            <RemoveIcon color="secondary" />
+                        </div>
+                        <div className={styles.addPriceRange}>Remove Price Range</div>
+                    </div>
+                )}
+
+                <Fade checked={isPriceRangeActive}>
+                    <div className={styles.sliderWrapper}>
+                        <RangeSlider
+                            priceRange={regeneratePriceRange}
+                            setPriceRange={setRegeneratePriceRange}
+                            min={0}
+                            max={50}
+                        />
+                    </div>
+                </Fade>
+                <DatePicker
+                    label="Event Date"
+                    selectedDate={regenerateDate}
+                    minDate={new Date()}
+                    setSelectedDate={setRegenerateDate}
+                    variant="inline"
+                />
+
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.regeneratingGroup} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={regenerateRequest}
+                            text="Regenerate"
+                            disabled={props.regeneratingGroup}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={closeRegenerating}
+                            text="Cancel"
+                            disabled={props.regeneratingGroup}
+                        />
+                    </LoadingDiv>
                 </div>
 
             </SuccessModal>
@@ -605,8 +821,10 @@ const mapDispatchToProps = {
     addGiftRestrictionRequest,
     assignPairingsRequest,
     deleteGroupRequest,
+    kickUserRequest,
     leaveGroupRequest,
     redirectRequest,
+    regenerateGroupRequest,
     removeWishlistItemsRequest,
     removeGiftRestrictionRequests
 };
@@ -618,7 +836,9 @@ const mapStateToProps = (state, props) => ({
     assigningPairings: state.groupDetails.assigningPairings,
     auth: state.firebase.auth,
     deletingGroup: state.groupDetails.deletingGroup,
+    kickingUser: state.groupDetails.kickingUser,
     leavingGroup: state.groupDetails.leavingGroup,
+    regeneratingGroup: state.groupDetails.regeneratingGroup,
     group: selectors.getGroupFromId(state, props),
     removingItemsFromWishlist: state.groupDetails.removingItemsFromWishlist,
     removingGiftRestrictions: state.groupDetails.removingGiftRestrictions

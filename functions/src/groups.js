@@ -33,6 +33,10 @@ exports.createGroup = functions
             throw new functions.https.HttpsError('invalid-argument', 'Group code must be at least 6 characters');
         }
 
+        if (!data.date) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a date. Contact Matt!');
+        }
+
         return db.collection('groups').where('code', '==', data.code).get().then(result => {
             if (result.size > 0) {
                 throw new functions.https.HttpsError('invalid-argument', 'There is already a group with that code!');
@@ -41,6 +45,7 @@ exports.createGroup = functions
                 return db.collection('groups').add({
                     addressMappings: {},
                     code: data.code,
+                    date: data.date,
                     groupName: data.groupName,
                     isNoPriceRange: data.isNoPriceRange || false,
                     status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
@@ -273,6 +278,87 @@ exports.setAddress = functions
                     ...doc.data().addressMappings,
                     [context.auth.uid]: data.address || ''
                 }
+            })
+        })
+    });
+
+exports.kickUser = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        if (!data.userId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a user id. Contact Matt');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+
+            if (doc.data().owner !== context.auth.uid) {
+                throw new functions.https.HttpsError('unauthenticated', 'You must be the group owner to kick users');
+            }
+
+            if (doc.data().status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
+                throw new functions.https.HttpsError('invalid-argument', 'Cannot kick users once pairings have been assigned');
+            }
+
+            const restrictions = Object.keys(doc.data().restrictions).reduce((acc, cur) => {
+                const filtered = doc.data().restrictions[cur].filter(x => x !== data.userId);
+                if (filtered.length > 1) {
+                    return {
+                        ...acc,
+                        [cur]: filtered
+                    };
+                }
+                return acc;
+            }, {});
+
+            return doc.ref.update({
+                addressMappings: _.omit(doc.data().addressMappings, data.userId),
+                displayNameMappings: _.omit(doc.data().displayNameMappings, data.userId),
+                participants: operations.arrayRemove(data.userId),
+                restrictions,
+                wishlist: _.omit(doc.data().wishlist, data.userId),
+            })
+        })
+    });
+
+
+exports.regenerateGroup = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.date) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a date. Contact Matt!');
+        }
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        if (!common.isDateInFuture(data.date)) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a date in the future');
+        }
+
+        return db.collection('groups').doc(data.groupId).get().then(doc => {
+            return doc.ref.update({
+                date: data.date,
+                isNoPriceRange: data.isNoPriceRange || false,
+                status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
+                pairings: {},
+                priceMin: common.isNumber(data.min) ? data.min : null,
+                priceMax: common.isNumber(data.max) ? data.max : null,
+                restrictions: {},
+                wishlist: Object.keys(doc.data().wishlist).reduce((acc, cur) => {
+                    return {
+                        ...acc,
+                        [cur]: []
+                    }
+                }, {})
             })
         })
     });

@@ -78,6 +78,7 @@ const MyGroups = props => {
             <DatePicker
                 label="Event Date"
                 selectedDate={props.selectedDate}
+                minDate={new Date()}
                 setSelectedDate={props.setSelectedDate}
                 variant="inline"
             />

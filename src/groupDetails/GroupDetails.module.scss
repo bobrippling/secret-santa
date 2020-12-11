@@ -211,10 +211,49 @@
 .addressWrapper {
     position: absolute;
     right: 0px;
+    cursor: pointer;
+}
+
+.deleteWrapper:focus {
+    outline: none;
+}
+
+.deleteWrapper  {
+    position: absolute;
+    left: 0px;
+    cursor: pointer;
 }
 
 .viewAddressMessage {
     font-size: $font-size-miniscule;
+}
+
+.priceRangeToggle:hover {
+    cursor: pointer;
+    @include hover-bold-blue();
+}
+
+.priceRangeToggle {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.iconWrapper {
+    @include vertical-center-div();
+}
+
+.sliderWrapper {
+    padding-top: $spacing-small;
+}
+
+.priceRangeToggle:focus {
+    outline: none;
+}
+
+.addPriceRange {
+    font-size: $font-size-miniscule;
+    @include vertical-center-div();
 }
 
 @media only screen and (max-width: 800px) {

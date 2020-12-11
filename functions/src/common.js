@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const moment = require('moment');
 const _ = require('lodash');
 const fp = require('lodash/fp');
 const constants = require('./constants');
@@ -65,4 +66,10 @@ module.exports.generatePairings = (restrictions, participants) => {
         }
     }
     return pairings;
+};
+
+module.exports.isDateInFuture = date => {
+    const providedDate = moment(Date.parse(date));
+    const currentDate = moment();
+    return providedDate.isAfter(currentDate);
 };

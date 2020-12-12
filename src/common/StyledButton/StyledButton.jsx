@@ -2,7 +2,6 @@ import React from 'react';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
-import { red, indigo, green } from '@material-ui/core/colors';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';

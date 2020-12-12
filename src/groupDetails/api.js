@@ -10,3 +10,4 @@ export const leaveGroup = request => functionToCall('groups-leaveGroup')(request
 export const setAddress = request => functionToCall('groups-setAddress')(request);
 export const kickUser = request => functionToCall('groups-kickUser')(request);
 export const regenerateGroup = request => functionToCall('groups-regenerateGroup')(request);
+export const editDate = request => functionToCall('groups-editDate')(request);

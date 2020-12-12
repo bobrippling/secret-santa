@@ -362,3 +362,25 @@ exports.regenerateGroup = functions
             })
         })
     });
+
+exports.editDate = functions
+    .region(constants.region)
+    .https.onCall((data, context) => {
+        common.isAuthenticated(context);
+
+        if (!data.date) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a date. Contact Matt!');
+        }
+
+        if (!data.groupId) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
+        }
+
+        if (!common.isDateInFuture(data.date)) {
+            throw new functions.https.HttpsError('invalid-argument', 'Must provide a date in the future');
+        }
+        
+        return db.collection('groups').doc(data.groupId).update({
+            date: data.date
+        });
+    });

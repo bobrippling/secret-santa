@@ -27,6 +27,28 @@
     padding-bottom: $spacing-small;
 }
 
+.detailWrapperStatusesDeadline {
+    text-align: center;
+    justify-content: center;
+    font-size: $font-size-large;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: $spacing-small;
+    width: fit-content;
+    display: flex;
+}
+
+.editDateIcon {
+    margin-left: $spacing-tiny;
+    @include vertical-center-div();
+    cursor: pointer;
+}
+
+.editDateIcon:focus {
+    outline: none;
+}
+
 .key {
     font-weight: bold;
     color: $color-dark-green;
@@ -202,6 +224,7 @@
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
+    cursor: pointer;
 }
 
 .addAddressWrapper:focus {

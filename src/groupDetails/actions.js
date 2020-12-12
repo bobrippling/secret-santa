@@ -25,6 +25,9 @@ export const CANCEL_KICKING_USER = `${pre}CANCEL_KICKING_USER`;
 export const REGENERATE_GROUP_REQUEST = `${pre}REGENERATE_GROUP_REQUEST`;
 export const CANCEL_REGENERATING_GROUP = `${pre}CANCEL_REGENERATING_GROUP`;
 
+export const EDIT_DATE_REQUEST = `${pre}EDIT_DATE_REQUEST`;
+export const CANCEL_EDITING_DATE = `${pre}CANCEL_EDITING_DATE`;
+
 export const addWishlistItemRequest = (groupId, item, url) => ({
     type: ADD_WISHLIST_ITEM_REQUEST,
     item,
@@ -129,15 +132,12 @@ export const cancelRegeneratingGroup = () => ({
     type: CANCEL_REGENERATING_GROUP
 });
 
-const x = {
-    a: [1, 2, 3, 5],
-    b: [3, 5, 1, 3],
-    c: [4, 7]
-};
+export const editDateRequest = (groupId, date) => ({
+    type: EDIT_DATE_REQUEST,
+    groupId,
+    date
+});
 
-const reduced = Object.keys(x).reduce((acc, cur) => ({
-    ...acc,
-    [cur]: []
-}), {});
-
-console.log('x', reduced);
+export const cancelEditingDate = () => ({
+    type: CANCEL_EDITING_DATE
+});

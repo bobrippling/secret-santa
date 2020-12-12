@@ -71,3 +71,7 @@ $font-weight-normal: 400;
 @mixin hover-bold-black() {
   text-shadow:0px 0px 1px $color-black;
 }
+
+@mixin hover-bold-green() {
+  text-shadow:0px 0px 1px $color-green;
+}

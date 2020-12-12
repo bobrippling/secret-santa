@@ -7,6 +7,7 @@ export const initialState = {
     addingGiftRestriction: false,
     assigningPairings: false,
     deletingGroup: false,
+    editingDate: false,
     kickingUser: false,
     regeneratingGroup: false,
     leavingGroup: false,
@@ -75,6 +76,12 @@ const groupDetailsReducer = (state = initialState, action) => {
     }
     case actions.CANCEL_REGENERATING_GROUP: {
         return fp.set('regeneratingGroup', false)(state);
+    }
+    case actions.EDIT_DATE_REQUEST: {
+        return fp.set('editingDate', true)(state);
+    }
+    case actions.CANCEL_EDITING_DATE: {
+        return fp.set('editingDate', false)(state);
     }
     default:
         return state;

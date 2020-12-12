@@ -157,6 +157,19 @@ export function* regenerate(api, action) {
     }
 }
 
+export function* editDate(api, action) {
+    try {
+        yield call(api.editDate, {
+            groupId: action.groupId,
+            date: action.date.toString()
+        });
+    } catch (error) {
+        yield put(setErrorMessage('Error Editing Date', error));
+    } finally {
+        yield put(actions.cancelEditingDate());
+    }
+}
+
 export default function* groupDetails() {
     yield all([
         takeEvery(actions.ADD_WISHLIST_ITEM_REQUEST, addItemToWishlist, myGroupsApi),
@@ -169,6 +182,7 @@ export default function* groupDetails() {
         takeEvery(actions.LEAVE_GROUP_REQUEST, leaveGroup, myGroupsApi),
         takeEvery(actions.ADD_DELIVERY_ADDRESS_REQUEST, setAddress, myGroupsApi),
         takeEvery(actions.KICK_USER_REQUEST, kickUser, myGroupsApi),
-        takeEvery(actions.REGENERATE_GROUP_REQUEST, regenerate, myGroupsApi)
+        takeEvery(actions.REGENERATE_GROUP_REQUEST, regenerate, myGroupsApi),
+        takeEvery(actions.EDIT_DATE_REQUEST, editDate, myGroupsApi)
     ]);
 }

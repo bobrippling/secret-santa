@@ -9,6 +9,7 @@ import ContactsIcon from '@material-ui/icons/Contacts';
 import classNames from 'classnames';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveIcon from '@material-ui/icons/Remove';
+import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
 import FaceIcon from '@material-ui/icons/Face';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -30,7 +31,7 @@ import {
     addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
     removeGiftRestrictionRequests, assignPairingsRequest, deleteGroupRequest,
     redirectRequest, leaveGroupRequest, addDeliveryAddressRequest,
-    kickUserRequest, regenerateGroupRequest
+    kickUserRequest, regenerateGroupRequest, editDateRequest
 } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
@@ -43,10 +44,6 @@ const isDateInFuture = date => {
     const currentDate = moment();
     return providedDate.isAfter(currentDate);
 };
-
-const date = 'Fri Dec 10 2020 23:24:39 GMT+0000 (Greenwich Mean Time)';
-
-console.log('isDateInFuture', isDateInFuture(date));
 
 const getDate = d => {
     if (!d) {
@@ -79,7 +76,7 @@ const MyGroups = props => {
 
     const [isConfirmLeaveGroup, setIsConfirmLeaveGroup] = React.useState(false);
 
-    const [newAddress, setNewAddress] = React.useState('');
+    const [newAddress, setNewAddress] = React.useState();
     const [isAddingAddress, setIsAddingAddress] = React.useState(false);
 
     const [isViewingAddress, setIsViewingAddress] = React.useState(false);
@@ -97,10 +94,12 @@ const MyGroups = props => {
     const [isRegenerating, setIsRegenerating] = React.useState(false);
     const [isPriceRangeActive, setIsPriceRangeActive] = React.useState(false);
 
+    const [isEditingDate, setIsEditingDate] = React.useState(false);
+    const [newDate, setNewDate] = React.useState('');
+
     const regenerateRequest = () => {
         props.regenerateGroupRequest(props.group.id,
             isPriceRangeActive ? regeneratePriceRange : null, regenerateDate);
-        console.log(regenerateDate);
         setIsRegenerating(false);
     };
 
@@ -144,6 +143,33 @@ const MyGroups = props => {
         setIsAddingAddress(false);
         setNewAddress('');
     };
+
+    const openAddingAddress = () => {
+        setIsAddingAddress(true);
+        setNewAddress(props.group?.addressMappings[props.auth.uid] || '');
+    };
+
+    const openEditingDate = () => {
+        setNewDate(props.group.date);
+        setIsEditingDate(true);
+    };
+
+    const closeEditingDate = () => {
+        setIsEditingDate(false);
+        setNewDate('');
+    };
+
+    const confirmEditDateRequest = () => {
+        props.editDateRequest(props.group.id, newDate);
+        setIsEditingDate(false);
+    };
+
+    React.useEffect(() => {
+        if (!props.editingDate) {
+            setNewDate(props.group?.date);
+        }
+        // eslint-disable-next-line
+    }, [props.editingDate]);
 
     const closeConfirmDeleteGroup = () => {
         setIsConfirmDeleteGroup(false);
@@ -331,15 +357,16 @@ const MyGroups = props => {
 
                 <div
                     className={styles.addAddressWrapper}
-                    onClick={() => setIsAddingAddress(true)}
+                    onClick={openAddingAddress}
                     role="button"
                     tabIndex={0}
                 >
                     <div className={styles.addAddressText}>
-                        {props.group.addressMappings[props.auth.uid] ? 'Set Address' : 'Add Address'}
+                        {props.group.addressMappings[props.auth.uid] ? 'Edit Address' : 'Add Address'}
                     </div>
                     <div>
-                        <AddCircleIcon color="primary" fontSize="large" />
+                        {props.group.addressMappings[props.auth.uid] ? <EditIcon color="primary" fontSize="medium" />
+                            : <AddCircleIcon color="primary" fontSize="large" />}
                     </div>
                 </div>
 
@@ -360,14 +387,26 @@ const MyGroups = props => {
                     )}
                 </div>
 
-                <div className={styles.detailWrapperStatuses}>
-                    <div className={styles.key}>
-                        When is the deadline?
-                    </div>
+                <div className={styles.detailWrapperStatusesDeadline}>
+                    <div className={styles.editDateWrapper}>
+                        <div className={styles.key}>
+                            When is the deadline?
+                        </div>
 
-                    <div className={styles.waitForPairingsStatus}>
-                        {getDate(props.group.date)}
+                        <div className={styles.waitForPairingsStatus}>
+                            {getDate(props.group.date)}
+                        </div>
                     </div>
+                    {props.group.owner === props.auth.uid && (
+                        <div
+                            className={styles.editDateIcon}
+                            onClick={openEditingDate}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <EditIcon color="primary" fontSize="medium" />
+                        </div>
+                    )}
                 </div>
 
                 {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS
@@ -381,7 +420,8 @@ const MyGroups = props => {
                 )}
 
                 {props.group.status === constants.groupStatuses.PAIRINGS_ASSIGNED
-                && props.auth.uid === props.group.owner && (
+                && props.auth.uid === props.group.owner
+                && !isDateInFuture(props.group.date) && (
                     <div className={styles.activateGroupButton}>
                         <StyledButton
                             text="Regenerate group"
@@ -544,7 +584,7 @@ const MyGroups = props => {
                 backdrop
                 closeModal={() => setIsConfirmingAssingPairings(false)}
                 isOpen={isConfirmingAssignPairings || props.assigningPairings}
-                headerMessage="Confirm Assign Pairings"
+                headerMessage="Randomise Pairings"
                 toggleModal={() => setIsConfirmingAssingPairings(false)}
             >
                 <div className={styles.confirmMessage}>
@@ -658,7 +698,7 @@ const MyGroups = props => {
                 backdrop
                 closeModal={closeAddingAddress}
                 isOpen={isAddingAddress || props.addingAddress}
-                headerMessage="Add Delivery Address"
+                headerMessage="Set Delivery Address"
                 toggleModal={closeAddingAddress}
             >
                 <div className={styles.confirmDeleteMessage}>
@@ -811,6 +851,40 @@ const MyGroups = props => {
 
             </SuccessModal>
 
+            <SuccessModal
+                backdrop
+                closeModal={closeEditingDate}
+                isOpen={isEditingDate || props.editingDate}
+                headerMessage="Edit Date"
+                toggleModal={closeEditingDate}
+            >
+                <DatePicker
+                    label="Event Date"
+                    selectedDate={newDate}
+                    minDate={new Date()}
+                    setSelectedDate={setNewDate}
+                    variant="inline"
+                />
+
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.editingDate} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={confirmEditDateRequest}
+                            text="Edit Date"
+                            disabled={props.editingDate}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={closeEditingDate}
+                            text="Cancel"
+                            disabled={props.editingDate}
+                        />
+                    </LoadingDiv>
+                </div>
+
+            </SuccessModal>
+
         </>
     );
 };
@@ -821,6 +895,7 @@ const mapDispatchToProps = {
     addGiftRestrictionRequest,
     assignPairingsRequest,
     deleteGroupRequest,
+    editDateRequest,
     kickUserRequest,
     leaveGroupRequest,
     redirectRequest,
@@ -836,6 +911,7 @@ const mapStateToProps = (state, props) => ({
     assigningPairings: state.groupDetails.assigningPairings,
     auth: state.firebase.auth,
     deletingGroup: state.groupDetails.deletingGroup,
+    editingDate: state.groupDetails.editingDate,
     kickingUser: state.groupDetails.kickingUser,
     leavingGroup: state.groupDetails.leavingGroup,
     regeneratingGroup: state.groupDetails.regeneratingGroup,

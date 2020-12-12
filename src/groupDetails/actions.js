@@ -28,6 +28,9 @@ export const CANCEL_REGENERATING_GROUP = `${pre}CANCEL_REGENERATING_GROUP`;
 export const EDIT_DATE_REQUEST = `${pre}EDIT_DATE_REQUEST`;
 export const CANCEL_EDITING_DATE = `${pre}CANCEL_EDITING_DATE`;
 
+export const EDIT_WISHLIST_ITEM_REQUEST = `${pre}EDIT_WISHLIST_ITEM_REQUEST`;
+export const CANCEL_EDITING_WISHLIST_ITEM = `${pre}CANCEL_EDITING_WISHLIST_ITEM`;
+
 export const addWishlistItemRequest = (groupId, item, url) => ({
     type: ADD_WISHLIST_ITEM_REQUEST,
     item,
@@ -140,4 +143,16 @@ export const editDateRequest = (groupId, date) => ({
 
 export const cancelEditingDate = () => ({
     type: CANCEL_EDITING_DATE
+});
+
+export const editWishlistItemRequest = (groupId, index, item, url) => ({
+    type: EDIT_WISHLIST_ITEM_REQUEST,
+    groupId,
+    index,
+    item,
+    url
+});
+
+export const cancelEditingWishlistItem = () => ({
+    type: CANCEL_EDITING_WISHLIST_ITEM
 });

@@ -170,6 +170,21 @@ export function* editDate(api, action) {
     }
 }
 
+export function* editWishlistItem(api, action) {
+    try {
+        yield call(api.editWishlistItem, {
+            groupId: action.groupId,
+            index: action.index,
+            item: action.item,
+            url: action.url
+        });
+    } catch (error) {
+        yield put(setErrorMessage('Error Editing Wishlist Item', error));
+    } finally {
+        yield put(actions.cancelEditingWishlistItem());
+    }
+}
+
 export default function* groupDetails() {
     yield all([
         takeEvery(actions.ADD_WISHLIST_ITEM_REQUEST, addItemToWishlist, myGroupsApi),
@@ -183,6 +198,7 @@ export default function* groupDetails() {
         takeEvery(actions.ADD_DELIVERY_ADDRESS_REQUEST, setAddress, myGroupsApi),
         takeEvery(actions.KICK_USER_REQUEST, kickUser, myGroupsApi),
         takeEvery(actions.REGENERATE_GROUP_REQUEST, regenerate, myGroupsApi),
-        takeEvery(actions.EDIT_DATE_REQUEST, editDate, myGroupsApi)
+        takeEvery(actions.EDIT_DATE_REQUEST, editDate, myGroupsApi),
+        takeEvery(actions.EDIT_WISHLIST_ITEM_REQUEST, editWishlistItem, myGroupsApi)
     ]);
 }

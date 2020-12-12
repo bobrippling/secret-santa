@@ -8,6 +8,7 @@ export const initialState = {
     assigningPairings: false,
     deletingGroup: false,
     editingDate: false,
+    editingWishlistItem: false,
     kickingUser: false,
     regeneratingGroup: false,
     leavingGroup: false,
@@ -82,6 +83,12 @@ const groupDetailsReducer = (state = initialState, action) => {
     }
     case actions.CANCEL_EDITING_DATE: {
         return fp.set('editingDate', false)(state);
+    }
+    case actions.EDIT_WISHLIST_ITEM_REQUEST: {
+        return fp.set('editingWishlistItem', true)(state);
+    }
+    case actions.CANCEL_EDITING_WISHLIST_ITEM: {
+        return fp.set('editingWishlistItem', false)(state);
     }
     default:
         return state;

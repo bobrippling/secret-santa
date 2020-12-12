@@ -16,6 +16,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { compose } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
 import StyledButton from '../common/StyledButton/StyledButton';
+import * as textInputConstants from '../common/TextInput/constants';
 import LoadingDiv from '../common/loadingDiv/LoadingDiv';
 import { findNextChristmas } from '../myGroups/MyGroups';
 import SuccessModal from '../common/modal/SuccessModal';
@@ -31,7 +32,7 @@ import {
     addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
     removeGiftRestrictionRequests, assignPairingsRequest, deleteGroupRequest,
     redirectRequest, leaveGroupRequest, addDeliveryAddressRequest,
-    kickUserRequest, regenerateGroupRequest, editDateRequest
+    kickUserRequest, regenerateGroupRequest, editDateRequest, editWishlistItemRequest
 } from './actions';
 import RemoveFromWishlist from './RemoveFromWishlist';
 import * as constants from '../constants';
@@ -96,6 +97,40 @@ const MyGroups = props => {
 
     const [isEditingDate, setIsEditingDate] = React.useState(false);
     const [newDate, setNewDate] = React.useState('');
+
+    const [isEditingWishlist, setIsEditingWishlist] = React.useState(false);
+    const [wishlistIndex, setWishlistIndex] = React.useState(-1);
+    const [editWishlistName, setEditWishlistName] = React.useState('');
+    const [editWishlistLink, setEditWishlistLink] = React.useState('');
+
+    const editWishlist = () => {
+        props.editWishlistItemRequest(props.group.id, wishlistIndex,
+            editWishlistName, editWishlistLink);
+        setIsEditingWishlist(false);
+    };
+
+    React.useEffect(() => {
+        if (!props.editingWishlistItem) {
+            setWishlistIndex(-1);
+            setEditWishlistLink('');
+            setEditWishlistName('');
+        }
+    }, [props.editingWishlistItem]);
+
+    const openEditWishlist = index => {
+        setIsEditingWishlist(true);
+        setWishlistIndex(index);
+        const wishlistItem = props.group.wishlist[props.auth.uid][index];
+        setEditWishlistName(wishlistItem.item);
+        setEditWishlistLink(wishlistItem.url);
+    };
+
+    const closeEditingWishlist = () => {
+        setIsEditingWishlist(false);
+        setWishlistIndex(-1);
+        setEditWishlistLink('');
+        setEditWishlistName('');
+    };
 
     const regenerateRequest = () => {
         props.regenerateGroupRequest(props.group.id,
@@ -474,11 +509,26 @@ const MyGroups = props => {
                             </div>
                         )}
                         <ul className={styles.wishlistBulletPoints}>
-                            {props.group.wishlist[p]?.map(wishlistItem => (
+                            {props.group.wishlist[p]?.map((wishlistItem, i) => (
                                 <li key={wishlistItem.item}>
-                                    {wishlistItem.url ? (
-                                        <a target="_blank" rel="noopener noreferrer" href={wishlistItem.url}>{wishlistItem.item}</a>
-                                    ) : wishlistItem.item}
+                                    <div className={styles.wishlistRow}>
+                                        <div>
+                                            {wishlistItem.url ? (
+                                                <a target="_blank" rel="noopener noreferrer" href={wishlistItem.url}>{wishlistItem.item}</a>
+                                            ) : wishlistItem.item}
+                                        </div>
+                                        {p === props.auth.uid
+                                    && (
+                                        <div
+                                            className={styles.wishlistEdit}
+                                            onClick={() => openEditWishlist(i)}
+                                            role="button"
+                                            tabIndex={0}
+                                        >
+                                            <EditIcon color="primary" fontSize="small" />
+                                        </div>
+                                    ) }
+                                    </div>
                                 </li>
                             ))}
                         </ul>
@@ -885,6 +935,56 @@ const MyGroups = props => {
 
             </SuccessModal>
 
+            <SuccessModal
+                backdrop
+                closeModal={closeEditingWishlist}
+                isOpen={isEditingWishlist || props.editingWishlistItem}
+                headerMessage="Edit Date"
+                toggleModal={closeEditingWishlist}
+            >
+                <div className={classNames({
+                    [styles.smallWidth]: !isMobile
+                })}
+                >
+                    <TextInput
+                        icon={textInputConstants.textInputIcons.present}
+                        iconColor="primary"
+                        value={editWishlistName}
+                        onChange={setEditWishlistName}
+                        label="Wishlist item"
+                        disabled={props.editingWishlistItem}
+                    />
+
+                    <TextInput
+                        icon={textInputConstants.textInputIcons.link}
+                        iconColor="primary"
+                        value={editWishlistLink}
+                        onChange={setEditWishlistLink}
+                        label="Link (optional)"
+                        disabled={props.editingWishlistItem}
+                    />
+
+                </div>
+
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.editingWishlistItem} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={editWishlist}
+                            text="Edit Wishlist Item"
+                            disabled={props.editingWishlistItem}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={closeEditingWishlist}
+                            text="Cancel"
+                            disabled={props.editingWishlistItem}
+                        />
+                    </LoadingDiv>
+                </div>
+
+            </SuccessModal>
+
         </>
     );
 };
@@ -896,6 +996,7 @@ const mapDispatchToProps = {
     assignPairingsRequest,
     deleteGroupRequest,
     editDateRequest,
+    editWishlistItemRequest,
     kickUserRequest,
     leaveGroupRequest,
     redirectRequest,
@@ -912,6 +1013,7 @@ const mapStateToProps = (state, props) => ({
     auth: state.firebase.auth,
     deletingGroup: state.groupDetails.deletingGroup,
     editingDate: state.groupDetails.editingDate,
+    editingWishlistItem: state.groupDetails.editingWishlistItem,
     kickingUser: state.groupDetails.kickingUser,
     leavingGroup: state.groupDetails.leavingGroup,
     regeneratingGroup: state.groupDetails.regeneratingGroup,

@@ -2,17 +2,14 @@ import React from 'react';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
-import { red, indigo } from '@material-ui/core/colors';
+import { red, indigo, green } from '@material-ui/core/colors';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 const useStyles = makeStyles(theme => ({
     margin: {
-        margin: theme.spacing(1),
-        '&:focus': {
-            backgroundColor: '#3f51b5'
-        }
+        margin: theme.spacing(1)
     },
     smallButton: {
         padding: '0px'
@@ -22,10 +19,10 @@ const useStyles = makeStyles(theme => ({
 const theme = createMuiTheme({
     palette: {
         primary: {
-            main: indigo[500]
+            main: '#388e3c'
         },
         secondary: {
-            main: red[400]
+            main: '#dd2c00'
         }
     }
 });

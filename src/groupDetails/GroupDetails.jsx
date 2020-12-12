@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import Paper from '@material-ui/core/Paper';
@@ -23,6 +23,7 @@ import SuccessModal from '../common/modal/SuccessModal';
 import materialStyles from '../materialStyles';
 import Fade from '../common/Fade/Fade';
 import DatePicker from '../common/datePicker/DatePicker';
+import Spinner from '../common/spinner/Spinner';
 import RangeSlider from '../common/slider/RangeSlider';
 import * as selectors from './selectors';
 import styles from './GroupDetails.module.scss';
@@ -39,6 +40,7 @@ import * as constants from '../constants';
 import AddGiftRestrictions from './AddGiftRestrictions';
 import RemoveGiftRestrictions from './RemoveGiftRestrictions';
 import TextInput from '../common/TextInput/TextInput';
+import Invited from './invited/Invited';
 
 const getParticipantsOrder = (group, uid) => {
     if (group.status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
@@ -111,19 +113,17 @@ const MyGroups = props => {
     const [editWishlistName, setEditWishlistName] = React.useState('');
     const [editWishlistLink, setEditWishlistLink] = React.useState('');
 
+    const closeAddingToWishlist = () => {
+        setIsAddingToWishlist(false);
+        setWishlistItemToAdd('');
+        setWishlistItemToAddUrl('');
+    };
+
     const editWishlist = () => {
         props.editWishlistItemRequest(props.group.id, wishlistIndex,
             editWishlistName, editWishlistLink);
         setIsEditingWishlist(false);
     };
-
-    React.useEffect(() => {
-        if (!props.editingWishlistItem) {
-            setWishlistIndex(-1);
-            setEditWishlistLink('');
-            setEditWishlistName('');
-        }
-    }, [props.editingWishlistItem]);
 
     const openEditWishlist = index => {
         setIsEditingWishlist(true);
@@ -152,13 +152,6 @@ const MyGroups = props => {
         setRegeneratePriceRange([0, 50]);
     };
 
-    React.useEffect(() => {
-        if (!props.regeneratingGroup) {
-            setRegenerateDate(findNextChristmas());
-            setRegeneratePriceRange([0, 50]);
-        }
-    }, [props.regeneratingGroup]);
-
     const kickPerson = id => {
         setPersonBeingKicked(id);
         setIsKicking(true);
@@ -174,13 +167,6 @@ const MyGroups = props => {
         props.kickUserRequest(props.group.id, personBeingKicked);
         setIsKicking(false);
     };
-
-    React.useEffect(() => {
-        if (!props.kickingUser) {
-            setKickingText('');
-            setPersonBeingKicked('');
-        }
-    }, [props.kickingUser]);
 
     const closeAddingAddress = () => {
         setIsAddingAddress(false);
@@ -207,13 +193,6 @@ const MyGroups = props => {
         setIsEditingDate(false);
     };
 
-    React.useEffect(() => {
-        if (!props.editingDate) {
-            setNewDate(props.group?.date);
-        }
-        // eslint-disable-next-line
-    }, [props.editingDate]);
-
     const closeConfirmDeleteGroup = () => {
         setIsConfirmDeleteGroup(false);
         setConfirmDeleteText('');
@@ -221,12 +200,6 @@ const MyGroups = props => {
 
     const [isConfirmingAssignPairings,
         setIsConfirmingAssingPairings] = React.useState(false);
-
-    const closeAddingToWishlist = () => {
-        setIsAddingToWishlist(false);
-        setWishlistItemToAdd('');
-        setWishlistItemToAddUrl('');
-    };
 
     const onRemoveRestriction = restriction => {
         setRemovedGiftRestrictions([...removedGiftRestrictions, restriction]);
@@ -238,12 +211,6 @@ const MyGroups = props => {
         props.addWishlistItemRequest(props.group?.id, wishlistItemToAdd, wishlistItemToAddUrl);
         // closeAddingToWishlist();
     }, [props, wishlistItemToAdd, wishlistItemToAddUrl]);
-
-    React.useEffect(() => {
-        if (!props.addingItemToWishlist) {
-            closeAddingToWishlist();
-        }
-    }, [props.addingItemToWishlist]);
 
     const removeWishlistItems = items => {
         props.removeWishlistItemsRequest(props.group?.id, items);
@@ -260,26 +227,12 @@ const MyGroups = props => {
 
     const addGiftRestriction = React.useCallback(() => {
         props.addGiftRestrictionRequest(props.group.id, newGiftRestriction);
-        // setNewGiftRestriction([]);
         setIsAddingGiftRestrictions(false);
     }, [props, newGiftRestriction]);
 
     const cancelRemovingGiftRestrictions = () => {
         setIsRemovingGiftRestrictions(false);
-        // setRemovedGiftRestrictions([]);
     };
-
-    useEffect(() => {
-        if (!props.addingGiftRestriction) {
-            setNewGiftRestriction([]);
-        }
-    }, [props.addingGiftRestriction, setNewGiftRestriction]);
-
-    useEffect(() => {
-        if (!props.removingGiftRestrictions) {
-            setRemovedGiftRestrictions([]);
-        }
-    }, [props.removingGiftRestrictions]);
 
     const confirmRemoveRequest = () => {
         props.removeGiftRestrictionRequests(props.group.id, removedGiftRestrictions);
@@ -301,12 +254,6 @@ const MyGroups = props => {
         setIsAddingAddress(false);
     };
 
-    React.useEffect(() => {
-        if (!props.addingAddress) {
-            setNewAddress(''); // CHANGE ME
-        }
-    }, [props.addingAddress]);
-
     const viewAddress = (address, userId) => {
         setAddressBeingViewed(address);
         setUserIdAddressBeingViewed(userId);
@@ -319,9 +266,77 @@ const MyGroups = props => {
         setUserIdAddressBeingViewed('');
     };
 
+    React.useEffect(() => {
+        if (!props.addingAddress) {
+            setNewAddress(''); // CHANGE ME
+        }
+    }, [props.addingAddress]);
+
+    React.useEffect(() => {
+        if (!props.editingWishlistItem) {
+            setWishlistIndex(-1);
+            setEditWishlistLink('');
+            setEditWishlistName('');
+        }
+    }, [props.editingWishlistItem]);
+
+    React.useEffect(() => {
+        if (!props.regeneratingGroup) {
+            setRegenerateDate(findNextChristmas());
+            setRegeneratePriceRange([0, 50]);
+        }
+    }, [props.regeneratingGroup]);
+
+    React.useEffect(() => {
+        if (!props.kickingUser) {
+            setKickingText('');
+            setPersonBeingKicked('');
+        }
+    }, [props.kickingUser]);
+
+    React.useEffect(() => {
+        if (!props.editingDate) {
+            setNewDate(props.group?.date);
+        }
+        // eslint-disable-next-line
+    }, [props.editingDate]);
+
+    React.useEffect(() => {
+        if (!props.addingItemToWishlist) {
+            closeAddingToWishlist();
+        }
+    }, [props.addingItemToWishlist]);
+
+    React.useEffect(() => {
+        if (!props.addingGiftRestriction) {
+            setNewGiftRestriction([]);
+        }
+    }, [props.addingGiftRestriction, setNewGiftRestriction]);
+
+    React.useEffect(() => {
+        if (!props.removingGiftRestrictions) {
+            setRemovedGiftRestrictions([]);
+        }
+    }, [props.removingGiftRestrictions]);
+
     const isMobile = useMediaQuery(`(max-width:${constants.mobileScreenSize}px)`);
 
     const { group } = props;
+
+    if (!props.auth.uid) {
+        return <Invited />;
+    }
+
+    if (!props.group?.participants.includes(props.auth.uid)) {
+        return (
+            <div className={styles.spinner}>
+                <Spinner />
+                <div className={styles.joinGroupMessage}>
+                    Joining Group
+                </div>
+            </div>
+        );
+    }
 
     if (!group) {
         props.redirectRequest(constants.URL.MY_GROUPS);

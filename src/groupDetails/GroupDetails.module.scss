@@ -92,6 +92,11 @@
     outline: none;
 }
 
+.spinner {
+    text-align: center;
+    margin-top: $spacing-average;
+}
+
 .smallWidth {
     width: 50%;
     margin-left: auto;
@@ -160,6 +165,12 @@
     color: $color-blue;
     text-align: center;
     font-size: $font-size-medium;
+}
+
+.joinGroupMessage {
+    text-align: center;
+    font-weight: bold;
+    color: $color-blue;
 }
 
 .addWishlistText, .removeWishlistText {

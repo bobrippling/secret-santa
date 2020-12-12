@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import * as constants from './constants';
 import AuthenticatedRoute from './auth/routes/AuthenticatedRoute';
+import AnyRoute from './auth/routes/AnyRoute';
 import UnauthenticatedRoute from './auth/routes/UnauthenticatedRoute';
 import PrivacyPolicy from './privacypolicy/PrivacyPolicy';
 import TermsOfService from './privacypolicy/TermsAndConditions';
@@ -16,7 +17,7 @@ import GroupDetails from './groupDetails/GroupDetails';
 const RenderRoutes = () => (
     <Switch>
         <AuthenticatedRoute exact path={constants.URL.PROFILE} component={Profile} />
-        <AuthenticatedRoute path={`${constants.URL.GROUP_DETAILS}/:groupId`} component={GroupDetails} />
+        <AnyRoute path={`${constants.URL.GROUP_DETAILS}/:groupId`} component={GroupDetails} />
         {routes.signedInLinks.map(link => (
             <AuthenticatedRoute
                 exact

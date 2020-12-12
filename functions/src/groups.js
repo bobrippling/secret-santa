@@ -69,6 +69,7 @@ exports.createGroup = functions
 exports.joinGroup = functions
     .region(constants.region)
     .https.onCall((data, context) => {
+        console.log("auth", context.auth.uid)
         common.isAuthenticated(context);
 
         if (!data.code) {

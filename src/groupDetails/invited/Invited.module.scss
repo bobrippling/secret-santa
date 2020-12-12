@@ -1,0 +1,22 @@
+@import "../../common/Styles.scss";
+
+.invitedToJoinGroup {
+    margin-top: $spacing-average;
+}
+
+.invitedToJoinGroup {
+    text-align: center;
+    font-weight: bold;
+    color: $color-blue;
+    padding: $spacing-medium;
+}
+
+.spinner {
+    text-align: center;
+    margin-top: $spacing-average;
+}
+
+.loginWrapper {
+    padding-top: $spacing-small;
+    padding-bottom: $spacing-tiny;
+}

@@ -8,6 +8,7 @@ import createSagaMiddleware from 'redux-saga';
 import { ReactReduxFirebaseProvider, getFirebase } from 'react-redux-firebase';
 import { createFirestoreInstance } from 'redux-firestore';
 import { createBrowserHistory } from 'history';
+import * as Sentry from '@sentry/react';
 import { routerMiddleware } from 'connected-react-router';
 import * as serviceWorker from './serviceWorker';
 import { firebaseApp } from './config/fbConfig';
@@ -15,6 +16,12 @@ import createRootReducer from './rootReducer';
 import rootSaga from './rootSaga';
 import App from './App';
 import 'react-notifications-component/dist/theme.css';
+
+Sentry.init({
+    environment: process.env.REACT_APP_PROJECT_ID,
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+    release: process.env.REACT_APP_VERSION
+});
 
 const history = createBrowserHistory();
 

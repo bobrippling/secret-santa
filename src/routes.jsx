@@ -6,9 +6,13 @@ import * as rootComponents from './rootComponents';
 import * as constants from './constants';
 import Spinner from './common/spinner/Spinner';
 
-const generateLazyComponent = Component => () => (
+import ErrorBoundary from './errorboundary/ErrorBoundary';
+
+const generateLazyComponent = (Component, moduleName) => () => (
     <Suspense fallback={<div style={{ textAlign: 'center', marginTop: '30px' }}><Spinner /></div>}>
-        <Component />
+        <ErrorBoundary moduleName={moduleName}>
+            <Component />
+        </ErrorBoundary>
     </Suspense>
 );
 

@@ -99,11 +99,13 @@ exports.joinGroup = functions
             }
             
             return db.collection('users').doc(context.auth.uid).get().then(user => {
+                const userData = user.data();
+
                 return docs.docs[0].ref.update({
                     participants: operations.arrayUnion(context.auth.uid),
                     displayNameMappings: {
                         ...docs.docs[0].data().displayNameMappings,
-                        [context.auth.uid]: user.data().displayName
+                        [context.auth.uid]: userData ? userData.displayName : ''
                     },
                     wishlist: {
                         ...docs.docs[0].data().wishlist,

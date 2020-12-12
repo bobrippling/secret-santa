@@ -167,6 +167,16 @@
     font-size: $font-size-medium;
 }
 
+.inviteWrapper {
+    text-align: center;
+}
+
+.inviteMessage {
+    text-align: center;
+    font-weight: bold;
+    color: $color-green;
+}
+
 .joinGroupMessage {
     text-align: center;
     font-weight: bold;

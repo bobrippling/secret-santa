@@ -112,6 +112,7 @@ const MyGroups = props => {
     const [wishlistIndex, setWishlistIndex] = React.useState(-1);
     const [editWishlistName, setEditWishlistName] = React.useState('');
     const [editWishlistLink, setEditWishlistLink] = React.useState('');
+    const [isInviting, setIsInviting] = React.useState(false);
 
     const closeAddingToWishlist = () => {
         setIsAddingToWishlist(false);
@@ -472,6 +473,7 @@ const MyGroups = props => {
                     <div className={styles.activateGroupButton}>
                         <StyledButton
                             text="Randomise Pairings"
+                            color="secondary"
                             onClick={() => setIsConfirmingAssingPairings(true)}
                         />
                     </div>
@@ -483,11 +485,18 @@ const MyGroups = props => {
                     <div className={styles.activateGroupButton}>
                         <StyledButton
                             text="Regenerate group"
+                            color="secondary"
                             onClick={() => setIsRegenerating(true)}
                         />
                     </div>
                 )}
-
+                <div className={styles.inviteWrapper}>
+                    <StyledButton
+                        color="primary"
+                        onClick={() => setIsInviting(true)}
+                        text="Invite"
+                    />
+                </div>
             </Paper>
 
             {getParticipantsOrder(group, props.auth.uid).map((p, index) => (
@@ -1006,6 +1015,18 @@ const MyGroups = props => {
                     </LoadingDiv>
                 </div>
 
+            </SuccessModal>
+
+            <SuccessModal
+                backdrop
+                closeModal={() => setIsInviting(false)}
+                isOpen={isInviting}
+                headerMessage="Invite somebody!"
+                toggleModal={() => setIsInviting(false)}
+            >
+                <div className={styles.inviteMessage}>
+                    {`https://${process.env.REACT_APP_AUTH_DOMAIN + constants.URL.GROUP_DETAILS}/${props.group.id}`}
+                </div>
             </SuccessModal>
 
         </>

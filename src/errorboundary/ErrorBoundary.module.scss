@@ -3,6 +3,8 @@
 .errorMessageWrapper {
     height: calc(100vh - 64px); // Height of the top navbar
     background-color: rgb(29, 27, 27);;
+    margin-left: $spacing-small;
+    margin-right: $spacing-small;
 }
 
 .errorHeader {

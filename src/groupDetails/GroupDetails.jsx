@@ -40,6 +40,14 @@ import AddGiftRestrictions from './AddGiftRestrictions';
 import RemoveGiftRestrictions from './RemoveGiftRestrictions';
 import TextInput from '../common/TextInput/TextInput';
 
+const getParticipantsOrder = (group, uid) => {
+    if (group.status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
+        const myTarget = group.pairings[uid];
+        return [uid, myTarget, ...group.participants.filter(x => x !== uid && x !== myTarget)];
+    }
+    return [uid, ...group.participants.filter(x => x !== uid)];
+};
+
 const isDateInFuture = date => {
     const providedDate = moment(Date.parse(date));
     const currentDate = moment();
@@ -467,7 +475,7 @@ const MyGroups = props => {
 
             </Paper>
 
-            {group.participants.map((p, index) => (
+            {getParticipantsOrder(group, props.auth.uid).map((p, index) => (
                 <Paper
                     elevation={4}
                     className={classNames({

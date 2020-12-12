@@ -30,7 +30,7 @@ class ErrorBoundary extends React.Component {
             return (
                 <div className={this.props.styles.errorMessageWrapper}>
                     <div className={this.props.styles.errorHeader}>
-                        {`There was an error in the ${this.props.moduleName} module. This error has been reported to the web developer.`}
+                        {`There was an error in the ${this.props.moduleName} module. This error has been reported to Matt.`}
                     </div>
 
                     <ul className={this.props.styles.options}>
@@ -48,7 +48,7 @@ class ErrorBoundary extends React.Component {
 
                         <li>
                             If the error persists,
-                            let the website maintainer know (and which module)
+                            please let Matt know (and which module)
                         </li>
                     </ul>
                 </div>

@@ -14,6 +14,12 @@ import LoadingDiv from '../common/loadingDiv/LoadingDiv';
 import * as appConstants from '../constants';
 
 const MyGroups = props => {
+    const a = {
+
+    };
+
+    console.log('a', a.b.c.d);
+
     const isMobile = useMediaQuery(`(max-width:${appConstants.mobileScreenSize}px)`);
     return (
         <div>

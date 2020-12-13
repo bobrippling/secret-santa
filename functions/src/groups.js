@@ -41,35 +41,32 @@ exports.createGroup = functions
             if (result.size > 0) {
                 throw new functions.https.HttpsError('invalid-argument', 'There is already a group with that code!');
             }
-            return db.collection('users').doc(context.auth.uid).get().then(user => {
-                return db.collection('groups').add({
-                    addressMappings: {},
-                    code: data.code,
-                    date: data.date,
-                    groupName: data.groupName,
-                    isNoPriceRange: data.isNoPriceRange || false,
-                    status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
-                    owner: context.auth.uid,
-                    participants: [context.auth.uid],
-                    pairings: {},
-                    priceMin: common.isNumber(data.min) ? data.min : null,
-                    priceMax: common.isNumber(data.max) ? data.max : null,
-                    restrictions: {},
-                    displayNameMappings: {
-                        [context.auth.uid]: user.data().displayName
-                    },
-                    wishlist: {
-                        [context.auth.uid]: []
-                    },
-                })
-            })
-        })        
+            return db.collection('users').doc(context.auth.uid).get().then(user => db.collection('groups').add({
+                addressMappings: {},
+                code: data.code,
+                date: data.date,
+                groupName: data.groupName,
+                isNoPriceRange: data.isNoPriceRange || false,
+                status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
+                owner: context.auth.uid,
+                participants: [context.auth.uid],
+                pairings: {},
+                priceMin: common.isNumber(data.min) ? data.min : null,
+                priceMax: common.isNumber(data.max) ? data.max : null,
+                restrictions: {},
+                displayNameMappings: {
+                    [context.auth.uid]: user.data().displayName
+                },
+                wishlist: {
+                    [context.auth.uid]: []
+                }
+            }));
+        });
     });
 
 exports.joinGroup = functions
     .region(constants.region)
     .https.onCall((data, context) => {
-        console.log("auth", context.auth.uid)
         common.isAuthenticated(context);
 
         if (!data.code) {
@@ -81,7 +78,6 @@ exports.joinGroup = functions
         }
 
         return db.collection('groups').where('code', '==', data.code).get().then(docs => {
-
             if (docs.size === 0) {
                 throw new functions.https.HttpsError('not-found', 'No group with that code exists');
             }
@@ -94,10 +90,10 @@ exports.joinGroup = functions
                 throw new functions.https.HttpsError('invalid-argument', 'This group has already started. Too late to join');
             }
 
-            if (docs.docs[0].data().participants.includes(context.auth.uid)){
+            if (docs.docs[0].data().participants.includes(context.auth.uid)) {
                 throw new functions.https.HttpsError('invalid-argument', 'You are already in that group!');
             }
-            
+
             return db.collection('users').doc(context.auth.uid).get().then(user => {
                 const userData = user.data();
 
@@ -111,9 +107,9 @@ exports.joinGroup = functions
                         ...docs.docs[0].data().wishlist,
                         [context.auth.uid]: []
                     }
-                })
+                });
             });
-        })
+        });
     });
 
 exports.addGiftRestriction = functions
@@ -130,7 +126,6 @@ exports.addGiftRestriction = functions
         }
 
         return db.collection('groups').doc(data.groupId).get().then(doc => {
-
             if (Object.keys(doc.data().restrictions).length >= 10) {
                 throw new functions.https.HttpsError('invalid-argument', 'Max of 10 restrictions');
             }
@@ -139,7 +134,9 @@ exports.addGiftRestriction = functions
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can add restrictions');
             }
 
-            if (Object.values(doc.data().restrictions).some(r => common.doArraysContainSameElements(r, data.restriction))) {
+            if (Object.values(doc.data().restrictions)
+                .some(r => common.doArraysContainSameElements(r,
+                    data.restriction))) {
                 throw new functions.https.HttpsError('invalid-argument', 'Cannot add duplicate group restrictions');
             }
 
@@ -157,8 +154,8 @@ exports.addGiftRestriction = functions
                     ...doc.data().restrictions,
                     [minKey]: data.restriction
                 }
-            })
-        })
+            });
+        });
     });
 
 exports.removeGiftRestrictions = functions
@@ -176,16 +173,17 @@ exports.removeGiftRestrictions = functions
 
         return db.collection('groups').doc(data.groupId).get().then(doc => {
             const getRemovedResult = (restrictions, removed) => Object.keys(restrictions)
-                .reduce((acc, cur) => (removed.some(x => common.doArraysContainSameElements(x, restrictions[cur])) 
-                ? acc : {
-                    ...acc,
-                [cur]: restrictions[cur]
-            }), {});
+                .reduce((acc, cur) => (removed.some(x => common.doArraysContainSameElements(x,
+                    restrictions[cur]))
+                    ? acc : {
+                        ...acc,
+                        [cur]: restrictions[cur]
+                    }), {});
 
             return doc.ref.update({
                 restrictions: getRemovedResult(doc.data().restrictions, data.restrictions)
-            })
-        })
+            });
+        });
     });
 
 exports.assignPairings = functions
@@ -198,7 +196,6 @@ exports.assignPairings = functions
         }
 
         return db.collection('groups').doc(data.groupId).get().then(doc => {
-
             if (context.auth.uid !== doc.data().owner) {
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can assign pairings');
             }
@@ -209,13 +206,13 @@ exports.assignPairings = functions
 
             const { restrictions, participants } = doc.data();
 
-            const pairings = common.generatePairings(restrictions, participants)
+            const pairings = common.generatePairings(restrictions, participants);
 
             return doc.ref.update({
                 pairings,
                 status: constants.groupStatuses.PAIRINGS_ASSIGNED
-            })
-        })
+            });
+        });
     });
 
 exports.deleteGroup = functions
@@ -232,7 +229,7 @@ exports.deleteGroup = functions
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can delete the group');
             }
             return doc.ref.delete();
-        })
+        });
     });
 
 exports.leaveGroup = functions
@@ -245,7 +242,8 @@ exports.leaveGroup = functions
         }
 
         return db.collection('groups').doc(data.groupId).get().then(doc => {
-            if (context.auth.uid === doc.data().owner && doc.data().participants && doc.data().participants.length > 1) {
+            if (context.auth.uid === doc.data().owner
+            && doc.data().participants && doc.data().participants.length > 1) {
                 throw new functions.https.HttpsError('invalid-argument', 'The group owner cannot leave if there are people left in the group');
             }
 
@@ -260,10 +258,9 @@ exports.leaveGroup = functions
             return doc.ref.update({
                 participants: operations.arrayRemove(context.auth.uid),
                 displayNameMappings: _.omit(doc.data().displayNameMappings, context.auth.uid),
-                wishlist: _.omit(doc.data().wishlist, context.auth.uid),
-            })
-            
-        })
+                wishlist: _.omit(doc.data().wishlist, context.auth.uid)
+            });
+        });
     });
 
 exports.setAddress = functions
@@ -275,14 +272,12 @@ exports.setAddress = functions
             throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
         }
 
-        return db.collection('groups').doc(data.groupId).get().then(doc => {
-            return doc.ref.update({
-                addressMappings: {
-                    ...doc.data().addressMappings,
-                    [context.auth.uid]: data.address || ''
-                }
-            })
-        })
+        return db.collection('groups').doc(data.groupId).get().then(doc => doc.ref.update({
+            addressMappings: {
+                ...doc.data().addressMappings,
+                [context.auth.uid]: data.address || ''
+            }
+        }));
     });
 
 exports.kickUser = functions
@@ -299,7 +294,6 @@ exports.kickUser = functions
         }
 
         return db.collection('groups').doc(data.groupId).get().then(doc => {
-
             if (doc.data().owner !== context.auth.uid) {
                 throw new functions.https.HttpsError('unauthenticated', 'You must be the group owner to kick users');
             }
@@ -324,9 +318,9 @@ exports.kickUser = functions
                 displayNameMappings: _.omit(doc.data().displayNameMappings, data.userId),
                 participants: operations.arrayRemove(data.userId),
                 restrictions,
-                wishlist: _.omit(doc.data().wishlist, data.userId),
-            })
-        })
+                wishlist: _.omit(doc.data().wishlist, data.userId)
+            });
+        });
     });
 
 
@@ -347,23 +341,19 @@ exports.regenerateGroup = functions
             throw new functions.https.HttpsError('invalid-argument', 'Must provide a date in the future');
         }
 
-        return db.collection('groups').doc(data.groupId).get().then(doc => {
-            return doc.ref.update({
-                date: data.date,
-                isNoPriceRange: data.isNoPriceRange || false,
-                status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
-                pairings: {},
-                priceMin: common.isNumber(data.min) ? data.min : null,
-                priceMax: common.isNumber(data.max) ? data.max : null,
-                restrictions: {},
-                wishlist: Object.keys(doc.data().wishlist).reduce((acc, cur) => {
-                    return {
-                        ...acc,
-                        [cur]: []
-                    }
-                }, {})
-            })
-        })
+        return db.collection('groups').doc(data.groupId).get().then(doc => doc.ref.update({
+            date: data.date,
+            isNoPriceRange: data.isNoPriceRange || false,
+            status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
+            pairings: {},
+            priceMin: common.isNumber(data.min) ? data.min : null,
+            priceMax: common.isNumber(data.max) ? data.max : null,
+            restrictions: {},
+            wishlist: Object.keys(doc.data().wishlist).reduce((acc, cur) => ({
+                ...acc,
+                [cur]: []
+            }), {})
+        }));
     });
 
 exports.editDate = functions
@@ -382,7 +372,7 @@ exports.editDate = functions
         if (!common.isDateInFuture(data.date)) {
             throw new functions.https.HttpsError('invalid-argument', 'Must provide a date in the future');
         }
-        
+
         return db.collection('groups').doc(data.groupId).update({
             date: data.date
         });

@@ -94,7 +94,6 @@
 
 .spinner {
     text-align: center;
-    margin-top: $spacing-average;
 }
 
 .smallWidth {
@@ -165,6 +164,37 @@
     color: $color-blue;
     text-align: center;
     font-size: $font-size-medium;
+}
+
+.copyTextButton {
+    margin-top: $spacing-small;
+    text-align: center;
+}
+
+.joinGroup {
+    font-weight: bold;
+    text-align: center;
+    color: $color-green;
+    margin-bottom: $spacing-small;
+}
+
+.joinWrapper {
+    padding: $spacing-average;
+}
+
+.joinGroupButton {
+    text-align: center;
+}
+
+.copyTextMessage {
+    font-weight: bold;
+    font-size: $font-size-small;
+    color: $color-gray;
+    text-align: center;
+}
+
+.copyTextInvisible {
+    visibility: hidden;
 }
 
 .inviteWrapper {

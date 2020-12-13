@@ -16,6 +16,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { compose } from 'redux';
 import { makeStyles } from '@material-ui/core/styles';
 import StyledButton from '../common/StyledButton/StyledButton';
+import { joinGroupRequest } from '../myGroups/actions';
 import * as textInputConstants from '../common/TextInput/constants';
 import LoadingDiv from '../common/loadingDiv/LoadingDiv';
 import { findNextChristmas } from '../myGroups/MyGroups';
@@ -113,6 +114,8 @@ const MyGroups = props => {
     const [editWishlistName, setEditWishlistName] = React.useState('');
     const [editWishlistLink, setEditWishlistLink] = React.useState('');
     const [isInviting, setIsInviting] = React.useState(false);
+
+    const [copyTextMessage, setCopyTextMessage] = React.useState('');
 
     const closeAddingToWishlist = () => {
         setIsAddingToWishlist(false);
@@ -267,6 +270,20 @@ const MyGroups = props => {
         setUserIdAddressBeingViewed('');
     };
 
+    const copyToClipBoard = async copyMe => {
+        try {
+            await navigator.clipboard.writeText(copyMe);
+            setCopyTextMessage('Copied!');
+        } catch (err) {
+            setCopyTextMessage('Failed to copy!');
+        }
+    };
+
+    const closeViewingInvite = () => {
+        setIsInviting(false);
+        setCopyTextMessage('');
+    };
+
     React.useEffect(() => {
         if (!props.addingAddress) {
             setNewAddress(''); // CHANGE ME
@@ -328,18 +345,70 @@ const MyGroups = props => {
         return <Invited />;
     }
 
-    if (!props.group?.participants.includes(props.auth.uid)) {
+    if (!props.group?.participants.includes(props.auth.uid) && props.joiningGroup) {
         return (
-            <div className={styles.spinner}>
-                <Spinner />
-                <div className={styles.joinGroupMessage}>
-                    Joining Group
+            <Paper
+                elevation={4}
+                className={classNames({
+                    [classes.paperNoPadding]: true,
+                    [classes.halfWidth]: !isMobile
+                })}
+            >
+                <div className={styles.joinWrapper}>
+                    <div className={styles.joinGroup}>
+                        {`You have been invited to join group ${props.group?.groupName}`}
+                    </div>
+
+                    <div className={styles.spinner}>
+                        <Spinner />
+                        <div className={styles.joinGroupMessage}>
+                            Joining Group
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </Paper>
+        );
+    }
+
+    if (!props.group?.participants.includes(props.auth.uid) && !props.joiningGroup
+    && props.group?.participants.length > 0) {
+        return (
+            <Paper
+                elevation={4}
+                className={classNames({
+                    [classes.paperNoPadding]: true,
+                    [classes.halfWidth]: !isMobile
+                })}
+            >
+                <div className={styles.joinWrapper}>
+                    <div className={styles.joinGroup}>
+                        {`You have been invited to join group ${props.group?.groupName}`}
+                    </div>
+
+                    <div className={styles.joinGroupButton}>
+                        <StyledButton
+                            text="Join"
+                            color="secondary"
+                            disabled={props.joiningGroup}
+                            onClick={() => props.joinGroupRequest(props.group.code)}
+                        />
+                    </div>
+                </div>
+            </Paper>
         );
     }
 
     if (!group) {
+        if (!props.hasFetchedGroups) {
+            return (
+                <div className={styles.spinner}>
+                    <Spinner />
+                    <div className={styles.joinGroupMessage}>
+                        Fetching Groups
+                    </div>
+                </div>
+            );
+        }
         props.redirectRequest(constants.URL.MY_GROUPS);
         return null;
     }
@@ -1019,14 +1088,31 @@ const MyGroups = props => {
 
             <SuccessModal
                 backdrop
-                closeModal={() => setIsInviting(false)}
+                closeModal={closeViewingInvite}
                 isOpen={isInviting}
                 headerMessage="Invite somebody!"
-                toggleModal={() => setIsInviting(false)}
+                toggleModal={closeViewingInvite}
             >
                 <div className={styles.inviteMessage}>
                     {`https://${process.env.REACT_APP_AUTH_DOMAIN + constants.URL.GROUP_DETAILS}/${props.group.id}`}
                 </div>
+
+                <div className={styles.copyTextButton}>
+                    <StyledButton
+                        text="Copy text!"
+                        color="secondary"
+                        onClick={() => copyToClipBoard(`https://${process.env.REACT_APP_AUTH_DOMAIN + constants.URL.GROUP_DETAILS}/${props.group.id}`)}
+                    />
+                </div>
+
+                <div className={classNames({
+                    [styles.copyTextMessage]: true,
+                    [styles.copyTextInvisible]: !copyTextMessage
+                })}
+                >
+                    {copyTextMessage || 'invisible'}
+                </div>
+
             </SuccessModal>
 
         </>
@@ -1041,6 +1127,7 @@ const mapDispatchToProps = {
     deleteGroupRequest,
     editDateRequest,
     editWishlistItemRequest,
+    joinGroupRequest,
     kickUserRequest,
     leaveGroupRequest,
     redirectRequest,
@@ -1058,6 +1145,8 @@ const mapStateToProps = (state, props) => ({
     deletingGroup: state.groupDetails.deletingGroup,
     editingDate: state.groupDetails.editingDate,
     editingWishlistItem: state.groupDetails.editingWishlistItem,
+    hasFetchedGroups: selectors.hasFetchedGroups(state),
+    joiningGroup: state.myGroups.joiningGroup,
     kickingUser: state.groupDetails.kickingUser,
     leavingGroup: state.groupDetails.leavingGroup,
     regeneratingGroup: state.groupDetails.regeneratingGroup,

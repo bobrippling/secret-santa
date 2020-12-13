@@ -24,3 +24,9 @@ export const getGroupFromId = (state, props) => {
         id: groupId
     };
 };
+
+export const hasFetchedGroups = state => {
+    const { firestore } = state;
+
+    return !fp.isEmpty(firestore.data);
+};

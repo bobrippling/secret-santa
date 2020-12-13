@@ -74,7 +74,7 @@ const Invited = props => {
     return (
         <>
             <div className={styles.invitedToJoinGroup}>
-                {`You have been invited to join the group ${props.group?.groupName}`}
+                {`You have been invited to join the group ${props.group?.groupName}. Create an account to join!`}
             </div>
             <div id="firebaseui-auth-container" />
         </>

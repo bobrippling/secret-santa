@@ -1,47 +1,49 @@
 /* eslint-disable react/prop-types */
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import AddIcon from '@material-ui/icons/Add';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+// import ContactsIcon from '@material-ui/icons/Contacts';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import FaceIcon from '@material-ui/icons/Face';
+import InfoIcon from '@material-ui/icons/Info';
+import RemoveIcon from '@material-ui/icons/Remove';
+import classNames from 'classnames';
+import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import Paper from '@material-ui/core/Paper';
 import { firestoreConnect } from 'react-redux-firebase';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import ContactsIcon from '@material-ui/icons/Contacts';
-import classNames from 'classnames';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveIcon from '@material-ui/icons/Remove';
-import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from '@material-ui/icons/Add';
-import FaceIcon from '@material-ui/icons/Face';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { compose } from 'redux';
-import { makeStyles } from '@material-ui/core/styles';
-import StyledButton from '../common/StyledButton/StyledButton';
-import { joinGroupRequest } from '../myGroups/actions';
-import * as textInputConstants from '../common/TextInput/constants';
-import LoadingDiv from '../common/loadingDiv/LoadingDiv';
-import { findNextChristmas } from '../myGroups/MyGroups';
-import SuccessModal from '../common/modal/SuccessModal';
-import materialStyles from '../materialStyles';
-import Fade from '../common/Fade/Fade';
 import DatePicker from '../common/datePicker/DatePicker';
-import Spinner from '../common/spinner/Spinner';
+import Fade from '../common/Fade/Fade';
+import LoadingDiv from '../common/loadingDiv/LoadingDiv';
+import SuccessModal from '../common/modal/SuccessModal';
 import RangeSlider from '../common/slider/RangeSlider';
-import * as selectors from './selectors';
-import styles from './GroupDetails.module.scss';
-import { mapIdToName } from '../myGroups/helpers';
-import AddToWishlist from './AddToWishlist';
-import {
-    addWishlistItemRequest, removeWishlistItemsRequest, addGiftRestrictionRequest,
-    removeGiftRestrictionRequests, assignPairingsRequest, deleteGroupRequest,
-    redirectRequest, leaveGroupRequest, addDeliveryAddressRequest,
-    kickUserRequest, regenerateGroupRequest, editDateRequest, editWishlistItemRequest
-} from './actions';
-import RemoveFromWishlist from './RemoveFromWishlist';
-import * as constants from '../constants';
-import AddGiftRestrictions from './AddGiftRestrictions';
-import RemoveGiftRestrictions from './RemoveGiftRestrictions';
+import Spinner from '../common/spinner/Spinner';
+import StyledButton from '../common/StyledButton/StyledButton';
+import * as textInputConstants from '../common/TextInput/constants';
 import TextInput from '../common/TextInput/TextInput';
+import * as constants from '../constants';
+import materialStyles from '../materialStyles';
+import { joinGroupRequest } from '../myGroups/actions';
+import { mapIdToName } from '../myGroups/helpers';
+import { findNextChristmas } from '../myGroups/MyGroups';
+import {
+    addDeliveryAddressRequest, addGiftRestrictionRequest, addWishlistItemRequest,
+    assignPairingsRequest, deleteGroupRequest, editDateRequest,
+    editWishlistItemRequest, kickUserRequest, leaveGroupRequest,
+    redirectRequest, regenerateGroupRequest,
+    removeGiftRestrictionRequests, removeWishlistItemsRequest
+} from './actions';
+import AddGiftRestrictions from './AddGiftRestrictions';
+import AddToWishlist from './AddToWishlist';
+import styles from './GroupDetails.module.scss';
 import Invited from './invited/Invited';
+import RemoveFromWishlist from './RemoveFromWishlist';
+import RemoveGiftRestrictions from './RemoveGiftRestrictions';
+import * as selectors from './selectors';
 
 const getParticipantsOrder = (group, uid) => {
     if (group.status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
@@ -57,13 +59,13 @@ const isDateInFuture = date => {
     return providedDate.isAfter(currentDate);
 };
 
-const getDate = d => {
-    if (!d) {
-        return '';
-    }
-    const castAsD = Date.parse(d);
-    return moment(castAsD).format('Do MMMM YYYY');
-};
+// const getDate = d => {
+//     if (!d) {
+//         return '';
+//     }
+//     const castAsD = Date.parse(d);
+//     return moment(castAsD).format('Do MMMM YYYY');
+// };
 
 const MyGroups = props => {
     const classes = makeStyles(materialStyles)();
@@ -116,6 +118,7 @@ const MyGroups = props => {
     const [isInviting, setIsInviting] = React.useState(false);
 
     const [copyTextMessage, setCopyTextMessage] = React.useState('');
+    const [isShowingDetails, setIsShowingDetails] = React.useState(false);
 
     const closeAddingToWishlist = () => {
         setIsAddingToWishlist(false);
@@ -177,15 +180,15 @@ const MyGroups = props => {
         setNewAddress('');
     };
 
-    const openAddingAddress = () => {
-        setIsAddingAddress(true);
-        setNewAddress(props.group?.addressMappings[props.auth.uid] || '');
-    };
+    // const openAddingAddress = () => {
+    //     setIsAddingAddress(true);
+    //     setNewAddress(props.group?.addressMappings[props.auth.uid] || '');
+    // };
 
-    const openEditingDate = () => {
-        setNewDate(props.group.date);
-        setIsEditingDate(true);
-    };
+    // const openEditingDate = () => {
+    //     setNewDate(props.group.date);
+    //     setIsEditingDate(true);
+    // };
 
     const closeEditingDate = () => {
         setIsEditingDate(false);
@@ -258,11 +261,11 @@ const MyGroups = props => {
         setIsAddingAddress(false);
     };
 
-    const viewAddress = (address, userId) => {
-        setAddressBeingViewed(address);
-        setUserIdAddressBeingViewed(userId);
-        setIsViewingAddress(true);
-    };
+    // const viewAddress = (address, userId) => {
+    //     setAddressBeingViewed(address);
+    //     setUserIdAddressBeingViewed(userId);
+    //     setIsViewingAddress(true);
+    // };
 
     const closeViewingAddress = () => {
         setIsViewingAddress(false);
@@ -419,9 +422,13 @@ const MyGroups = props => {
                 elevation={4}
                 className={classNames({
                     [classes.paperNoPadding]: true,
-                    [classes.halfWidth]: !isMobile
+                    [classes.halfWidth]: !isMobile,
+                    [classes.relative]: true
                 })}
             >
+                <div className={styles.groupInfo}>
+                    <InfoIcon color="primary" fontSize="large" onClick={() => setIsShowingDetails(true)} />
+                </div>
                 <div className={styles.groupPartialInfoWrapper}>
                     <div className={styles.detailWrapper}>
                         <div className={styles.key}>
@@ -431,17 +438,20 @@ const MyGroups = props => {
                             {group.groupName}
                         </div>
                     </div>
-                    <div className={styles.detailWrapper}>
-                        <div className={styles.key}>
-                            Group Code
+                    {props.group.owner === props.auth.uid
+                    && (
+                        <div className={styles.detailWrapper}>
+                            <div className={styles.key}>
+                                Group Code
+                            </div>
+                            <div className={styles.valueCode}>
+                                {group.code}
+                            </div>
                         </div>
-                        <div className={styles.valueCode}>
-                            {group.code}
-                        </div>
-                    </div>
+                    )}
                 </div>
 
-                {!group.isNoPriceRange && (
+                {!group.isNoPriceRange && props.group.owner === props.auth.uid && (
                     <div className={styles.detailWrapper}>
                         <div className={styles.key}>
                             Price Range
@@ -452,25 +462,27 @@ const MyGroups = props => {
                     </div>
                 )}
 
-                <div className={styles.detailWrapper}>
+                {/* <div className={styles.detailWrapper}>
                     <div className={styles.key}>
                         Manage Wishlist
                     </div>
                     <div className={styles.wishlistButtons}>
                         <div className={styles.addWishlistIcon}>
-                            <AddCircleIcon color="primary" fontSize="large" onClick={() => setIsAddingToWishlist(true)} />
+                            <AddCircleIcon color="primary" fontSize="large"
+                            onClick={() => setIsAddingToWishlist(true)} />
                         </div>
                         <div className={styles.removeWishlistIcon}>
-                            <RemoveIcon color="secondary" fontSize="large" onClick={() => setIsRemovingFromWishlist(true)} />
+                            <RemoveIcon color="secondary" fontSize="large"
+                            onClick={() => setIsRemovingFromWishlist(true)} />
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 {props.group.owner === props.auth.uid
                 && props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS && (
                     <div className={styles.detailWrapper}>
                         <div className={styles.key}>
-                            Manage Gift Restrictions
+                            {`Manage Gift Restrictions (${Object.keys(props.group?.restrictions)?.length})`}
                         </div>
                         <div className={styles.giftRestrictionButtons}>
                             <div className={styles.addGiftRestrictionIcon}>
@@ -483,20 +495,22 @@ const MyGroups = props => {
                     </div>
                 )}
 
-                <div
+                {/* <div
                     className={styles.addAddressWrapper}
                     onClick={openAddingAddress}
                     role="button"
                     tabIndex={0}
                 >
                     <div className={styles.addAddressText}>
-                        {props.group.addressMappings[props.auth.uid] ? 'Edit Address' : 'Add Address'}
+                        {props.group.addressMappings[props.auth.uid]
+                            ? 'Edit Address' : 'Add Address'}
                     </div>
                     <div>
-                        {props.group.addressMappings[props.auth.uid] ? <EditIcon color="primary" fontSize="medium" />
+                        {props.group.addressMappings[props.auth.uid] ?
+                            <EditIcon color="primary" fontSize="medium" />
                             : <AddCircleIcon color="primary" fontSize="large" />}
                     </div>
-                </div>
+                </div> */}
 
                 <div className={styles.detailWrapperStatuses}>
                     <div className={styles.key}>
@@ -515,7 +529,7 @@ const MyGroups = props => {
                     )}
                 </div>
 
-                <div className={styles.detailWrapperStatusesDeadline}>
+                {/* <div className={styles.detailWrapperStatusesDeadline}>
                     <div className={styles.editDateWrapper}>
                         <div className={styles.key}>
                             When is the deadline?
@@ -535,24 +549,14 @@ const MyGroups = props => {
                             <EditIcon color="primary" fontSize="medium" />
                         </div>
                     )}
-                </div>
-
-                {props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS
-                && props.auth.uid === props.group.owner && (
-                    <div className={styles.activateGroupButton}>
-                        <StyledButton
-                            text="Randomise Pairings"
-                            color="secondary"
-                            onClick={() => setIsConfirmingAssingPairings(true)}
-                        />
-                    </div>
-                )}
+                </div> */}
 
                 {props.group.status === constants.groupStatuses.PAIRINGS_ASSIGNED
                 && props.auth.uid === props.group.owner
                 && !isDateInFuture(props.group.date) && (
-                    <div className={styles.activateGroupButton}>
+                    <div className={styles.wishlistButton}>
                         <StyledButton
+                            fullWidth
                             text="Regenerate group"
                             color="secondary"
                             onClick={() => setIsRegenerating(true)}
@@ -560,12 +564,48 @@ const MyGroups = props => {
                     </div>
                 )}
                 <div className={styles.inviteWrapper}>
-                    <StyledButton
-                        color="primary"
-                        onClick={() => setIsInviting(true)}
-                        text="Invite"
-                    />
+                    <div className={styles.wishlistButton}>
+                        <StyledButton
+                            fullWidth
+                            text="Add wishlist item"
+                            color="primary"
+                            onClick={() => setIsAddingToWishlist(true)}
+                        />
+                    </div>
+                    <div className={styles.wishlistButton}>
+                        <StyledButton
+                            fullWidth
+                            text="Remove wishlist items"
+                            color="secondary"
+                            onClick={() => setIsRemovingFromWishlist(true)}
+                        />
+                    </div>
+                    {props.auth.uid === props.group.owner
+                    && (
+                        <div className={styles.wishlistButton}>
+                            <StyledButton
+                                fullWidth
+                                color="primary"
+                                onClick={() => setIsInviting(true)}
+                                text="Invite"
+                            />
+                        </div>
+                    )}
+
                 </div>
+
+                {props.group.status
+                    === constants.groupStatuses.WAITING_FOR_PAIRINGS
+                && props.auth.uid === props.group.owner && (
+                    <div className={styles.wishlistButton}>
+                        <StyledButton
+                            fullWidth
+                            text="Randomise Pairings"
+                            color="secondary"
+                            onClick={() => setIsConfirmingAssingPairings(true)}
+                        />
+                    </div>
+                )}
             </Paper>
 
             {getParticipantsOrder(group, props.auth.uid).map((p, index) => (
@@ -588,17 +628,26 @@ const MyGroups = props => {
                             </div>
                         )}
                         <div className={styles.faceIcon}>
-                            <FaceIcon color={index % 2 === 0 ? 'primary' : 'secondary'} />
+                            <FaceIcon className={classNames({
+                                [classes.faceIconGreen]: index % 7 === 4,
+                                [classes.faceIconRed]: index % 7 === 5,
+                                [classes.faceIconBlue]: index % 7 === 6,
+                                [classes.faceIconPurple]: index % 7 === 0,
+                                [classes.faceIconGreen]: index % 7 === 1,
+                                [classes.faceIconBrown]: index % 7 === 2,
+                                [classes.faceIconGoldenrod]: index % 7 === 3
+                            })}
+                            />
                         </div>
                         <div className={styles.participantName}>
                             {mapIdToName(p, group.displayNameMappings)}
                         </div>
-                        <div className={styles.addressWrapper}>
+                        {/* <div className={styles.addressWrapper}>
                             <ContactsIcon
                                 color={index % 2 === 0 ? 'primary' : 'secondary'}
                                 onClick={() => viewAddress(props.group?.addressMappings[p], p)}
                             />
-                        </div>
+                        </div> */}
                     </div>
                     <div className={styles.wishlistWrapper}>
                         <div className={styles.wishlistHeader}>
@@ -653,11 +702,15 @@ const MyGroups = props => {
                                 text="Delete Group"
                             />
                         )}
-                        <StyledButton
-                            color="secondary"
-                            onClick={() => setIsConfirmLeaveGroup(true)}
-                            text="Leave group"
-                        />
+
+                        {props.group.status !== constants.groupStatuses.PAIRINGS_ASSIGNED
+                        && (
+                            <StyledButton
+                                color="secondary"
+                                onClick={() => setIsConfirmLeaveGroup(true)}
+                                text="Leave group"
+                            />
+                        )}
                     </LoadingDiv>
                 </div>
             </Paper>
@@ -678,6 +731,54 @@ const MyGroups = props => {
                     wishlistItemToAddUrl={wishlistItemToAddUrl}
                     setWishlistItemToAddUrl={setWishlistItemToAddUrl}
                 />
+            </SuccessModal>
+
+            <SuccessModal
+                backdrop
+                closeModal={() => setIsShowingDetails(false)}
+                isOpen={isShowingDetails}
+                headerMessage="Group Detaills"
+                toggleModal={() => setIsShowingDetails(false)}
+            >
+
+                <div className={styles.groupPartialInfoWrapper}>
+                    <div className={styles.detailWrapper}>
+                        <div className={styles.key}>
+                            Group Name
+                        </div>
+                        <div className={styles.value}>
+                            {group.groupName}
+                        </div>
+                    </div>
+
+                    <div className={styles.detailWrapper}>
+                        <div className={styles.key}>
+                            Group Owner
+                        </div>
+                        <div className={styles.valueCode}>
+                            {mapIdToName(props.group.owner, props.group.displayNameMappings)}
+                        </div>
+                    </div>
+                    <div className={styles.detailWrapper}>
+                        <div className={styles.key}>
+                            Group Code
+                        </div>
+                        <div className={styles.valueCode}>
+                            {group.code}
+                        </div>
+                    </div>
+
+                    {!group.isNoPriceRange && (
+                        <div className={styles.detailWrapper}>
+                            <div className={styles.key}>
+                                Price Range
+                            </div>
+                            <div className={styles.value}>
+                                {`£${group.priceMin} - £${group.priceMax}` }
+                            </div>
+                        </div>
+                    )}
+                </div>
             </SuccessModal>
 
             <SuccessModal
@@ -1040,7 +1141,7 @@ const MyGroups = props => {
                 backdrop
                 closeModal={closeEditingWishlist}
                 isOpen={isEditingWishlist || props.editingWishlistItem}
-                headerMessage="Edit Date"
+                headerMessage="Edit Wishlist"
                 toggleModal={closeEditingWishlist}
             >
                 <div className={classNames({
@@ -1069,18 +1170,24 @@ const MyGroups = props => {
 
                 <div className={styles.buttonWrapper}>
                     <LoadingDiv isLoading={props.editingWishlistItem} isBorderRadius>
-                        <StyledButton
-                            color="primary"
-                            onClick={editWishlist}
-                            text="Edit Wishlist Item"
-                            disabled={props.editingWishlistItem}
-                        />
-                        <StyledButton
-                            color="secondary"
-                            onClick={closeEditingWishlist}
-                            text="Cancel"
-                            disabled={props.editingWishlistItem}
-                        />
+                        <div className={styles.wislistExtraButton}>
+                            <StyledButton
+                                fullWidth
+                                color="primary"
+                                onClick={editWishlist}
+                                text="Edit Wishlist Item"
+                                disabled={props.editingWishlistItem}
+                            />
+                        </div>
+                        <div className={styles.wislistExtraButton}>
+                            <StyledButton
+                                fullWidth
+                                color="secondary"
+                                onClick={closeEditingWishlist}
+                                text="Cancel"
+                                disabled={props.editingWishlistItem}
+                            />
+                        </div>
                     </LoadingDiv>
                 </div>
 

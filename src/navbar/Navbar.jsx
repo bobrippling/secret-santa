@@ -25,7 +25,7 @@ const NewNavbar = props => {
     }, [redirect]);
 
     const groups = _.map(props.groups, (value, id) => ({ id, ...value }))
-        .filter(x => x.participants.includes(props.auth.uid));
+        .filter(x => x.participants && x.participants.includes(props.auth.uid));
 
     return (
         <>

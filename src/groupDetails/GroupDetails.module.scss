@@ -250,9 +250,10 @@
     margin-right: $spacing-small;
 }
 
-.activateGroupButton {
-    justify-content: center;
-    text-align: center;
+.groupInfo {
+    cursor: pointer;
+    right: $spacing-tiny;
+    position: absolute
 }
 
 .mySecretSantaTarget {
@@ -353,6 +354,14 @@
     @include vertical-center-div();
 }
 
+.wishlistButton {
+    justify-content: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+}
+
 @media only screen and (max-width: 800px) {
     .waitForPairingsStatus {
        max-height: 300px;
@@ -361,5 +370,9 @@
 
     .groupPartialInfoWrapper {
         flex-direction: column;
+    }
+
+    .wishlistButton {
+        width: 60%;
     }
 }

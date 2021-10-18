@@ -8,7 +8,7 @@ import styles from './AddGiftRestrictions.module.scss';
 
 const AddGiftRestrictions = props => {
     const generateCheckboxRow = (p, onClick, displayNameMappings) => (
-        <div className={styles.participantRow}>
+        <div className={styles.participantRow} key={p}>
             <div>
                 <Checkbox
                     checked={props.newGiftRestriction.includes(p)}

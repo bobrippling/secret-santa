@@ -23,6 +23,27 @@ export default theme => ({
     },
     maxWidth: {
         width: '100%'
+    },
+    relative: {
+        position: 'relative'
+    },
+    faceIconGreen: {
+        color: 'green'
+    },
+    faceIconRed: {
+        color: 'red'
+    },
+    faceIconBlue: {
+        color: 'blue'
+    },
+    faceIconPurple: {
+        color: 'purple'
+    },
+    faceIconBrown: {
+        color: 'brown'
+    },
+    faceIconGoldenrod: {
+        color: 'goldenrod'
     }
 
 });

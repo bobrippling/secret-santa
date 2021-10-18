@@ -87,7 +87,7 @@ const MyGroups = props => {
     }, [props.creatingGroup, props.joiningGroup]);
 
     const groups = _.map(props.groups, (value, id) => ({ id, ...value }))
-        .filter(x => x.participants.includes(props.auth.uid));
+        .filter(x => x.participants && x.participants.includes(props.auth.uid));
 
     const joinGroup = React.useCallback(() => {
         props.joinGroupRequest(groupCodeToJoin);

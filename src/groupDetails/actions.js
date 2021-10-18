@@ -90,13 +90,10 @@ export const cancelDeletingGroup = () => ({
     type: CANCEL_DELETING_GROUP
 });
 
-export const redirectRequest = url => {
-    console.log('redirect');
-    return ({
-        type: REDIRECT_REQUEST,
-        url
-    });
-};
+export const redirectRequest = url => ({
+    type: REDIRECT_REQUEST,
+    url
+});
 
 export const leaveGroupRequest = groupId => ({
     type: LEAVE_GROUP_REQUEST,

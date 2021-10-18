@@ -32,6 +32,7 @@ const StyledButton = props => {
     return (
         <ThemeProvider theme={theme}>
             <Button
+                fullWidth={props.fullWidth}
                 disabled={props.disabled}
                 variant="contained"
                 color={props.color}
@@ -50,6 +51,7 @@ const StyledButton = props => {
 
 StyledButton.defaultProps = {
     disabled: false,
+    fullWidth: false,
     color: 'primary',
     onClick: noop,
     smallButton: false,
@@ -59,6 +61,7 @@ StyledButton.defaultProps = {
 
 StyledButton.propTypes = {
     disabled: PropTypes.bool,
+    fullWidth: PropTypes.bool,
     color: PropTypes.string,
     onClick: PropTypes.func,
     smallButton: PropTypes.bool,

@@ -16,8 +16,14 @@ const RemoveFromWishlist = props => {
 
     const removeItems = React.useCallback(() => {
         removeWishlistItems(removedItems);
-        setRemovedItems([]);
+        // setRemovedItems([]);
     }, [removeWishlistItems, removedItems]);
+
+    React.useEffect(() => {
+        if (!props.removingItemsFromWishlist) {
+            setRemovedItems([]);
+        }
+    }, [props.removingItemsFromWishlist]);
 
     return (
         <>

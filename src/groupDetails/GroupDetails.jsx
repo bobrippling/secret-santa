@@ -416,6 +416,10 @@ const MyGroups = props => {
         return null;
     }
 
+    const showRandomisePairings = props.group.status
+    === constants.groupStatuses.WAITING_FOR_PAIRINGS
+&& props.auth.uid === props.group.owner;
+
     return (
         <>
             <Paper
@@ -592,20 +596,19 @@ const MyGroups = props => {
                         </div>
                     )}
 
+                    {showRandomisePairings && (
+                        <div className={styles.wishlistButton}>
+                            <StyledButton
+                                fullWidth
+                                text="Randomise Pairings"
+                                color="secondary"
+                                onClick={() => setIsConfirmingAssingPairings(true)}
+                            />
+                        </div>
+                    )}
+
                 </div>
 
-                {props.group.status
-                    === constants.groupStatuses.WAITING_FOR_PAIRINGS
-                && props.auth.uid === props.group.owner && (
-                    <div className={styles.wishlistButton}>
-                        <StyledButton
-                            fullWidth
-                            text="Randomise Pairings"
-                            color="secondary"
-                            onClick={() => setIsConfirmingAssingPairings(true)}
-                        />
-                    </div>
-                )}
             </Paper>
 
             {getParticipantsOrder(group, props.auth.uid).map((p, index) => (

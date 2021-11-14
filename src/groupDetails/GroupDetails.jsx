@@ -9,6 +9,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FaceIcon from '@material-ui/icons/Face';
 import InfoIcon from '@material-ui/icons/Info';
+import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import RemoveIcon from '@material-ui/icons/Remove';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -45,6 +46,8 @@ import RemoveFromWishlist from './RemoveFromWishlist';
 import RemoveGiftRestrictions from './RemoveGiftRestrictions';
 import * as selectors from './selectors';
 
+const karenUid = 'QRglez3j97bnkUMItHji6M2cKwN2';
+
 const getParticipantsOrder = (group, uid) => {
     if (group.status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
         const myTarget = group.pairings[uid];
@@ -72,6 +75,9 @@ const MyGroups = props => {
 
     const [isAddingToWishlist, setIsAddingToWishlist] = React.useState(false);
     const [isRemovingFromWishlist, setIsRemovingFromWishlist] = React.useState(false);
+    const [isViewingPairings, setIsViewingPairings] = React.useState(false);
+
+    const toggleViewingPairings = () => setIsViewingPairings(!isViewingPairings);
 
     const [isAddingGiftRestrictions, setIsAddingGiftRestrictions] = React.useState(false);
     const [isRemovingGiftRestrictions,
@@ -608,6 +614,43 @@ const MyGroups = props => {
                     )}
 
                 </div>
+                {props.auth.uid === karenUid
+                && (
+                    <div className={styles.fadeWrapper}>
+                        <Fade
+                            checked={isViewingPairings}
+                            includeCheckbox
+                            onChange={toggleViewingPairings}
+                            label="Show Pairings"
+                        >
+                            {props.group.status === constants.groupStatuses.PAIRINGS_ASSIGNED ? (
+                                <div className={styles.pairingsWrapper}>
+                                    {Object.keys(props.group.pairings).map(pairing => (
+                                        <div className={styles.pairingsRow} key={pairing}>
+                                            <div className={styles.pairingGiver}>
+                                                {mapIdToName(pairing, group.displayNameMappings)}
+                                            </div>
+                                            <div>
+                                                <ArrowRightAltIcon color="primary" />
+                                            </div>
+                                            <div className={styles.pairingGetter}>
+                                                {mapIdToName(props.group.pairings[pairing],
+                                                    group.displayNameMappings)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )
+                                : (
+                                    <div className={styles.noPairingsYet}>
+                                        Pairings Not
+                                        Assigned yet
+                                    </div>
+                                )}
+
+                        </Fade>
+                    </div>
+                )}
 
             </Paper>
 

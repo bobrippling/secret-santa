@@ -364,6 +364,40 @@
     width: 35%;
 }
 
+.sliderWrapper {
+    justify-content: center;
+}
+
+.fadeWrapper {
+    text-align: center;
+}
+
+.pairingsRow {
+    display: flex;
+    justify-content: center;
+}
+
+.pairingGiver {
+    margin-right: $spacing-small;
+    text-align: end;
+    width: 100%;
+    color: $color-green;
+    font-weight: bold;
+}
+
+.pairingGetter {
+    font-weight: bold;
+    margin-left: $spacing-small;
+    width: 100%;
+    text-align: start;
+    color: $color-red;
+}
+
+.noPairingsYet {
+    color: $color-blue;
+    font-weight: bold;
+}
+
 @media only screen and (max-width: 800px) {
     .waitForPairingsStatus {
        max-height: 300px;

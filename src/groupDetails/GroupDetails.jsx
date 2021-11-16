@@ -614,7 +614,7 @@ const MyGroups = props => {
                     )}
 
                 </div>
-                {props.auth.uid === karenUid
+                {props.auth.uid === karenUid && props.group.owner === karenUid
                 && (
                     <div className={styles.fadeWrapper}>
                         <Fade

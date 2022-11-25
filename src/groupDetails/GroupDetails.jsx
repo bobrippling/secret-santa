@@ -46,7 +46,7 @@ import RemoveFromWishlist from './RemoveFromWishlist';
 import RemoveGiftRestrictions from './RemoveGiftRestrictions';
 import * as selectors from './selectors';
 
-const karenUid = 'QRglez3j97bnkUMItHji6M2cKwN2';
+const karenUid = 'qDoJc4gO2KXwcZZXSJlw54CnWX72';
 
 const getParticipantsOrder = (group, uid) => {
     if (group.status === constants.groupStatuses.PAIRINGS_ASSIGNED) {

@@ -30,45 +30,47 @@ const AddGiftRestrictions = props => {
     );
 
     return (
-        <div>
+        <>
             <div className={styles.instructionsMessage}>
-                Anybody in the same group will not be able to send or receive a gift from each other
+                    Anybody in the same group will not be able to send or receive a gift from each other
             </div>
-            <div className={styles.checkboxWrapper}>
-                <div>
-                    {props.participants.filter((x, index) => index % 3 === 0).map(p => (
-                        generateCheckboxRow(p, props.onClick, props.displayNameMappings)
-                    ))}
+            <div className={styles.scrollableWrapper}>
+                <div className={styles.checkboxWrapper}>
+                    <div>
+                        {props.participants.filter((x, index) => index % 3 === 0).map(p => (
+                            generateCheckboxRow(p, props.onClick, props.displayNameMappings)
+                        ))}
+                    </div>
+                    <div>
+                        {props.participants.filter((x, index) => index % 3 === 1).map(p => (
+                            generateCheckboxRow(p, props.onClick, props.displayNameMappings)
+                        ))}
+                    </div>
+                    <div>
+                        {props.participants.filter((x, index) => index % 3 === 2).map(p => (
+                            generateCheckboxRow(p, props.onClick, props.displayNameMappings)
+                        ))}
+                    </div>
                 </div>
-                <div>
-                    {props.participants.filter((x, index) => index % 3 === 1).map(p => (
-                        generateCheckboxRow(p, props.onClick, props.displayNameMappings)
-                    ))}
-                </div>
-                <div>
-                    {props.participants.filter((x, index) => index % 3 === 2).map(p => (
-                        generateCheckboxRow(p, props.onClick, props.displayNameMappings)
-                    ))}
+                <div className={styles.buttonWrapper}>
+                    <LoadingDiv isLoading={props.addingGiftRestriction} isBorderRadius>
+                        <StyledButton
+                            color="primary"
+                            onClick={props.addGiftRestriction}
+                            text="Add Group"
+                            disabled={props.newGiftRestriction.length < 2
+                                || props.addingGiftRestriction}
+                        />
+                        <StyledButton
+                            color="secondary"
+                            onClick={props.cancelAddingGiftRestriction}
+                            text="Cancel"
+                            disabled={props.addingGiftRestriction}
+                        />
+                    </LoadingDiv>
                 </div>
             </div>
-            <div className={styles.buttonWrapper}>
-                <LoadingDiv isLoading={props.addingGiftRestriction} isBorderRadius>
-                    <StyledButton
-                        color="primary"
-                        onClick={props.addGiftRestriction}
-                        text="Add Group"
-                        disabled={props.newGiftRestriction.length < 2
-                            || props.addingGiftRestriction}
-                    />
-                    <StyledButton
-                        color="secondary"
-                        onClick={props.cancelAddingGiftRestriction}
-                        text="Cancel"
-                        disabled={props.addingGiftRestriction}
-                    />
-                </LoadingDiv>
-            </div>
-        </div>
+        </>
     );
 };
 

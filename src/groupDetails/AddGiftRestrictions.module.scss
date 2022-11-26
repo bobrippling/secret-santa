@@ -43,3 +43,10 @@
         flex-direction: column;
     }  
 }
+
+@media only screen and (max-height: 800px) {
+    .scrollableWrapper {
+        height: 500px;
+        overflow-x: scroll;
+    }  
+}

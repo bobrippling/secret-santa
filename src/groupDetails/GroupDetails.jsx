@@ -488,8 +488,7 @@ const MyGroups = props => {
                     </div>
                 </div> */}
 
-                {props.group.owner === props.auth.uid
-                && props.group.status === constants.groupStatuses.WAITING_FOR_PAIRINGS && (
+                {true && (
                     <div className={styles.detailWrapper}>
                         <div className={styles.key}>
                             {`Manage Gift Restrictions (${Object.keys(props.group?.restrictions)?.length})`}
@@ -614,7 +613,7 @@ const MyGroups = props => {
                     )}
 
                 </div>
-                {props.auth.uid === karenUid && props.group.owner === karenUid
+                {true
                 && (
                     <div className={styles.fadeWrapper}>
                         <Fade

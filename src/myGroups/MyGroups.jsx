@@ -34,6 +34,10 @@ export const findNextChristmas = () => {
 const MyGroups = props => {
     const classes = makeStyles(materialStyles)();
 
+    const [hideWishlist, setHideWishlist] = React.useState(true);
+
+    const toggleWishlist = () => setHideWishlist(!hideWishlist);
+
     const [isJoiningGroup, setIsJoiningGroup] = React.useState(false);
     const [isCreatingGroup, setIsCreatingGroup] = React.useState(false);
 
@@ -76,9 +80,9 @@ const MyGroups = props => {
 
     const triggerCreateGroupRequest = React.useCallback(() => {
         const priceRangeUsed = isPriceRangeActive ? priceRange : null;
-        props.createGroupRequest(groupName, priceRangeUsed, selectedDate, groupCode);
+        props.createGroupRequest(groupName, priceRangeUsed, selectedDate, groupCode, hideWishlist);
         // resetState();
-    }, [props, isPriceRangeActive, priceRange, selectedDate, groupName, groupCode]);
+    }, [props, isPriceRangeActive, priceRange, selectedDate, groupName, groupCode, hideWishlist]);
 
     React.useEffect(() => {
         if (!props.creatingGroup || !props.joiningGroup) {
@@ -141,6 +145,8 @@ const MyGroups = props => {
                     creatingGroup={props.creatingGroup}
                     createGroupRequest={triggerCreateGroupRequest}
                     groupCode={groupCode}
+                    hideWishlist={hideWishlist}
+                    setHideWishlist={setHideWishlist}
                     setGroupCode={setGroupCode}
                     closeCreatingGroup={resetState}
                     isPriceRangeActive={isPriceRangeActive}
@@ -151,6 +157,7 @@ const MyGroups = props => {
                     setPriceRange={setPriceRange}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
+                    toggleWishlist={toggleWishlist}
                 />
             </SuccessModal>
 

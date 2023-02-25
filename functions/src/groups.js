@@ -46,6 +46,7 @@ exports.createGroup = functions
                 code: data.code,
                 date: data.date,
                 groupName: data.groupName,
+                hideWishlist: Boolean(data.hideWishlist),
                 isNoPriceRange: data.isNoPriceRange || false,
                 status: constants.groupStatuses.WAITING_FOR_PAIRINGS,
                 owner: context.auth.uid,

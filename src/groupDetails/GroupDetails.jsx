@@ -707,9 +707,13 @@ const MyGroups = props => {
                         <ul className={styles.wishlistBulletPoints}>
                             {props.group.wishlist[p]?.map((wishlistItem, i) => (
                                 <li key={wishlistItem.item}>
-                                    <div className={styles.wishlistRow}>
+                                    <div className={classNames({
+                                        [styles.wishlistRow]: true,
+                                        [styles.blur]: index > 1 && props.group.hideWishlist
+                                    })}
+                                    >
                                         <div>
-                                            {wishlistItem.url ? (
+                                            {(wishlistItem.url && index <= 1) || !props.group.hideWishlist ? (
                                                 <a target="_blank" rel="noopener noreferrer" href={wishlistItem.url}>{wishlistItem.item}</a>
                                             ) : wishlistItem.item}
                                         </div>
@@ -1128,7 +1132,7 @@ const MyGroups = props => {
                     minDate={new Date()}
                     setSelectedDate={setRegenerateDate}
                     variant="inline"
-                />
+                />               
 
                 <div className={styles.buttonWrapper}>
                     <LoadingDiv isLoading={props.regeneratingGroup} isBorderRadius>

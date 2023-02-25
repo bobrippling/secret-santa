@@ -10,13 +10,15 @@ export const createGroupRequest = (
     groupName,
     priceRange,
     date,
-    code
+    code,
+    hideWishlist
 ) => ({
     type: CREATE_GROUP_REQUEST,
     groupName,
     priceRange,
     date,
-    code
+    code,
+    hideWishlist
 });
 
 export const cancelCreatingGroup = () => ({

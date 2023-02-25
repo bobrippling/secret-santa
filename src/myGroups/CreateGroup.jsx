@@ -2,6 +2,7 @@ import React from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import classNames from 'classnames';
+import Switch from '@material-ui/core/Switch';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import * as textInputConstants from '../common/TextInput/constants';
 import StyledButton from '../common/StyledButton/StyledButton';
@@ -82,6 +83,15 @@ const MyGroups = props => {
                 setSelectedDate={props.setSelectedDate}
                 variant="inline"
             />
+            <div className={styles.hideWishlist}>
+                Hide Wishlist
+                <div>
+                    <Switch
+                        checked={props.hideWishlist}
+                        onChange={props.toggleWishlist}
+                    />
+                </div>
+            </div>
             <div className={styles.buttonWrapper}>
                 <LoadingDiv isLoading={props.creatingGroup} isBorderRadius>
                     <StyledButton

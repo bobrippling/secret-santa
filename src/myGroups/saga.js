@@ -5,11 +5,12 @@ import * as myGroupsApi from './api';
 import * as actions from './actions';
 import { setErrorMessage } from '../modalHandling/actions';
 
-const getFields = (groupName, priceRange, date, code) => {
+const getFields = (groupName, priceRange, date, code, hideWishlist) => {
     const fields = {
         groupName,
         date: date.toString(),
-        code
+        code,
+        hideWishlist
     };
 
     if (priceRange) {
@@ -26,7 +27,8 @@ const getFields = (groupName, priceRange, date, code) => {
 
 export function* createGroup(api, action) {
     try {
-        const fields = getFields(action.groupName, action.priceRange, action.date, action.code);
+        const fields = getFields(action.groupName, action.priceRange, action.date, action.code,
+            action.hideWishlist);
         yield call(api.createGroup, fields);
     } catch (error) {
         yield put(setErrorMessage('Error Creating group', error));

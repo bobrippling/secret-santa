@@ -15,6 +15,13 @@
     outline: none;
 }
 
+.hideWishlist {
+    text-align: center;
+    color: $color-blue;
+    font-weight: bold;
+    margin-top: $spacing-small
+}
+
 
 .iconWrapper {
     @include vertical-center-div();

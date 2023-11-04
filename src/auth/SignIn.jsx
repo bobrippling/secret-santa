@@ -29,7 +29,6 @@ const App = () => {
             signInOptions: [
                 // Leave the lines as is for the providers you want to offer your users.
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                firebase.auth.FacebookAuthProvider.PROVIDER_ID,
                 {
                     provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
                     defaultCountry: 'GB',

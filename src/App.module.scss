@@ -2,12 +2,14 @@
 
 .app{
   background-color: $color-light-gray;
-  
+
   .appContainer{
     width: 100%;
     padding: 0px;
     margin: 0px;
     max-width: 100%;
+    background-image: url('Christmas.jpg');
+    height: 5000px
   }
 }
 

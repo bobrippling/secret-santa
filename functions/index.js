@@ -20,3 +20,5 @@ exports.auth = require('./src/auth');
 exports.profile = require('./src/profile');
 exports.groups = require('./src/groups');
 exports.wishlist = require('./src/wishlist');
+
+// nvm use 14.18.0 for secret santa app

@@ -590,17 +590,14 @@ const MyGroups = props => {
                             onClick={() => setIsRemovingFromWishlist(true)}
                         />
                     </div>
-                    {props.auth.uid === props.group.owner
-                    && (
-                        <div className={styles.wishlistButton}>
-                            <StyledButton
-                                fullWidth
-                                color="primary"
-                                onClick={() => setIsInviting(true)}
-                                text="Invite"
-                            />
-                        </div>
-                    )}
+                    <div className={styles.wishlistButton}>
+                        <StyledButton
+                            fullWidth
+                            color="primary"
+                            onClick={() => setIsInviting(true)}
+                            text="Invite"
+                        />
+                    </div>
 
                     {showRandomisePairings && (
                         <div className={styles.wishlistButton}>
@@ -1219,7 +1216,7 @@ const MyGroups = props => {
                 </div>
 
                 <div className={styles.buttonWrapper}>
-                    <LoadingDiv isLoading={props.editingWishlistItem} isBorderRadius>
+                        <LoadingDiv isLoading={props.editingWishlistItem} isBorderRadius>
                         <div className={styles.wislistExtraButton}>
                             <StyledButton
                                 fullWidth

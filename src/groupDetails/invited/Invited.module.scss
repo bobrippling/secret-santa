@@ -1,14 +1,13 @@
 @import "../../common/Styles.scss";
 
 .invitedToJoinGroup {
-    margin-top: $spacing-average;
-}
-
-.invitedToJoinGroup {
     text-align: center;
     font-weight: bold;
     color: $color-blue;
     padding: $spacing-medium;
+    margin-top: 0px;
+    font-size: $font-size-massive;
+    background-color: wheat;
 }
 
 .spinner {

@@ -86,3 +86,4 @@ jobs:
         npx firebase deploy --only firestore:rules
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }} # Generate by `firebase login:ci` in bash
+        

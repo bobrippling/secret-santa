@@ -46,7 +46,30 @@ import RemoveFromWishlist from './RemoveFromWishlist';
 import RemoveGiftRestrictions from './RemoveGiftRestrictions';
 import * as selectors from './selectors';
 
-const karenUid = 'k7p7idzoOpX9PZN96HlSQwALKVh2';
+const karenUids = [
+    'QRglez3j97bnkUMItHji6M2cKwN2', // Phone
+    'qDoJc4gO2KXwcZZXSJlw54CnWX72' // Gmail
+];
+
+const mattFUids = [
+    'dqjGC5mU1AQmK3v8G3UfbzDV9Q32', // Gmail
+    '9KzftPLwUAZzN6wl6YaJXIvsqSp2' // Phone
+]
+
+const shouldShowPairings = (loggedInUserId, owner) => {
+    // If Karen is the group owner and logged in
+    if (karenUids.includes(loggedInUserId) && karenUids.includes(owner)) {
+        return true
+    }
+    // If Karen is logged in and I'm the group owner
+    if (karenUids.includes(loggedInUserId) && mattFUids.includes(owner)) {
+        return true
+    }
+    if (mattFUids.includes(loggedInUserId)) {
+        return true
+    }
+    return false
+}
 
 const getParticipantsOrder = (group, uid) => {
     if (group.status === constants.groupStatuses.PAIRINGS_ASSIGNED) {
@@ -611,7 +634,7 @@ const MyGroups = props => {
                     )}
 
                 </div>
-                {props.auth.uid === karenUid && props.group.owner === karenUid
+                {shouldShowPairings(props.auth.uid, props.group.owner)
                 && (
                     <div className={styles.fadeWrapper}>
                         <Fade

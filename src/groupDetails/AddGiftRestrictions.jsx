@@ -7,20 +7,20 @@ import Checkbox from '../common/Checkbox/Checkbox';
 import styles from './AddGiftRestrictions.module.scss';
 
 const AddGiftRestrictions = props => {
-    const generateCheckboxRow = (p, onClick, displayNameMappings) => (
+    const generateCheckboxRow = (p, onAddPerson, displayNameMappings) => (
         <div className={styles.participantRow} key={p}>
             <div>
                 <Checkbox
-                    checked={props.newGiftRestriction.includes(p)}
-                    onClick={() => onClick(p)}
+                    checked={props.newGiftRestriction.people.includes(p)}
+                    onClick={() => onAddPerson(p)}
                 />
             </div>
             <div
                 className={classNames({
                     [styles.participantName]: true,
-                    [styles.makeBold]: props.newGiftRestriction.includes(p)
+                    [styles.makeBold]: props.newGiftRestriction.people.includes(p)
                 })}
-                onClick={() => onClick(p)}
+                onClick={() => onAddPerson(p)}
                 role="button"
                 tabIndex={0}
             >
@@ -38,17 +38,17 @@ const AddGiftRestrictions = props => {
                 <div className={styles.checkboxWrapper}>
                     <div>
                         {props.participants.filter((x, index) => index % 3 === 0).map(p => (
-                            generateCheckboxRow(p, props.onClick, props.displayNameMappings)
+                            generateCheckboxRow(p, props.onAddPerson, props.displayNameMappings)
                         ))}
                     </div>
                     <div>
                         {props.participants.filter((x, index) => index % 3 === 1).map(p => (
-                            generateCheckboxRow(p, props.onClick, props.displayNameMappings)
+                            generateCheckboxRow(p, props.onAddPerson, props.displayNameMappings)
                         ))}
                     </div>
                     <div>
                         {props.participants.filter((x, index) => index % 3 === 2).map(p => (
-                            generateCheckboxRow(p, props.onClick, props.displayNameMappings)
+                            generateCheckboxRow(p, props.onAddPerson, props.displayNameMappings)
                         ))}
                     </div>
                 </div>
@@ -58,7 +58,7 @@ const AddGiftRestrictions = props => {
                             color="primary"
                             onClick={props.addGiftRestriction}
                             text="Add Group"
-                            disabled={props.newGiftRestriction.length < 2
+                            disabled={props.newGiftRestriction.people.length < 2
                                 || props.addingGiftRestriction}
                         />
                         <StyledButton
@@ -66,6 +66,10 @@ const AddGiftRestrictions = props => {
                             onClick={props.cancelAddingGiftRestriction}
                             text="Cancel"
                             disabled={props.addingGiftRestriction}
+                        />
+                        <Checkbox
+                            checked={props.newGiftRestriction.isOneWay}
+                            onClick={props.onToggleIsOneWay}
                         />
                     </LoadingDiv>
                 </div>

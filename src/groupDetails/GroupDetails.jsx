@@ -111,7 +111,7 @@ const MyGroups = props => {
     const [wishlistItemToAdd, setWishlistItemToAdd] = React.useState('');
     const [wishlistItemToAddUrl, setWishlistItemToAddUrl] = React.useState('');
 
-    const [newGiftRestriction, setNewGiftRestriction] = React.useState([]);
+    const [newGiftRestriction, setNewGiftRestriction] = React.useState({ people: [], isOneWay: false });
     const [removedGiftRestrictions, setRemovedGiftRestrictions] = React.useState([]);
 
     const [isConfirmDeleteGroup, setIsConfirmDeleteGroup] = React.useState(false);
@@ -253,12 +253,25 @@ const MyGroups = props => {
         setIsRemovingFromWishlist(false);
     };
 
-    const onGroupRestrictionClick = React.useCallback(id => {
-        if (newGiftRestriction.includes(id)) {
-            setNewGiftRestriction(newGiftRestriction.filter(x => x !== id));
+    const onGroupRestrictionAdd = React.useCallback(id => {
+        if (newGiftRestriction.people.includes(id)) {
+            setNewGiftRestriction({
+                ...newGiftRestriction,
+                people: newGiftRestriction.people.filter(x => x !== id)
+            });
         } else {
-            setNewGiftRestriction([...newGiftRestriction, id]);
+            setNewGiftRestriction({
+                ...newGiftRestriction,
+                people: [...newGiftRestriction.people, id]
+            });
         }
+    }, [setNewGiftRestriction, newGiftRestriction]);
+
+    const onGroupRestrictionToggleOneWay = React.useCallback(() => {
+        setNewGiftRestriction({
+            ...newGiftRestriction,
+            isOneWay: !newGiftRestriction.isOneWay,
+        });
     }, [setNewGiftRestriction, newGiftRestriction]);
 
     const addGiftRestriction = React.useCallback(() => {
@@ -359,7 +372,7 @@ const MyGroups = props => {
 
     React.useEffect(() => {
         if (!props.addingGiftRestriction) {
-            setNewGiftRestriction([]);
+            setNewGiftRestriction({ people: [], isOneWay: false });
         }
     }, [props.addingGiftRestriction, setNewGiftRestriction]);
 
@@ -879,7 +892,8 @@ const MyGroups = props => {
                     cancelAddingGiftRestriction={cancelAddingGiftRestriction}
                     displayNameMappings={group.displayNameMappings}
                     newGiftRestriction={newGiftRestriction}
-                    onClick={onGroupRestrictionClick}
+                    onAddPerson={onGroupRestrictionAdd}
+                    onToggleIsOneWay={onGroupRestrictionToggleOneWay}
                     participants={group.participants}
                 />
             </SuccessModal>
@@ -1152,7 +1166,7 @@ const MyGroups = props => {
                     minDate={new Date()}
                     setSelectedDate={setRegenerateDate}
                     variant="inline"
-                />               
+                />
 
                 <div className={styles.buttonWrapper}>
                     <LoadingDiv isLoading={props.regeneratingGroup} isBorderRadius>

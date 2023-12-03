@@ -13,7 +13,7 @@ module.exports.isAuthenticated = context => {
 
 module.exports.isNumber = value => Boolean((Number(value) && value) >= 0 || Number(value) === 0);
 
-module.exports.doArraysContainSameElements = (arr,    arrTwo) => _.xor(arr, arrTwo).length === 0;
+module.exports.doArraysContainSameElements = (arr, arrTwo) => _.xor(arr, arrTwo).length === 0;
 
 const findPeopleInMyRestriction = (person, restrictions) => Object.values(restrictions).reduce((acc, cur) => {
     if (cur.includes(person)) {

@@ -22,7 +22,6 @@ const findPeopleInMyRestriction = (person, restrictions) => Object.values(restri
     return acc;
 }, [person]);
 
-module.exports.findPeopleInMyRestriction = findPeopleInMyRestriction;
 
 const generateReceivers = (restrictions, participants) => {
     const result = [];
@@ -33,7 +32,6 @@ const generateReceivers = (restrictions, participants) => {
     return result;
 };
 
-module.exports.generateReceivers = generateReceivers;
 
 // // https://pastebin.com/a7yCDf95
 module.exports.generatePairings = (restrictions, participants) => {

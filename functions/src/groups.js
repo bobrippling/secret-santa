@@ -115,19 +115,21 @@ exports.joinGroup = functions
 
 exports.addGiftRestriction = functions
     .region(constants.region)
-    .https.onCall((data, context) => {
+    .https.onCall((newData, context) => {
         common.isAuthenticated(context);
 
-        if (!data.restriction || data.restriction.length < 2) {
+        // newData: { people: string[], isOneWay: boolean }
+
+        if (_.get(newData, 'restriction.people', []).length < 2) {
             throw new functions.https.HttpsError('invalid-argument', 'Must provide a valid number of restrictions');
         }
 
-        if (!data.groupId) {
+        if (!newData.groupId) {
             throw new functions.https.HttpsError('invalid-argument', 'Must provide a group id. Contact Matt');
         }
 
-        return db.collection('groups').doc(data.groupId).get().then(doc => {
-            if (Object.keys(doc.data().restrictions).length >= 10) {
+        return db.collection('groups').doc(newData.groupId).get().then(doc => {
+            if (doc.data().restrictions.length >= 10) {
                 throw new functions.https.HttpsError('invalid-argument', 'Max of 10 restrictions');
             }
 
@@ -135,9 +137,9 @@ exports.addGiftRestriction = functions
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can add restrictions');
             }
 
-            if (Object.values(doc.data().restrictions)
-                .some(r => common.doArraysContainSameElements(r,
-                    data.restriction))) {
+            if (doc.data().restrictions.some(
+                r => common.doArraysContainSameElements(r.people, newData.restriction.people)
+            )) {
                 throw new functions.https.HttpsError('invalid-argument', 'Cannot add duplicate group restrictions');
             }
 
@@ -153,7 +155,7 @@ exports.addGiftRestriction = functions
             return doc.ref.update({
                 restrictions: {
                     ...doc.data().restrictions,
-                    [minKey]: data.restriction
+                    [minKey]: newData.restriction
                 }
             });
         });

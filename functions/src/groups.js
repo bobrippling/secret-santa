@@ -8,6 +8,11 @@ const db = admin.firestore();
 
 const operations = admin.firestore.FieldValue;
 
+const dataFromOldOrNewFormat = restrictions =>
+    restrictions
+        ? [restrictions.people, restrictions.isOneWay] // new format
+        : [data, false]; // old format
+
 exports.createGroup = functions
     .region(constants.region)
     .https.onCall((data, context) => {
@@ -129,7 +134,9 @@ exports.addGiftRestriction = functions
         }
 
         return db.collection('groups').doc(newData.groupId).get().then(doc => {
-            if (doc.data().restrictions.length >= 10) {
+            const { restrictions } = doc.data();
+
+            if (restrictions.length >= 10) {
                 throw new functions.https.HttpsError('invalid-argument', 'Max of 10 restrictions');
             }
 
@@ -137,7 +144,7 @@ exports.addGiftRestriction = functions
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can add restrictions');
             }
 
-            if (doc.data().restrictions.some(
+            if (!newData.restriction.isOneWay && restrictions.some(
                 r => common.doArraysContainSameElements(r.people, newData.restriction.people)
             )) {
                 throw new functions.https.HttpsError('invalid-argument', 'Cannot add duplicate group restrictions');
@@ -146,7 +153,7 @@ exports.addGiftRestriction = functions
             let minKey = 0;
 
             for (let x = 0; x < constants.maxGiftRestrictionGroups; x += 1) {
-                if (!(x in doc.data().restrictions)) {
+                if (!(x in restrictions)) {
                     minKey = x;
                     break;
                 }
@@ -154,7 +161,7 @@ exports.addGiftRestriction = functions
 
             return doc.ref.update({
                 restrictions: {
-                    ...doc.data().restrictions,
+                    ...restrictions,
                     [minKey]: newData.restriction
                 }
             });
@@ -183,8 +190,10 @@ exports.removeGiftRestrictions = functions
                         [cur]: restrictions[cur]
                     }), {});
 
+            const [restrictions, isOneWay] = dataFromOldOrNewFormat(doc.data().restrictions);
+
             return doc.ref.update({
-                restrictions: getRemovedResult(doc.data().restrictions, data.restrictions)
+                restrictions: getRemovedResult(restrictions, data.restrictions)
             });
         });
     });
@@ -207,7 +216,8 @@ exports.assignPairings = functions
                 throw new functions.https.HttpsError('invalid-argument', 'There are not enough people in the group yet');
             }
 
-            const { restrictions, participants } = doc.data();
+            const { restrictions: rawRestrictions, participants } = doc.data();
+            const [restrictions, isOneWay] = dataFromOldOrNewFormat(rawRestrictions);
 
             const pairings = common.generatePairings(restrictions, participants);
 
@@ -305,8 +315,10 @@ exports.kickUser = functions
                 throw new functions.https.HttpsError('invalid-argument', 'Cannot kick users once pairings have been assigned');
             }
 
-            const restrictions = Object.keys(doc.data().restrictions).reduce((acc, cur) => {
-                const filtered = doc.data().restrictions[cur].filter(x => x !== data.userId);
+            const [restrictions, isOneWay] = dataFromOldOrNewFormat(doc.data().restrictions);
+
+            const newRestrictions = Object.keys(restrictions).reduce((acc, cur) => {
+                const filtered = restrictions[cur].filter(x => x !== data.userId);
                 if (filtered.length > 1) {
                     return {
                         ...acc,
@@ -320,7 +332,7 @@ exports.kickUser = functions
                 addressMappings: _.omit(doc.data().addressMappings, data.userId),
                 displayNameMappings: _.omit(doc.data().displayNameMappings, data.userId),
                 participants: operations.arrayRemove(data.userId),
-                restrictions,
+                restrictions: newRestrictions,
                 wishlist: _.omit(doc.data().wishlist, data.userId)
             });
         });

@@ -22,7 +22,7 @@
     "eslint-plugin-jest": "^22.16.0",
     "firebase": "^5.11.1",
     "firebase-functions": "^3.6.2",
-    "firebase-tools": "^7.8.1",
+    "firebase-tools": "^8.20.0",
     "history": "^4.7.1",
     "jest": "^24.9.0",
     "lodash": "^4.17.15",

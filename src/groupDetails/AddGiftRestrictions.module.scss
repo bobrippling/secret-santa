@@ -38,6 +38,10 @@
     justify-content: space-evenly;
 }
 
+.disabled {
+    pointer-events: none;
+}
+
 @media only screen and (max-width: 800px) {
     .checkboxWrapper {
         flex-direction: column;

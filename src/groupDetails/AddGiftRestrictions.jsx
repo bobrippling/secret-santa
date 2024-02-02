@@ -10,6 +10,7 @@ const AddGiftRestrictions = props => {
     const generateCheckboxRow = (p, onAddPerson, displayNameMappings) => {
         const people = props.newGiftRestriction.people;
         const selected = people.includes(p);
+        const disabled = !selected && props.newGiftRestriction.isOneWay && people.length >= 2;
         const myIndex = people.indexOf(p);
         const oneWayDetail = !props.newGiftRestriction.isOneWay
             ? ""
@@ -25,14 +26,16 @@ const AddGiftRestrictions = props => {
                     <Checkbox
                         checked={selected}
                         onClick={() => onAddPerson(p)}
+                        disabled={disabled}
                     />
                 </div>
                 <div
                     className={classNames({
                         [styles.participantName]: true,
                         [styles.makeBold]: selected,
+                        [styles.disabled]: disabled
                     })}
-                    onClick={() => onAddPerson(p)}
+                    onClick={() => !disabled && onAddPerson(p)}
                     role="button"
                     tabIndex={0}
                 >

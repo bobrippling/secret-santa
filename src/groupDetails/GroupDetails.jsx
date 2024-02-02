@@ -268,9 +268,16 @@ const MyGroups = props => {
     }, [setNewGiftRestriction, newGiftRestriction]);
 
     const onGroupRestrictionToggleOneWay = React.useCallback(() => {
+        const isOneWay = !newGiftRestriction.isOneWay;
+        // if there's more than two selected and we're going to one-way, clear the selection
+        const people = isOneWay && newGiftRestriction.people.length > 2
+            ? []
+            : newGiftRestriction.people;
+
         setNewGiftRestriction({
             ...newGiftRestriction,
-            isOneWay: !newGiftRestriction.isOneWay,
+            isOneWay,
+            people,
         });
     }, [setNewGiftRestriction, newGiftRestriction]);
 

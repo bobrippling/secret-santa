@@ -13,6 +13,11 @@ const dataFromOldOrNewFormat = restrictions =>
         ? [restrictions.people, restrictions.isOneWay] // new format
         : [data, false]; // old format
 
+const objectToArray = obj => {
+    const length = Object.keys(obj).sort().pop();
+    return Array.from({ ...obj, length });
+};
+
 exports.createGroup = functions
     .region(constants.region)
     .https.onCall((data, context) => {
@@ -135,8 +140,9 @@ exports.addGiftRestriction = functions
 
         return db.collection('groups').doc(newData.groupId).get().then(doc => {
             const { restrictions } = doc.data();
+            const restrictionsArray = objectToArray(restrictions);
 
-            if (restrictions.length >= 10) {
+            if (restrictionsArray.filter(x=>x).length >= 10) {
                 throw new functions.https.HttpsError('invalid-argument', 'Max of 10 restrictions');
             }
 
@@ -144,14 +150,13 @@ exports.addGiftRestriction = functions
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can add restrictions');
             }
 
-            if (!newData.restriction.isOneWay && restrictions.some(
-                r => common.doArraysContainSameElements(r.people, newData.restriction.people)
+            if (!newData.restriction.isOneWay && restrictionsArray.some(
+                r => r && common.doArraysContainSameElements(r.people, newData.restriction.people)
             )) {
                 throw new functions.https.HttpsError('invalid-argument', 'Cannot add duplicate group restrictions');
             }
 
             let minKey = 0;
-
             for (let x = 0; x < constants.maxGiftRestrictionGroups; x += 1) {
                 if (!(x in restrictions)) {
                     minKey = x;

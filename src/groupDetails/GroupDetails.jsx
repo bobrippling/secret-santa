@@ -288,6 +288,7 @@ const MyGroups = props => {
 
     const cancelRemovingGiftRestrictions = () => {
         setIsRemovingGiftRestrictions(false);
+        setRemovedGiftRestrictions([]);
     };
 
     const confirmRemoveRequest = () => {

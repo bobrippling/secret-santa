@@ -9,13 +9,20 @@ const db = admin.firestore();
 const operations = admin.firestore.FieldValue;
 
 const dataFromOldOrNewFormat = restrictions =>
-    restrictions
+    "people" in restrictions
         ? [restrictions.people, restrictions.isOneWay] // new format
-        : [data, false]; // old format
+        : [restrictions, false]; // old format
 
 const objectToArray = obj => {
-    const length = Object.keys(obj).sort().pop();
-    return Array.from({ ...obj, length });
+    const last = Object.keys(obj).sort().pop();
+    return Array.from({ ...obj, length: last + 1 });
+};
+
+const isSameRestriction = (a, b) => {
+    const [aPeople, aOneWay] = dataFromOldOrNewFormat(a);
+    const [bPeople, bOneWay] = dataFromOldOrNewFormat(b);
+
+    return aOneWay === bOneWay && common.doArraysContainSameElements(aPeople, bPeople);
 };
 
 exports.createGroup = functions
@@ -128,7 +135,7 @@ exports.addGiftRestriction = functions
     .https.onCall((newData, context) => {
         common.isAuthenticated(context);
 
-        // newData: { people: string[], isOneWay: boolean }
+        // newData.restriction: { people: string[], isOneWay: boolean }
 
         if (_.get(newData, 'restriction.people', []).length < 2) {
             throw new functions.https.HttpsError('invalid-argument', 'Must provide a valid number of restrictions');
@@ -150,9 +157,7 @@ exports.addGiftRestriction = functions
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can add restrictions');
             }
 
-            if (!newData.restriction.isOneWay && restrictionsArray.some(
-                r => r && common.doArraysContainSameElements(r.people, newData.restriction.people)
-            )) {
+            if (restrictionsArray.some(r => r && isSameRestriction(r, newData.restriction))) {
                 throw new functions.https.HttpsError('invalid-argument', 'Cannot add duplicate group restrictions');
             }
 
@@ -187,18 +192,21 @@ exports.removeGiftRestrictions = functions
         }
 
         return db.collection('groups').doc(data.groupId).get().then(doc => {
-            const getRemovedResult = (restrictions, removed) => Object.keys(restrictions)
-                .reduce((acc, cur) => (removed.some(x => common.doArraysContainSameElements(x,
-                    restrictions[cur]))
-                    ? acc : {
-                        ...acc,
-                        [cur]: restrictions[cur]
-                    }), {});
+            const getRemovedResult = (restrictions, removed) => Object
+                .keys(restrictions)
+                .reduce((acc, curKey) => {
+                    const curRestriction = restrictions[curKey];
 
-            const [restrictions, isOneWay] = dataFromOldOrNewFormat(doc.data().restrictions);
+                    return removed.some(removedEntry => isSameRestriction(removedEntry, curRestriction))
+                        ? acc
+                        : {
+                            ...acc,
+                            [curKey]: curRestriction
+                        }
+                }, {});
 
             return doc.ref.update({
-                restrictions: getRemovedResult(restrictions, data.restrictions)
+                restrictions: getRemovedResult(doc.data().restrictions, data.restrictions)
             });
         });
     });
@@ -221,10 +229,10 @@ exports.assignPairings = functions
                 throw new functions.https.HttpsError('invalid-argument', 'There are not enough people in the group yet');
             }
 
-            const { restrictions: rawRestrictions, participants } = doc.data();
-            const [restrictions, isOneWay] = dataFromOldOrNewFormat(rawRestrictions);
+            const { restrictions, participants } = doc.data();
 
-            const pairings = common.generatePairings(restrictions, participants);
+            const restrictionsArray = objectToArray(restrictions);
+            const pairings = common.generatePairings(restrictionsArray, participants);
 
             return doc.ref.update({
                 pairings,

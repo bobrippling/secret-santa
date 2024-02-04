@@ -18,6 +18,8 @@ const objectToArray = obj => {
     return Array.from({ ...obj, length: last + 1 });
 };
 
+const restrictionsObjToArray = restrictions => objectToArray(restrictions).filter(x=>x);
+
 const isSameRestriction = (a, b) => {
     const [aPeople, aOneWay] = dataFromOldOrNewFormat(a);
     const [bPeople, bOneWay] = dataFromOldOrNewFormat(b);
@@ -147,9 +149,9 @@ exports.addGiftRestriction = functions
 
         return db.collection('groups').doc(newData.groupId).get().then(doc => {
             const { restrictions } = doc.data();
-            const restrictionsArray = objectToArray(restrictions);
+            const restrictionsArray = restrictionsObjToArray(restrictions);
 
-            if (restrictionsArray.filter(x=>x).length >= 10) {
+            if (restrictionsArray.length >= 10) {
                 throw new functions.https.HttpsError('invalid-argument', 'Max of 10 restrictions');
             }
 
@@ -157,7 +159,7 @@ exports.addGiftRestriction = functions
                 throw new functions.https.HttpsError('unauthenticated', 'Only the group owner can add restrictions');
             }
 
-            if (restrictionsArray.some(r => r && isSameRestriction(r, newData.restriction))) {
+            if (restrictionsArray.some(r => isSameRestriction(r, newData.restriction))) {
                 throw new functions.https.HttpsError('invalid-argument', 'Cannot add duplicate group restrictions');
             }
 
@@ -231,7 +233,7 @@ exports.assignPairings = functions
 
             const { restrictions, participants } = doc.data();
 
-            const restrictionsArray = objectToArray(restrictions);
+            const restrictionsArray = restrictionsObjToArray(restrictions);
             const pairings = common.generatePairings(restrictionsArray, participants);
 
             return doc.ref.update({

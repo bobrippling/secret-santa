@@ -9,9 +9,12 @@ import styles from './RemoveGiftRestrictions.module.scss';
 
 const doArraysContainSameElements = (arr, arrTwo) => _.xor(arr, arrTwo).length === 0;
 
-const getRemainingRestrictions = (giftRestrictions,
-    removedRestrictions) => Object.values(giftRestrictions)
-    .filter(x => !removedRestrictions.some(y => doArraysContainSameElements(x, y)));
+const getRemainingRestrictions = (giftRestrictions, removedRestrictions) =>
+    Object
+        .values(giftRestrictions)
+        .filter(x => {
+            return !removedRestrictions.some(y => x.isOneWay === y.isOneWay && doArraysContainSameElements(x.people, y.people))
+        });
 
 const RemoveGiftRestrictions = props => {
     const remainingResults = getRemainingRestrictions(props.giftRestrictions,

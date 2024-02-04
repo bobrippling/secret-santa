@@ -330,18 +330,24 @@ exports.kickUser = functions
                 throw new functions.https.HttpsError('invalid-argument', 'Cannot kick users once pairings have been assigned');
             }
 
-            const [restrictions, isOneWay] = dataFromOldOrNewFormat(doc.data().restrictions);
-
-            const newRestrictions = Object.keys(restrictions).reduce((acc, cur) => {
-                const filtered = restrictions[cur].filter(x => x !== data.userId);
-                if (filtered.length > 1) {
-                    return {
-                        ...acc,
-                        [cur]: filtered
-                    };
-                }
-                return acc;
-            }, {});
+            const restrictions = doc.data().restrictions;
+            const newRestrictions = Object
+                .keys(restrictions)
+                .filter(cur => restrictions[cur])
+                .reduce((acc, cur) => {
+                    const [people, isOneWay] = dataFromOldOrNewFormat(restrictions[cur]);
+                    const filtered = people.filter(x => x !== data.userId);
+                    if (filtered.length > 1) {
+                        return {
+                            ...acc,
+                            [cur]: {
+                                people: filtered,
+                                isOneWay,
+                            }
+                        };
+                    }
+                    return acc;
+                }, {});
 
             return doc.ref.update({
                 addressMappings: _.omit(doc.data().addressMappings, data.userId),

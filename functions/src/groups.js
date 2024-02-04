@@ -8,11 +8,6 @@ const db = admin.firestore();
 
 const operations = admin.firestore.FieldValue;
 
-const dataFromOldOrNewFormat = restrictions =>
-    "people" in restrictions
-        ? [restrictions.people, restrictions.isOneWay] // new format
-        : [restrictions, false]; // old format
-
 const objectToArray = obj => {
     const last = Object.keys(obj).sort().pop();
     return Array.from({ ...obj, length: last + 1 });
@@ -20,12 +15,8 @@ const objectToArray = obj => {
 
 const restrictionsObjToArray = restrictions => objectToArray(restrictions).filter(x=>x);
 
-const isSameRestriction = (a, b) => {
-    const [aPeople, aOneWay] = dataFromOldOrNewFormat(a);
-    const [bPeople, bOneWay] = dataFromOldOrNewFormat(b);
-
-    return aOneWay === bOneWay && common.doArraysContainSameElements(aPeople, bPeople);
-};
+const isSameRestriction = ({ people: aPeople, isOneWay: aOneWay }, { people: bPeople, isOneWay: bOneWay }) =>
+    aOneWay === bOneWay && common.doArraysContainSameElements(aPeople, bPeople);
 
 exports.createGroup = functions
     .region(constants.region)
@@ -335,7 +326,7 @@ exports.kickUser = functions
                 .keys(restrictions)
                 .filter(cur => restrictions[cur])
                 .reduce((acc, cur) => {
-                    const [people, isOneWay] = dataFromOldOrNewFormat(restrictions[cur]);
+                    const { people, isOneWay } = restrictions[cur];
                     const filtered = people.filter(x => x !== data.userId);
                     if (filtered.length > 1) {
                         return {

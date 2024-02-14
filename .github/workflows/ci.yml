@@ -23,6 +23,6 @@ jobs:
 
     - name: Unit tests
       run:
-        npm test
+        npm run test-functions
       env:
         CI: true

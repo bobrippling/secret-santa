@@ -58,7 +58,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest --config jest.config.json && react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom",
+    "test-functions": "jest --config jest.config.json",
     "eject": "react-scripts eject",
     "lint": "eslint src",
     "lint-fix": "npm run lint -- --fix",

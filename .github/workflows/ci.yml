@@ -5,7 +5,7 @@ on:
 
 jobs:
   test:
-    name: Test
+    name: Testing
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,5 +22,7 @@ jobs:
         npm i
 
     - name: Unit tests
-      run: |
-        node functions/src/test.js
+      run:
+        npm test
+      env:
+        CI: true

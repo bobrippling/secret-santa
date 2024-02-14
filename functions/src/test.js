@@ -1,4 +1,3 @@
-process.env.CI = 1;
 const algo = require("./common");
 
 const assert = cond => {

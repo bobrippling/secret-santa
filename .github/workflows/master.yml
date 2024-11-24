@@ -76,14 +76,14 @@ jobs:
     - name: Deploy Firebase Hosting
       run: |
         npm ci
-        npx firebase use fennell-secret-santa
-        npx firebase deploy --only hosting
+#npx firebase use fennell-secret-santa
+#npx firebase deploy --only hosting
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
     - name: Deploy Firebase Security Rules
       run: |
         npm ci
-        npx firebase use fennell-secret-santa
-        npx firebase deploy --only firestore:rules
+#npx firebase use fennell-secret-santa
+#npx firebase deploy --only firestore:rules
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }} # Generate by `firebase login:ci` in bash

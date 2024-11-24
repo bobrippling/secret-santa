@@ -20,7 +20,7 @@ jobs:
     - name: install
       run:
         npm ci
-        
+
     - name: get-npm-version
       id: package-version
       uses: martinbeentjes/npm-get-version-action@master
@@ -42,7 +42,7 @@ jobs:
           echo 'REACT_APP_VERSION=${{ steps.package-version.outputs.current-version}}' >> .env.production
 
     - name: Build
-      run: 
+      run:
         npm run build
       env:
         CI: true
@@ -86,4 +86,3 @@ jobs:
         npx firebase deploy --only firestore:rules
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }} # Generate by `firebase login:ci` in bash
-        
